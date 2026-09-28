@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>RNG Pedras</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;font-family:Arial,Helvetica,sans-serif;background:#070b19;color:#fff}body{overflow:hidden;touch-action:none}button{font:inherit}
+.screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+#menu{overflow:auto;align-items:flex-start;padding:34px 0 50px;background:radial-gradient(circle at 35% 18%,#311a5c 0,#15112e 35%,#071020 72%,#050811 100%)}
+.menuWrap{width:min(92vw,560px);margin:auto}
+.header{text-align:center;margin-bottom:20px}.header h1{font-size:clamp(32px,9vw,52px);margin:0;font-weight:1000;letter-spacing:-1px}.header p{margin:8px 0 0;color:#9eacc0;font-size:15px;line-height:1.4}
+.playerCard,.mainCard{border:1px solid #283650;background:#0b1225e8;border-radius:24px;box-shadow:0 18px 60px #0008}.playerCard{padding:16px 18px;margin-bottom:14px}.playerRow{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center}.playerRow label{font-size:17px;font-weight:800}.playerInput{width:100%;background:#060b19;border:1px solid #32415c;color:#fff;border-radius:11px;padding:11px 13px;font-weight:700;font-size:16px}.stats{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:12px;margin-top:13px;align-items:center}.stat{font-size:16px;font-weight:900}.gold{color:#ffd22e}.blue{color:#42a9ff}.muted{color:#8e9bae;font-size:12px;font-weight:700}
+.mainCard{padding:14px 16px 18px}.resultBox{height:285px;border:1px solid #26334b;border-radius:20px;background:radial-gradient(circle at 50% 50%,#121b32,#060b18 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden}.resultBox:after{content:"";position:absolute;top:0;bottom:0;width:3px;background:linear-gradient(transparent,#ffffff44,transparent);box-shadow:0 0 20px #ffffff55}.resultName{position:relative;z-index:1;font-size:clamp(42px,11vw,72px);font-weight:1000;text-shadow:0 0 25px currentColor}.resultRarity{position:relative;z-index:1;margin-top:8px;font-size:16px;font-weight:900;letter-spacing:2px}.resultTitle{text-align:center;margin:28px 0 18px}.resultTitle small{display:block;color:#66758d;font-size:12px;font-weight:1000;letter-spacing:4px}.resultTitle b{display:block;margin-top:6px;font-size:28px}
+.buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn{border:0;border-radius:15px;padding:17px 10px;font-weight:1000;font-size:17px;cursor:pointer;box-shadow:0 8px 24px #0008}.btn.roll{background:linear-gradient(90deg,#8b34f7,#286cff);color:#fff}.btn.play{background:linear-gradient(90deg,#a12d3a,#70202a);color:#b9aab0}.btn.play.enabled{color:#fff;cursor:pointer}.btn:disabled{cursor:not-allowed;filter:grayscale(.25)}.btn:active,.deviceBtn:active{transform:scale(.98)}
+.rarityGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}.rarity{min-height:68px;border-radius:16px;background:#070d1e;border:1px solid #18243a;display:flex;flex-direction:column;justify-content:center;align-items:center}.rarity span{font-size:11px;color:#aab6c7}.rarity b{font-size:20px;margin-top:4px}.c-white b{color:#fff}.c-blue b{color:#4d9cff}.c-purple b{color:#b35cff}.c-orange b{color:#ff9130}.c-red b{color:#ff4050}.c-rgb b{background:linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,violet,red);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:rainbow 1.2s linear infinite}@keyframes rainbow{to{background-position:300% 0}}
+.rainbowText{background:linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,violet,red);background-size:400% 100%;-webkit-background-clip:text;background-clip:text;color:transparent!important;animation:rainbow 1s linear infinite;text-shadow:none!important}
+.bottomLinks{display:grid;grid-template-columns:1fr 1fr;margin-top:14px;color:#fff;font-weight:800;font-size:14px}.bottomLinks span{text-align:center}
+.rollHelp{text-align:center;color:#718099;font-size:11px;margin:10px 0 2px}.rollHelp b{color:#ffd22e}.deviceTitle{text-align:center;margin:15px 0 8px;color:#718099;font-size:10px;letter-spacing:2px;font-weight:1000}.deviceButtons{display:grid;grid-template-columns:1fr 1fr;gap:10px}.deviceBtn{border:1px solid #293a55;background:#080f20;color:#9daec2;border-radius:13px;padding:12px;font-weight:1000;cursor:pointer}.deviceBtn.active{background:#132b55;border-color:#4b8cff;color:#fff;box-shadow:0 0 18px #2868ff44}
+#rngPanel{display:none !important;position:fixed;inset:0;background:radial-gradient(circle,#201642,#070a14 75%);align-items:center;justify-content:center;z-index:20;padding:20px}.rngCard{width:min(92vw,650px);text-align:center;padding:24px;border-radius:24px;background:#0b1225;border:1px solid #2c3c59;box-shadow:0 20px 90px #000}.rngTitle{font-size:13px;letter-spacing:4px;color:#8fa5bd}.rollingName{height:120px;display:flex;align-items:center;justify-content:center;font-size:clamp(42px,11vw,78px);font-weight:1000;text-shadow:0 0 28px currentColor}.rollingRarity{font-size:20px;font-weight:900;min-height:30px}.bar{height:7px;background:#172437;border-radius:10px;overflow:hidden;margin:22px 0}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#8b34f7,#2d78ff)}
+#game{display:none;position:fixed;inset:0;background:#050914}.gameTop{position:fixed;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:center;z-index:8}.gameHud{display:flex;gap:8px;flex-wrap:wrap}.hudBox{background:#07101ddd;border:1px solid #2a415b;border-radius:12px;padding:8px 11px;box-shadow:0 5px 20px #0007}.hudBox b{font-size:16px}.tiny{font-size:9px;color:#91a5ba;text-transform:uppercase;display:block}.exitBtn{border:1px solid #5b3140;background:#2a1018;color:#fff;border-radius:11px;padding:10px 14px;font-weight:1000;cursor:pointer}.exitBtn:active{transform:scale(.97)}
+canvas{width:100%;height:100%;display:block}.hintPanel{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);background:#07101de8;border:1px solid #2a415b;border-radius:14px;padding:9px 14px;text-align:center;z-index:5;pointer-events:none}.hintPanel b{font-weight:1000}.hint{font-size:11px;color:#9fb0c2}#mobileFire{display:none;position:fixed;right:24px;bottom:78px;width:92px;height:92px;border-radius:50%;border:2px solid #ffffff66;background:#e84141dd;color:#fff;font-weight:1000;font-size:15px;z-index:7;box-shadow:0 8px 30px #0008}#mobileTip{display:none;position:fixed;left:50%;bottom:82px;transform:translateX(-50%);z-index:7;background:#07101de8;border:1px solid #304863;border-radius:12px;padding:8px 12px;font-size:11px;color:#b8c8d8}.flash{position:fixed;inset:0;pointer-events:none;z-index:10;opacity:0}
+#gameOver{display:none;position:fixed;inset:0;z-index:30;align-items:center;justify-content:center;background:#030611cc;backdrop-filter:blur(6px);padding:20px}.gameOverCard{width:min(90vw,460px);text-align:center;background:#0b1225;border:1px solid #33445f;border-radius:24px;padding:28px;box-shadow:0 25px 90px #000}.gameOverCard h2{margin:0;font-size:40px;color:#ff4050}.gameOverCard p{color:#9eb0c5;margin:10px 0 20px}.gameOverCard b{color:#ffd22e}.overBtns{display:grid;grid-template-columns:1fr 1fr;gap:10px}.overBtns button{border:0;border-radius:14px;padding:14px;font-weight:1000;cursor:pointer}.retry{background:linear-gradient(90deg,#8b34f7,#286cff);color:#fff}.menuBtn{background:#26354d;color:#fff}
+@media(max-width:430px){.menuWrap{width:92vw}.header h1{font-size:38px}.playerCard{padding:14px}.stats{grid-template-columns:1.25fr 1fr 1fr;gap:7px}.stat{font-size:14px}.mainCard{padding:12px}.resultBox{height:270px}.buttons{grid-template-columns:1fr 1fr}.btn{font-size:15px;padding:15px 8px}.rarityGrid{grid-template-columns:repeat(3,1fr)}.rarity{min-height:62px}.bottomLinks{font-size:12px}}
+@media(max-width:340px){.buttons,.deviceButtons{grid-template-columns:1fr}.rarityGrid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<section id="menu" class="screen">
+  <div class="menuWrap">
+    <div class="header"><h1>🎲 RNG DE APELIDOS</h1><p>Gaste pontos para rolar novos apelidos e enfrente pedras espaciais!</p></div>
+    <div class="playerCard">
+      <div class="playerRow"><label>👤 Player:</label><input class="playerInput" id="playerName" value="Player1" maxlength="16"></div>
+      <div class="stats"><div class="stat gold">🪙 <span id="menuScore">100</span> Pontos</div><div class="stat blue">⭐ Nível <span id="menuLevel">1</span></div><div class="muted">XP: <span id="menuXp">0</span>/100</div></div>
+    </div>
+    <div class="mainCard">
+      <div class="resultBox"><div id="resultName" class="resultName">???</div><div id="resultRarity" class="resultRarity"></div></div>
+      <div class="resultTitle"><small>RESULTADO</small><b id="resultText">Pronto para rolar</b></div>
+      <div class="buttons"><button class="btn roll" id="menuRoll">🎲 ROLAR</button><button class="btn play" id="playBtn">🚀 JOGAR SHOOTER</button></div><div class="rollHelp">A primeira rolagem é grátis. Depois, cada roll custa <b>100 pontos</b>. Derrote pedras no shooter para ganhar pontos.</div>
+      <div class="deviceTitle">ESCOLHA O CONTROLE</div>
+      <div class="deviceButtons"><button class="deviceBtn active" id="pcMode">🖥️ COMPUTADOR</button><button class="deviceBtn" id="mobileMode">📱 CELULAR</button></div>
+      <div class="rarityGrid">
+        <div class="rarity c-white"><span>Comum</span><b>50%</b></div><div class="rarity c-blue"><span>Raro</span><b>25%</b></div><div class="rarity c-purple"><span>Épico</span><b>15%</b></div><div class="rarity c-orange"><span>Lendário</span><b>5%</b></div><div class="rarity c-red"><span>Mítico</span><b>1%</b></div><div class="rarity c-rgb"><span>Secreto</span><b>0,5%</b></div>
+      </div>
+      <div class="bottomLinks"><span>📜 Histórico</span><span>🏆 Leaderboard Online</span></div>
+<div id="leaderboard" style="margin-top:16px;border:1px solid #283650;border-radius:18px;background:#060b19;padding:14px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><b>🏆 TOP 5 ONLINE</b><span id="onlineCount" style="color:#55e58a;font-weight:900">🟢 0 online</span></div>
+  <div id="leaderRows" style="display:grid;gap:7px"><div style="color:#7f8da2;text-align:center">Carregando...</div></div>
+</div>
+    </div>
+  </div>
+</section>
+
+<section id="rngPanel" class="screen">
+  <div class="rngCard">
+    <div class="rngTitle">SORTEANDO APELIDO...</div>
+    <div id="rollingName" class="rollingName">Nicolas</div>
+    <div id="rollingRarity" class="rollingRarity">COMUM</div>
+    <div class="bar"><i id="bar"></i></div>
+    <div class="buttons"><button class="btn roll" id="again">🎲 ROLAR NOVAMENTE</button></div>
+  </div>
+</section>
+
+<section id="game">
+  <canvas id="canvas"></canvas>
+  <div class="gameTop"><div class="gameHud"><div class="hudBox"><span class="tiny">Apelido</span><b id="hudName">Nicolas</b><div id="hudRarity">COMUM</div></div><div class="hudBox"><span class="tiny">Pontos</span><b id="score">0</b></div><div class="hudBox"><span class="tiny">Vida</span><b id="hp">100</b></div><div class="hudBox"><span class="tiny">Dano</span><b id="damage">8</b></div><div class="hudBox"><span class="tiny">Tiros/clique</span><b id="shotCount">1</b></div></div><button id="back" class="exitBtn">✕ SAIR</button></div>
+  <div class="hintPanel"><b id="powerName">Nicolas • COMUM</b></div>
+  <button id="mobileFire">🔫<br>ATIRAR</button><div id="mobileTip">Arraste o dedo para mirar e aperte ATIRAR</div>
+  <div id="gameOver"><div class="gameOverCard"><h2>💥 VOCÊ PERDEU!</h2><p>Suas vidas chegaram a <b>0</b>.</p><p>Pontuação da partida: <b id="finalScore">0</b></p><div class="overBtns"><button class="retry" id="retryBtn">🔄 JOGAR NOVAMENTE</button><button class="menuBtn" id="overMenuBtn">✕ SAIR</button></div></div></div>
+</section>
+<div id="flash" class="flash"></div>
+
+<script>
+const R=[
+ {k:'comum',n:'COMUM',c:'#ffffff',p:50,d:8,h:100,names:['Nicolas','Henrico','Thales','Pedro']},
+ {k:'raro',n:'RARO',c:'#39a7ff',p:25,d:14,h:130,names:['Wlissys','Jaque','Bruno','Bagre']},
+ {k:'epico',n:'ÉPICO',c:'#b85cff',p:15,d:22,h:165,names:['Jadrian','Felipin','Kenedy','Vini']},
+ {k:'lendario',n:'LENDÁRIO',c:'#ff9b20',p:5,d:34,h:210,names:['Leo','Lipão','Jão']},
+ {k:'mitico',n:'MÍTICO',c:'#ff263c',p:1,d:55,h:270,names:['RL','FEFA']},
+ {k:'secreto',n:'SECRETO',c:'rgb',p:.5,d:90,h:360,names:['POLO']}
+];
+let current=null, currentName='???', rolling=false, coins=100, hasCharacter=false, rollTimer=null, rollToken=0;
+const PROFILE_KEY='rng_pedras_profile_v2';
+let profile={nick:'',level:1,xp:0};
+function loadProfile(){try{const p=JSON.parse(localStorage.getItem(PROFILE_KEY)||'null');if(p){profile.nick=String(p.nick||'').slice(0,16);profile.level=Math.max(1,+p.level||1);profile.xp=Math.max(0,+p.xp||0);}}catch(e){} const el=document.getElementById('playerName'); if(profile.nick) el.value=profile.nick; updateProfileUI(); syncPlayer();}
+function saveProfile(){profile.nick=(document.getElementById('playerName').value||'').trim().slice(0,16)||'Player1'; try{localStorage.setItem(PROFILE_KEY,JSON.stringify(profile));}catch(e){} updateProfileUI(); syncPlayer();}
+function updateProfileUI(){document.getElementById('menuLevel').textContent=profile.level;document.getElementById('menuXp').textContent=profile.xp;document.getElementById('hudName').textContent=profile.nick||'Player1';}
+function addXP(n){profile.xp+=n;while(profile.xp>=100){profile.xp-=100;profile.level++;} saveProfile();}
+async function syncPlayer(){if(!profile.nick)return;try{await fetch('/api/player',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nick:profile.nick,level:profile.level,xp:profile.xp})});}catch(e){}}
+async function loadLeaderboard(){try{const r=await fetch('/api/leaderboard');if(!r.ok)return;const d=await r.json();document.getElementById('onlineCount').textContent='🟢 '+(d.online||0)+' online';document.getElementById('leaderRows').innerHTML=(d.players||[]).map((p,i)=>`<div style="display:grid;grid-template-columns:32px 1fr auto;gap:8px;align-items:center;background:#0b1225;border-radius:10px;padding:8px 10px"><b>${i+1}º</b><span style="font-weight:900">${esc(p.nick)}</span><span style="color:#42a9ff;font-weight:900">Nv.${p.level} • ${p.xp}/100 XP</span></div>`).join('')||'<div style="color:#7f8da2;text-align:center">Nenhum jogador salvo</div>';}catch(e){}}
+function esc(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[c]));}
+
+const menu=document.getElementById('menu'), panel=document.getElementById('rngPanel');
+const rn=document.getElementById('rollingName'), rr=document.getElementById('rollingRarity'), bar=document.getElementById('bar');
+
+function pick(){
+ let x=Math.random()*96.5,s=0;
+ for(const r of R){s+=r.p;if(x<s)return r}
+ return R[0];
+}
+function colorFor(r){return r.c==='rgb'?`hsl(${Date.now()/4%360} 100% 60%)`:r.c}
+function showResult(r,name){
+ current=r;currentName=name;hasCharacter=true;
+ const n=document.getElementById('resultName'), rr=document.getElementById('resultRarity');
+ n.textContent=name; rr.textContent=r.n;
+ n.classList.toggle('rainbowText',r.k==='secreto'); rr.classList.toggle('rainbowText',r.k==='secreto');
+ if(r.k!=='secreto'){n.style.color=r.c;rr.style.color=r.c;} else {n.style.color='';rr.style.color='';}
+ document.getElementById('resultText').textContent=name+' • '+r.n;
+ document.getElementById('hudName').textContent=name;
+ document.getElementById('hudName').style.color=r.k==='secreto'?'#fff':r.c;
+ document.getElementById('hudRarity').textContent=r.n;
+ document.getElementById('hudRarity').style.color=r.k==='secreto'?'#fff':r.c;
+ document.getElementById('damage').textContent=r.d;
+ document.getElementById('hp').textContent=r.h;
+ document.getElementById('shotCount').textContent=shotCountFor(r);
+ document.getElementById('powerName').textContent=name+' • '+r.n+' • '+shotCountFor(r)+' TIRO'+(shotCountFor(r)>1?'S':'');
+}
+function special(r){
+ if(r.k!=='mitico'&&r.k!=='secreto')return;
+ initAudio();
+ const f=document.getElementById('flash');
+ f.style.background=r.k==='secreto'?'linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,violet)':'#ff173d';
+ f.animate([{opacity:0},{opacity:.9},{opacity:0}],{duration:1200});
+ if(r.k==='mitico'){
+  beep(220,.15,'sawtooth',.06,440); setTimeout(()=>beep(440,.18,'sine',.05,660),120); setTimeout(()=>beep(880,.25,'sine',.04,-120),260);
+ }else{
+  beep(330,.13,'square',.055,330); setTimeout(()=>beep(660,.13,'triangle',.05,660),100); setTimeout(()=>beep(990,.22,'sine',.045,-250),210);
+  for(let i=0;i<60;i++)parts.push({x:W/2,y:H*.35,t:'',life:50,vx:(Math.random()-.5)*13,vy:(Math.random()-.5)*13});
+ }
+}
+function setDisplay(r,name,rollingView=false){
+ const n=document.getElementById('resultName'), rr=document.getElementById('resultRarity');
+ n.textContent=name; rr.textContent=r.n;
+ n.classList.toggle('rainbowText',r.k==='secreto');
+ if(r.k==='secreto'){n.style.color='';rr.style.color='';}
+ else {n.style.color=r.c;rr.style.color=r.c;}
+}
+function startRoll(){
+  if(rolling)return;
+
+  // The very first roll is FREE. Every roll after getting a character costs 100 points.
+  if(hasCharacter && coins<100){
+    document.getElementById('resultText').textContent='Você precisa de 100 pontos para rolar novamente!';
+    return;
+  }
+  if(hasCharacter){
+    coins-=100;
+    document.getElementById('menuScore').textContent=coins;
+  }
+
+  // Always keep the player on the main screen. The old separate RNG screen is not used.
+  menu.style.display='flex';
+  panel.style.display='none';
+
+  rolling=true;
+  const myToken=++rollToken;
+  if(rollTimer){clearTimeout(rollTimer);rollTimer=null;}
+  initAudio();
+
+  const resultName=document.getElementById('resultName');
+  const resultRarity=document.getElementById('resultRarity');
+  const resultText=document.getElementById('resultText');
+  const rollButton=document.getElementById('menuRoll');
+  const finalR=pick();
+  const finalName=finalR.names[Math.floor(Math.random()*finalR.names.length)];
+  const names=R.flatMap(r=>r.names);
+
+  let step=0;
+  const total=52;
+  let lastName='';
+  resultText.textContent='SORTEANDO...';
+  resultName.textContent='???';
+  resultRarity.textContent='';
+  resultName.classList.remove('rainbowText');
+  resultRarity.classList.remove('rainbowText');
+  rollButton.disabled=true;
+  rollButton.textContent='🎲 SORTEANDO...';
+
+  function displayRolling(name,r){
+    resultName.textContent=name;
+    resultRarity.textContent=r.n;
+    if(r.k==='secreto'){
+      resultName.classList.add('rainbowText');
+      resultRarity.classList.add('rainbowText');
+      resultName.style.color='';
+      resultRarity.style.color='';
+    }else{
+      resultName.classList.remove('rainbowText');
+      resultRarity.classList.remove('rainbowText');
+      resultName.style.color=r.c;
+      resultRarity.style.color=r.c;
+    }
+    resultName.animate(
+      [{transform:'scale(1.06)'},{transform:'scale(1)'}],
+      {duration:65,easing:'ease-out'}
+    );
+    rollSnd();
+  }
+
+  function finish(){
+    if(myToken!==rollToken)return;
+    if(rollTimer){clearTimeout(rollTimer);rollTimer=null;}
+    resultName.textContent=finalName;
+    resultRarity.textContent=finalR.n;
+    if(finalR.k==='secreto'){
+      resultName.classList.add('rainbowText');
+      resultRarity.classList.add('rainbowText');
+      resultName.style.color='';
+      resultRarity.style.color='';
+    }else{
+      resultName.classList.remove('rainbowText');
+      resultRarity.classList.remove('rainbowText');
+      resultName.style.color=finalR.c;
+      resultRarity.style.color=finalR.c;
+    }
+    showResult(finalR,finalName);
+    resultText.textContent=finalName+' • '+finalR.n;
+    special(finalR);
+    rolling=false;
+    rollButton.disabled=false;
+    rollButton.textContent=hasCharacter?'🎲 ROLAR (100 Pts)':'🎲 ROLAR';
+  }
+
+  function tick(){
+    if(myToken!==rollToken)return;
+    if(step>=total){finish();return;}
+
+    let name;
+    do{name=names[Math.floor(Math.random()*names.length)];}
+    while(name===lastName && names.length>1);
+    lastName=name;
+    const r=R.find(x=>x.names.includes(name))||R[0];
+    displayRolling(name,r);
+    step++;
+
+    // Starts VERY fast and progressively slows down before stopping.
+    const p=step/total;
+    const delay=30 + Math.pow(p,3.4)*430;
+    rollTimer=setTimeout(tick,delay);
+  }
+
+  // Start immediately so there is never a blank/frozen first frame.
+  tick();
+}
+document.getElementById('menuRoll').onclick=startRoll;
+document.getElementById('again').onclick=startRoll;
+
+document.getElementById('playerName').addEventListener('input',e=>{document.getElementById('hudName').textContent=e.target.value||'Player1';});
+document.getElementById('playerName').addEventListener('change',saveProfile);
+document.getElementById('playerName').addEventListener('blur',saveProfile);
+
+document.getElementById('playBtn').onclick=()=>{
+ if(!hasCharacter){
+   document.getElementById('resultText').textContent='Faça a primeira rolagem para ganhar um apelido!';
+   document.getElementById('resultName').textContent='???';
+   document.getElementById('resultName').animate([{transform:'scale(1)'},{transform:'scale(1.08)'},{transform:'scale(1)'}],{duration:350});
+   return;
+ }
+ saveProfile(); menu.style.display='none';document.getElementById('game').style.display='block';document.getElementById('back').style.display='block';resetGame();
+};
+document.getElementById('back').onclick=()=>{document.getElementById('game').style.display='none';document.getElementById('back').style.display='none';document.getElementById('gameOver').style.display='none';menu.style.display='flex';document.getElementById('menuScore').textContent=coins};
+document.getElementById('retryBtn').onclick=()=>{document.getElementById('gameOver').style.display='none';document.getElementById('mobileFire').style.display=deviceMode==='mobile'?'block':'none';resetGame()};
+document.getElementById('overMenuBtn').onclick=()=>document.getElementById('back').click();
+addEventListener('keydown',e=>{
+ if(deviceMode==='pc' && e.code==='Space'){e.preventDefault();shoot(aimX||W/2,aimY||H/2)}
+});
+
+
+let deviceMode='pc', aimX=0, aimY=0;
+const pcMode=document.getElementById('pcMode'), mobileMode=document.getElementById('mobileMode');
+function setDevice(mode){
+ deviceMode=mode;
+ pcMode.classList.toggle('active',mode==='pc'); mobileMode.classList.toggle('active',mode==='mobile');
+ document.getElementById('mobileFire').style.display=mode==='mobile'?'block':'none';
+ document.getElementById('mobileTip').style.display=mode==='mobile'?'block':'none';
+ if(document.getElementById('controlHint')) document.getElementById('controlHint').textContent=mode==='mobile'
+  ? 'Celular: toque/arraste para mirar e use ATIRAR • cada pedra = +100'
+  : 'Computador: clique na pedra para atirar • pedra = +100';
+}
+pcMode.onclick=()=>setDevice('pc'); mobileMode.onclick=()=>setDevice('mobile');
+
+let audioCtx=null;
+function initAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume()}
+function snd(f,d,t='sine',g=.025,slide=0){if(!audioCtx)return;let o=audioCtx.createOscillator(),a=audioCtx.createGain();o.type=t;o.frequency.setValueAtTime(f,audioCtx.currentTime);if(slide)o.frequency.linearRampToValueAtTime(f+slide,audioCtx.currentTime+d);a.gain.setValueAtTime(g,audioCtx.currentTime);a.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+d);o.connect(a);a.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+d)}
+function rollSnd(){initAudio();snd(220,.055,'square',.035,120)}
+function shotSnd(){initAudio();snd(620,.07,'sawtooth',.035,-180)}
+function hitSnd(){initAudio();snd(110,.09,'triangle',.045,90)}
+function destroySnd(){initAudio();snd(360,.11,'square',.04,300)}
+const canvas=document.getElementById('canvas'),ctx=canvas.getContext('2d');
+let W=0,H=0,rocks=[],shots=[],parts=[],score=0,life=100,spawn=0,player={x:0,y:0},gameOver=false;
+function resize(){W=canvas.width=innerWidth*devicePixelRatio;H=canvas.height=innerHeight*devicePixelRatio;canvas.style.width=innerWidth+'px';canvas.style.height=innerHeight+'px';player.x=W/2;player.y=H-100*devicePixelRatio}
+addEventListener('resize',resize);resize();
+function shotCountFor(r){const map={comum:1,raro:2,epico:3,lendario:4,mitico:5,secreto:6};return map[r.k]||1}
+function resetGame(){score=0;life=current?current.h:100;rocks=[];shots=[];parts=[];spawn=1;gameOver=false;player.x=W/2;player.y=H-100*devicePixelRatio;document.getElementById('score').textContent=0;document.getElementById('hp').textContent=life;document.getElementById('shotCount').textContent=shotCountFor(current);document.getElementById('gameOver').style.display='none';document.getElementById('powerName').textContent=currentName+' • '+current.n+' • '+shotCountFor(current)+' TIRO'+(shotCountFor(current)>1?'S':''); spawnRock();}
+function shoot(x,y){initAudio();shotSnd();
+ if(gameOver)return;
+ const dx=x-player.x,dy=y-player.y,base=Math.atan2(dy,dx),count=shotCountFor(current);
+ const spread=count===1?0:(Math.min(.42,.10+count*.045));
+ for(let i=0;i<count;i++){
+   const a=base+(i-(count-1)/2)*spread;
+   shots.push({x:player.x,y:player.y,vx:Math.cos(a)*18,vy:Math.sin(a)*18,life:70,d:current.d});
+ }
+}
+canvas.addEventListener('pointermove',e=>{aimX=e.clientX*devicePixelRatio;aimY=e.clientY*devicePixelRatio});
+canvas.addEventListener('pointerdown',e=>{
+  aimX=e.clientX*devicePixelRatio; aimY=e.clientY*devicePixelRatio;
+  if(deviceMode==='pc') shoot(aimX,aimY);
+});
+document.getElementById('mobileFire').addEventListener('pointerdown',e=>{
+  e.preventDefault(); shoot(aimX||W/2,aimY||H/2);
+});
+function spawnRock(){let r=25+Math.random()*28,h=35+r*1.3+score/1000*10;rocks.push({x:r+Math.random()*(W-r*2),y:-r,r,h,max:h,v:1+Math.random()*1.5})}
+function endGame(){if(gameOver)return;gameOver=true;document.getElementById('finalScore').textContent=score;document.getElementById('gameOver').style.display='flex';document.getElementById('mobileFire').style.display='none';}
+function update(){
+ if(gameOver)return;
+ spawn--;if(spawn<=0){spawnRock();spawn=38+Math.random()*38}
+ for(const s of shots){s.x+=s.vx;s.y+=s.vy;s.life--}
+ for(const r of rocks)r.y+=r.v;
+ for(const s of shots)for(const r of rocks)if(!s.hit&&Math.hypot(s.x-r.x,s.y-r.y)<r.r+7){s.hit=true;r.h-=s.d;hitSnd();parts.push({x:r.x,y:r.y,t:'-'+s.d,life:35,vx:0,vy:-1});break}
+ shots=shots.filter(s=>s.life>0&&!s.hit);
+ for(const r of rocks)if(r.h<=0&&!r.dead){r.dead=true;score+=100;destroySnd();coins+=100;document.getElementById('menuScore').textContent=coins;for(let i=0;i<15;i++)parts.push({x:r.x,y:r.y,t:'',life:30,vx:(Math.random()-.5)*7,vy:(Math.random()-.5)*7})}
+ for(const r of rocks)if(!r.dead&&r.y-r.r>H){r.dead=true;life=Math.max(0,life-10);document.getElementById('hp').textContent=life;if(life<=0){endGame();break}}
+ rocks=rocks.filter(r=>!r.dead);for(const p of parts){p.x+=p.vx;p.y+=p.vy;p.life--}parts=parts.filter(p=>p.life>0);
+ document.getElementById('score').textContent=score;
+}
+function draw(){
+ ctx.fillStyle='#050914';ctx.fillRect(0,0,W,H);
+ const g=ctx.createRadialGradient(W/2,H*.6,10,W/2,H*.6,Math.max(W,H)*.7);g.addColorStop(0,'#142b46');g.addColorStop(1,'#050914');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+ for(let x=0;x<W;x+=70){ctx.strokeStyle='#17324c55';ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()}
+ for(const r of rocks){ctx.beginPath();ctx.arc(r.x,r.y,r.r,0,7);ctx.fillStyle='#68727e';ctx.fill();ctx.strokeStyle='#b6bec8';ctx.lineWidth=3;ctx.stroke();ctx.fillStyle='#e14b4b';ctx.fillRect(r.x-r.r,r.y-r.r-10,r.r*2,5);ctx.fillStyle='#49e26d';ctx.fillRect(r.x-r.r,r.y-r.r-10,r.r*2*Math.max(0,r.h/r.max),5);ctx.fillStyle='#fff';ctx.font='bold 12px Arial';ctx.textAlign='center';ctx.fillText(Math.max(0,Math.ceil(r.h)),r.x,r.y+4)}
+ for(const s of shots){ctx.beginPath();ctx.arc(s.x,s.y,6,0,7);const active=current||R[0];ctx.fillStyle=active.c==='rgb'?`hsl(${Date.now()/3%360} 100% 60%)`:active.c;ctx.shadowBlur=18;ctx.shadowColor=ctx.fillStyle;ctx.fill();ctx.shadowBlur=0}
+ const active=current||R[0];const shipColor=active.c==='rgb'?`hsl(${Date.now()/3%360} 100% 60%)`:active.c;
+ ctx.save();ctx.translate(player.x,player.y);ctx.shadowBlur=22;ctx.shadowColor=shipColor;ctx.fillStyle=shipColor;ctx.beginPath();ctx.moveTo(0,-34);ctx.lineTo(27,25);ctx.lineTo(0,16);ctx.lineTo(-27,25);ctx.closePath();ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='#07101d';ctx.beginPath();ctx.arc(0,3,7,0,7);ctx.fill();ctx.fillStyle='#dce8f4';ctx.fillRect(-4,8,8,15);ctx.restore();
+ for(const p of parts){ctx.globalAlpha=p.life/35;if(p.t){ctx.fillStyle='#fff';ctx.font='bold 15px Arial';ctx.fillText(p.t,p.x,p.y)}else{ctx.fillStyle='#c8d0da';ctx.beginPath();ctx.arc(p.x,p.y,3,0,7);ctx.fill()}ctx.globalAlpha=1}
+ requestAnimationFrame(loop)
+}
+function loop(){update();draw()}
+loadProfile(); loadLeaderboard(); setInterval(()=>{syncPlayer();loadLeaderboard()},40000);
+loop();
+</script>
+</body>
+</html>
