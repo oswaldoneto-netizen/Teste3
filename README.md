@@ -1,7 +1,19 @@
-RNG Pedras Online PvP v7
+RNG Pedras Online - versão corrigida
 
-Novidades: rank por vitórias (5 Bronze, 10 Prata, 15 Ouro, 20 Platina, 25 Diamante, 30 Champion), rank colorido no Top 5 e vitórias salvas no mesmo players.json.
+Arquivos:
+- index.html
+- server.js
+- package.json
+- players.json
 
-IMPORTANTE: ao atualizar seu site principal, preserve o players.json atual para manter Levels/XP/Nicks/Top 5. O servidor v7 mescla os dados existentes e adiciona wins sem resetar Level/XP.
-
-Render Start Command: npm start
+Recursos restaurados:
+- Leaderboard TOP 5 persistente
+- Nick, nível, XP e vitórias salvos
+- Atualização do leaderboard a cada 5 segundos
+- PvP online via WebSocket /ws
+- Tiro normal do modo Pedra sem intervalo artificial
+- Tiro PvP com intervalo de 2 segundos
+- Rajada PvP de 5 tiros com cooldown de 10 segundos
+- Escudo PvP com 3 bloqueios e cooldown de 15 segundos
+- Tiros do adversário aparecem na tela
+- Apenas um index.html no ZIP

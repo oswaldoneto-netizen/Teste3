@@ -12,17 +12,19 @@
 .header{text-align:center;margin-bottom:20px}.header h1{font-size:clamp(32px,9vw,52px);margin:0;font-weight:1000;letter-spacing:-1px}.header p{margin:8px 0 0;color:#9eacc0;font-size:15px;line-height:1.4}
 .playerCard,.mainCard{border:1px solid #283650;background:#0b1225e8;border-radius:24px;box-shadow:0 18px 60px #0008}.playerCard{padding:16px 18px;margin-bottom:14px}.playerRow{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center}.playerRow label{font-size:17px;font-weight:800}.playerInput{width:100%;background:#060b19;border:1px solid #32415c;color:#fff;border-radius:11px;padding:11px 13px;font-weight:700;font-size:16px}.stats{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:12px;margin-top:13px;align-items:center}.stat{font-size:16px;font-weight:900}.gold{color:#ffd22e}.blue{color:#42a9ff}.muted{color:#8e9bae;font-size:12px;font-weight:700}
 .mainCard{padding:14px 16px 18px}.resultBox{height:285px;border:1px solid #26334b;border-radius:20px;background:radial-gradient(circle at 50% 50%,#121b32,#060b18 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden}.resultBox:after{content:"";position:absolute;top:0;bottom:0;width:3px;background:linear-gradient(transparent,#ffffff44,transparent);box-shadow:0 0 20px #ffffff55}.resultName{position:relative;z-index:1;font-size:clamp(42px,11vw,72px);font-weight:1000;text-shadow:0 0 25px currentColor}.resultRarity{position:relative;z-index:1;margin-top:8px;font-size:16px;font-weight:900;letter-spacing:2px}.resultTitle{text-align:center;margin:28px 0 18px}.resultTitle small{display:block;color:#66758d;font-size:12px;font-weight:1000;letter-spacing:4px}.resultTitle b{display:block;margin-top:6px;font-size:28px}
-.buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn{border:0;border-radius:15px;padding:17px 10px;font-weight:1000;font-size:17px;cursor:pointer;box-shadow:0 8px 24px #0008}.btn.roll{background:linear-gradient(90deg,#8b34f7,#286cff);color:#fff}.btn.play{background:linear-gradient(90deg,#a12d3a,#70202a);color:#b9aab0}.btn.pvp{background:linear-gradient(90deg,#e12d70,#7a24ff);color:#fff}.pvpScreen{display:none;position:fixed;inset:0;background:#040712;z-index:50}.pvpCanvas{width:100%;height:100%;display:block;touch-action:none}.pvpHud{position:fixed;top:10px;left:10px;right:10px;z-index:5;display:flex;justify-content:space-between;gap:8px}.pvpInfo{background:#07101ddd;border:1px solid #314660;border-radius:12px;padding:8px 12px;font-weight:900}.pvpMenu{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#040712dd;z-index:10}.pvpCard{width:min(92vw,470px);background:#0b1225;border:1px solid #334861;border-radius:22px;padding:22px;text-align:center;box-shadow:0 25px 90px #000}.pvpBtns{display:grid;gap:10px}.pvpBtns button{border:0;border-radius:13px;padding:14px;font-weight:1000;cursor:pointer}.pvpStart{background:linear-gradient(90deg,#e12d70,#7a24ff);color:#fff}.pvpBack{background:#26354d;color:#fff}.pvpStatus{min-height:22px;color:#9fb0c2;margin:12px 0}.pvpClose{position:fixed;top:10px;right:10px;z-index:8;border:1px solid #5b3140;background:#2a1018;color:#fff;border-radius:11px;padding:10px 14px;font-weight:1000}.pvpSkills{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:8;display:flex;gap:10px}.skillBtn{border:2px solid #536a86;border-radius:15px;background:#101d31;color:#fff;padding:12px 14px;font-weight:1000;min-width:120px;box-shadow:0 8px 24px #0008}.skillBtn.ready{border-color:#7c4dff;box-shadow:0 0 22px #7c4dff66}.skillBtn:disabled{opacity:.45}.pvpHelp{position:fixed;bottom:88px;left:50%;transform:translateX(-50%);z-index:7;background:#07101de8;border:1px solid #304863;border-radius:12px;padding:8px 12px;font-size:11px;color:#b8c8d8;text-align:center}.shieldGlow{box-shadow:0 0 35px #35bfff}.btn.play.enabled{color:#fff;cursor:pointer}.btn:disabled{cursor:not-allowed;filter:grayscale(.25)}.btn:active,.deviceBtn:active{transform:scale(.98)}
+.buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn{border:0;border-radius:15px;padding:17px 10px;font-weight:1000;font-size:17px;cursor:pointer;box-shadow:0 8px 24px #0008}.btn.roll{background:linear-gradient(90deg,#8b34f7,#286cff);color:#fff}.btn.play{background:linear-gradient(90deg,#a12d3a,#70202a);color:#b9aab0}.btn.play.enabled{color:#fff;cursor:pointer}.btn.pvp{background:linear-gradient(90deg,#e12d70,#7a24ff);color:#fff}.pvpScreen{display:none;position:fixed;inset:0;background:#040712;z-index:40}.pvpHud{position:fixed;top:10px;left:10px;right:10px;z-index:5;display:flex;justify-content:space-between;gap:8px}.pvpInfo{background:#07101ddd;border:1px solid #314660;border-radius:12px;padding:8px 12px;font-weight:900}.pvpArena{width:100%;height:100%;display:block;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}.pvpMenu{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#040712dd;z-index:10}.pvpCard{width:min(92vw,460px);background:#0b1225;border:1px solid #334861;border-radius:22px;padding:22px;text-align:center;box-shadow:0 25px 90px #000}.pvpCard h2{margin:0 0 8px}.pvpCard p{color:#9fb0c2}.pvpBtns{display:grid;gap:10px}.pvpBtns button{border:0;border-radius:13px;padding:14px;font-weight:1000;cursor:pointer}.pvpStart{background:linear-gradient(90deg,#e12d70,#7a24ff);color:#fff}.pvpBack{background:#26354d;color:#fff}.pvpStatus{min-height:22px;color:#9fb0c2;margin:12px 0}.pvpControls{display:none}.pvpControls button{border:0;border-radius:50%;width:72px;height:72px;background:#16263b;color:#fff;font-weight:1000;font-size:24px}.pvpFire{background:#d9364f!important;width:88px!important;height:88px!important}.pvpClose{position:fixed;top:10px;right:10px;z-index:8;border:1px solid #5b3140;background:#2a1018;color:#fff;border-radius:11px;padding:10px 14px;font-weight:1000}.btn:disabled{cursor:not-allowed;filter:grayscale(.25)}.btn:active,.deviceBtn:active{transform:scale(.98)}
 .rarityGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}.rarity{min-height:68px;border-radius:16px;background:#070d1e;border:1px solid #18243a;display:flex;flex-direction:column;justify-content:center;align-items:center}.rarity span{font-size:11px;color:#aab6c7}.rarity b{font-size:20px;margin-top:4px}.c-white b{color:#fff}.c-blue b{color:#4d9cff}.c-purple b{color:#b35cff}.c-orange b{color:#ff9130}.c-red b{color:#ff4050}.c-rgb b{background:linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,violet,red);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:rainbow 1.2s linear infinite}@keyframes rainbow{to{background-position:300% 0}}
 .rainbowText{background:linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,violet,red);background-size:400% 100%;-webkit-background-clip:text;background-clip:text;color:transparent!important;animation:rainbow 1s linear infinite;text-shadow:none!important}
 .bottomLinks{display:grid;grid-template-columns:1fr 1fr;margin-top:14px;color:#fff;font-weight:800;font-size:14px}.bottomLinks span{text-align:center}
 .rollHelp{text-align:center;color:#718099;font-size:11px;margin:10px 0 2px}.rollHelp b{color:#ffd22e}.deviceTitle{text-align:center;margin:15px 0 8px;color:#718099;font-size:10px;letter-spacing:2px;font-weight:1000}.deviceButtons{display:grid;grid-template-columns:1fr 1fr;gap:10px}.deviceBtn{border:1px solid #293a55;background:#080f20;color:#9daec2;border-radius:13px;padding:12px;font-weight:1000;cursor:pointer}.deviceBtn.active{background:#132b55;border-color:#4b8cff;color:#fff;box-shadow:0 0 18px #2868ff44}
-#rngPanel{display:none;position:fixed;inset:0;background:radial-gradient(circle,#201642,#070a14 75%);align-items:center;justify-content:center;z-index:20;padding:20px}.rngCard{width:min(92vw,650px);text-align:center;padding:24px;border-radius:24px;background:#0b1225;border:1px solid #2c3c59;box-shadow:0 20px 90px #000}.rngTitle{font-size:13px;letter-spacing:4px;color:#8fa5bd}.rollingName{height:120px;display:flex;align-items:center;justify-content:center;font-size:clamp(42px,11vw,78px);font-weight:1000;text-shadow:0 0 28px currentColor}.rollingRarity{font-size:20px;font-weight:900;min-height:30px}.bar{height:7px;background:#172437;border-radius:10px;overflow:hidden;margin:22px 0}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#8b34f7,#2d78ff)}
+#rngPanel{display:none !important;position:fixed;inset:0;background:radial-gradient(circle,#201642,#070a14 75%);align-items:center;justify-content:center;z-index:20;padding:20px}.rngCard{width:min(92vw,650px);text-align:center;padding:24px;border-radius:24px;background:#0b1225;border:1px solid #2c3c59;box-shadow:0 20px 90px #000}.rngTitle{font-size:13px;letter-spacing:4px;color:#8fa5bd}.rollingName{height:120px;display:flex;align-items:center;justify-content:center;font-size:clamp(42px,11vw,78px);font-weight:1000;text-shadow:0 0 28px currentColor}.rollingRarity{font-size:20px;font-weight:900;min-height:30px}.bar{height:7px;background:#172437;border-radius:10px;overflow:hidden;margin:22px 0}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#8b34f7,#2d78ff)}
 #game{display:none;position:fixed;inset:0;background:#050914}.gameTop{position:fixed;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:center;z-index:8}.gameHud{display:flex;gap:8px;flex-wrap:wrap}.hudBox{background:#07101ddd;border:1px solid #2a415b;border-radius:12px;padding:8px 11px;box-shadow:0 5px 20px #0007}.hudBox b{font-size:16px}.tiny{font-size:9px;color:#91a5ba;text-transform:uppercase;display:block}.exitBtn{border:1px solid #5b3140;background:#2a1018;color:#fff;border-radius:11px;padding:10px 14px;font-weight:1000;cursor:pointer}.exitBtn:active{transform:scale(.97)}
-canvas{width:100%;height:100%;display:block}.hintPanel{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);background:#07101de8;border:1px solid #2a415b;border-radius:14px;padding:9px 14px;text-align:center;z-index:5;pointer-events:none}.hintPanel b{font-weight:1000}.hint{font-size:11px;color:#9fb0c2}#mobileFire{display:none;position:fixed;right:24px;bottom:78px;width:92px;height:92px;border-radius:50%;border:2px solid #ffffff66;background:#e84141dd;color:#fff;font-weight:1000;font-size:15px;z-index:7;box-shadow:0 8px 30px #0008}#mobileTip{display:none;position:fixed;left:50%;bottom:82px;transform:translateX(-50%);z-index:7;background:#07101de8;border:1px solid #304863;border-radius:12px;padding:8px 12px;font-size:11px;color:#b8c8d8}.flash{position:fixed;inset:0;pointer-events:none;z-index:10;opacity:0}
+canvas{width:100%;height:100%;display:block}.hintPanel{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);background:#07101de8;border:1px solid #2a415b;border-radius:14px;padding:9px 14px;text-align:center;z-index:5;pointer-events:none}.hintPanel b{font-weight:1000}.hint{font-size:11px;color:#9fb0c2}#skillPanel{display:none;position:fixed;right:18px;bottom:78px;display:flex;gap:8px;z-index:7}#skillPanel button{border:1px solid #ffffff44;border-radius:14px;padding:10px 12px;background:#101b31;color:#fff;font-weight:1000;box-shadow:0 8px 24px #0008;min-width:108px}#skillPanel button:disabled{opacity:.45;filter:grayscale(.5)}#skillBurst{background:linear-gradient(90deg,#7a24ff,#e12d70)!important}#skillShield{background:linear-gradient(90deg,#1687ff,#16c8ff)!important}#skillStatus{display:none;position:fixed;right:18px;bottom:145px;z-index:7;background:#07101de8;border:1px solid #304863;border-radius:12px;padding:7px 10px;font-size:11px;font-weight:900;color:#b8c8d8}#mobileFire{display:none;position:fixed;right:24px;bottom:78px;width:92px;height:92px;border-radius:50%;border:2px solid #ffffff66;background:#e84141dd;color:#fff;font-weight:1000;font-size:15px;z-index:7;box-shadow:0 8px 30px #0008}#mobileTip{display:none;position:fixed;left:50%;bottom:82px;transform:translateX(-50%);z-index:7;background:#07101de8;border:1px solid #304863;border-radius:12px;padding:8px 12px;font-size:11px;color:#b8c8d8}.flash{position:fixed;inset:0;pointer-events:none;z-index:10;opacity:0}
 #gameOver{display:none;position:fixed;inset:0;z-index:30;align-items:center;justify-content:center;background:#030611cc;backdrop-filter:blur(6px);padding:20px}.gameOverCard{width:min(90vw,460px);text-align:center;background:#0b1225;border:1px solid #33445f;border-radius:24px;padding:28px;box-shadow:0 25px 90px #000}.gameOverCard h2{margin:0;font-size:40px;color:#ff4050}.gameOverCard p{color:#9eb0c5;margin:10px 0 20px}.gameOverCard b{color:#ffd22e}.overBtns{display:grid;grid-template-columns:1fr 1fr;gap:10px}.overBtns button{border:0;border-radius:14px;padding:14px;font-weight:1000;cursor:pointer}.retry{background:linear-gradient(90deg,#8b34f7,#286cff);color:#fff}.menuBtn{background:#26354d;color:#fff}
-@media(max-width:430px){.menuWrap{width:92vw}.header h1{font-size:38px}.playerCard{padding:14px}.stats{grid-template-columns:1.25fr 1fr 1fr;gap:7px}.stat{font-size:14px}.mainCard{padding:12px}.resultBox{height:270px}.buttons{grid-template-columns:1fr 1fr}.btn{font-size:15px;padding:15px 8px}.rarityGrid{grid-template-columns:repeat(3,1fr)}.rarity{min-height:62px}.bottomLinks{font-size:12px}}
+@media(max-width:700px){#skillPanel{right:12px;bottom:184px;flex-direction:column}.skillStatus{right:12px;bottom:172px}}@media(max-width:430px){.menuWrap{width:92vw}.header h1{font-size:38px}.playerCard{padding:14px}.stats{grid-template-columns:1.25fr 1fr 1fr;gap:7px}.stat{font-size:14px}.mainCard{padding:12px}.resultBox{height:270px}.buttons{grid-template-columns:1fr 1fr}.btn{font-size:15px;padding:15px 8px}.rarityGrid{grid-template-columns:repeat(3,1fr)}.rarity{min-height:62px}.bottomLinks{font-size:12px}}
 @media(max-width:340px){.buttons,.deviceButtons{grid-template-columns:1fr}.rarityGrid{grid-template-columns:repeat(2,1fr)}}
+
+.pvpSkills{position:fixed;right:18px;bottom:22px;z-index:8;display:flex;gap:8px}.pvpSkills button{border:1px solid #ffffff44;border-radius:14px;padding:11px 13px;color:#fff;font-weight:1000;min-width:118px;box-shadow:0 8px 24px #0008}.pvpSkillBtn{background:linear-gradient(90deg,#7a24ff,#e12d70)}.pvpShieldBtn{background:linear-gradient(90deg,#1687ff,#16c8ff)}.pvpSkills button:disabled{opacity:.45}.pvpSkillStatus{position:fixed;right:18px;bottom:86px;z-index:8;background:#07101de8;border:1px solid #304863;border-radius:12px;padding:7px 10px;font-size:11px;font-weight:900;color:#b8c8d8}@media(max-width:700px){.pvpSkills{right:10px;bottom:18px;flex-direction:column}.pvpSkillStatus{right:10px;bottom:160px;max-width:220px}}
 </style>
 </head>
 <body>
@@ -44,6 +46,10 @@ canvas{width:100%;height:100%;display:block}.hintPanel{position:fixed;left:50%;b
         <div class="rarity c-white"><span>Comum</span><b>50%</b></div><div class="rarity c-blue"><span>Raro</span><b>25%</b></div><div class="rarity c-purple"><span>Épico</span><b>15%</b></div><div class="rarity c-orange"><span>Lendário</span><b>5%</b></div><div class="rarity c-red"><span>Mítico</span><b>1%</b></div><div class="rarity c-rgb"><span>Secreto</span><b>0,5%</b></div>
       </div>
       <div class="bottomLinks"><span>📜 Histórico</span><span>🏆 Leaderboard Online</span></div>
+<div id="leaderboard" style="margin-top:16px;border:1px solid #283650;border-radius:18px;background:#060b19;padding:14px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><b>🏆 TOP 5</b><span id="onlineCount" style="color:#55e58a;font-weight:900">🟢 0 online</span></div>
+  <div id="leaderRows" style="display:grid;gap:7px"><div style="color:#7f8da2;text-align:center">Carregando...</div></div>
+</div>
     </div>
   </div>
 </section>
@@ -62,10 +68,18 @@ canvas{width:100%;height:100%;display:block}.hintPanel{position:fixed;left:50%;b
   <canvas id="canvas"></canvas>
   <div class="gameTop"><div class="gameHud"><div class="hudBox"><span class="tiny">Apelido</span><b id="hudName">Nicolas</b><div id="hudRarity">COMUM</div></div><div class="hudBox"><span class="tiny">Pontos</span><b id="score">0</b></div><div class="hudBox"><span class="tiny">Vida</span><b id="hp">100</b></div><div class="hudBox"><span class="tiny">Dano</span><b id="damage">8</b></div><div class="hudBox"><span class="tiny">Tiros/clique</span><b id="shotCount">1</b></div></div><button id="back" class="exitBtn">✕ SAIR</button></div>
   <div class="hintPanel"><b id="powerName">Nicolas • COMUM</b></div>
-  <button id="mobileFire">🔫<br>ATIRAR</button><div id="mobileTip">Arraste o dedo para mirar e aperte ATIRAR</div>
+  <div id="skillStatus">🔫 Próximo tiro: pronto</div><div id="skillPanel"><button id="skillBurst">🔥 RAJADA<br><small>5 TIROS</small></button><button id="skillShield">🛡️ ESCUDO<br><small>3 ACERTOS</small></button></div><button id="mobileFire">🔫<br>ATIRAR</button><div id="mobileTip">Arraste o dedo para mirar e aperte ATIRAR</div>
   <div id="gameOver"><div class="gameOverCard"><h2>💥 VOCÊ PERDEU!</h2><p>Suas vidas chegaram a <b>0</b>.</p><p>Pontuação da partida: <b id="finalScore">0</b></p><div class="overBtns"><button class="retry" id="retryBtn">🔄 JOGAR NOVAMENTE</button><button class="menuBtn" id="overMenuBtn">✕ SAIR</button></div></div></div>
 </section>
-<div id="flash" class="flash"></div>
+<div id="flash" class="flash"></div><section id="pvpScreen" class="pvpScreen">
+  <canvas id="pvpCanvas" class="pvpArena"></canvas>
+  <button id="pvpClose" class="pvpClose">✕ SAIR</button>
+  <div class="pvpHud"><div class="pvpInfo">🛡️ VOCÊ <span id="pvpMyName">Player1</span><br>❤️ <span id="pvpMyHp">100</span></div><div class="pvpInfo">⚔️ ADVERSÁRIO <span id="pvpEnemyName">Aguardando...</span><br>❤️ <span id="pvpEnemyHp">100</span></div></div>
+  <div id="pvpMenu" class="pvpMenu"><div class="pvpCard"><h2>⚔️ PVP ONLINE</h2><p>Entre na fila e lute contra outro jogador em tempo real.</p><div id="pvpStatus" class="pvpStatus">Pronto para procurar adversário.</div><div class="pvpBtns"><button id="pvpStart" class="pvpStart">🔎 ENCONTRAR ADVERSÁRIO</button><button id="pvpBack" class="pvpBack">← VOLTAR</button></div></div></div>
+  <div class="pvpControls"><button id="pvpLeft">◀</button><button id="pvpFire" class="pvpFire">🔫</button><button id="pvpRight">▶</button></div>
+  <div class="pvpSkills"><button id="pvpSkill" class="pvpSkillBtn">🔥 RAJADA<br><small>5 TIROS</small></button><button id="pvpShieldBtn" class="pvpShieldBtn">🛡️ ESCUDO<br><small>3 ACERTOS</small></button></div><div id="pvpSkillStatus" class="pvpSkillStatus">🔫 Tiro: pronto • 🔥 Rajada: pronta • 🛡️ Escudo: pronto</div>
+</section>
+
 
 <script>
 const R=[
@@ -76,7 +90,19 @@ const R=[
  {k:'mitico',n:'MÍTICO',c:'#ff263c',p:1,d:55,h:270,names:['RL','FEFA']},
  {k:'secreto',n:'SECRETO',c:'rgb',p:.5,d:90,h:360,names:['POLO']}
 ];
-let current=null, currentName='???', rolling=false, coins=100, hasCharacter=false;
+let current=null, currentName='???', rolling=false, coins=100, hasCharacter=false, rollTimer=null, rollToken=0;
+const PROFILE_KEY='rng_pedras_profile_v2';
+let profile={nick:'',level:1,xp:0,wins:0,rank:'Sem Rank'};
+function rankForWins(w){w=+w||0;if(w>=30)return 'Champion';if(w>=25)return 'Diamante';if(w>=20)return 'Platina';if(w>=15)return 'Ouro';if(w>=10)return 'Prata';if(w>=5)return 'Bronze';return 'Sem Rank'}
+function rankColor(r){return ({'Sem Rank':'#fff','Bronze':'#cd7f32','Prata':'#c0c0c0','Ouro':'#ffd700','Platina':'#7ee6e8','Diamante':'#55b9ff','Champion':'#ff4d9d'})[r]||'#fff'}
+function loadProfile(){try{const p=JSON.parse(localStorage.getItem(PROFILE_KEY)||'null');if(p){profile.nick=String(p.nick||'').slice(0,16);profile.level=Math.max(1,+p.level||1);profile.xp=Math.max(0,+p.xp||0);profile.wins=Math.max(0,+p.wins||0);profile.rank=String(p.rank||rankForWins(profile.wins));}}catch(e){} const el=document.getElementById('playerName'); if(profile.nick) el.value=profile.nick; updateProfileUI(); syncPlayer();}
+function saveProfile(){profile.nick=(document.getElementById('playerName').value||'').trim().slice(0,16)||'Player1'; try{localStorage.setItem(PROFILE_KEY,JSON.stringify(profile));}catch(e){} updateProfileUI(); syncPlayer();}
+function updateProfileUI(){document.getElementById('menuLevel').textContent=profile.level;document.getElementById('menuXp').textContent=profile.xp;document.getElementById('hudName').textContent=profile.nick||'Player1';}
+function addXP(n){profile.xp+=n;while(profile.xp>=100){profile.xp-=100;profile.level++;} saveProfile();}
+async function syncPlayer(){if(!profile.nick)return;try{await fetch('/api/player',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nick:profile.nick,level:profile.level,xp:profile.xp,wins:profile.wins})});}catch(e){}}
+async function loadLeaderboard(){try{const r=await fetch('/api/leaderboard');if(!r.ok)return;const d=await r.json();document.getElementById('onlineCount').textContent='🟢 '+(d.online||0)+' online';document.getElementById('leaderRows').innerHTML=(d.players||[]).map((p,i)=>{const r=p.rank||rankForWins(p.wins||0);const col=p.rankColor||rankColor(r);return `<div style="display:grid;grid-template-columns:32px 1fr auto;gap:8px;align-items:center;background:#0b1225;border-radius:10px;padding:8px 10px"><b>${i+1}º</b><span style="font-weight:900;color:${col};text-shadow:0 0 10px ${col}44">${esc(p.nick)} <small style="opacity:.9">• ${r}</small></span><span style="color:#42a9ff;font-weight:900">Nv.${p.level} • ${p.xp}/100 XP</span></div>`}).join('')||'<div style="color:#7f8da2;text-align:center">Nenhum jogador salvo</div>';}catch(e){}}
+function esc(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[c]));}
+
 const menu=document.getElementById('menu'), panel=document.getElementById('rngPanel');
 const rn=document.getElementById('rollingName'), rr=document.getElementById('rollingRarity'), bar=document.getElementById('bar');
 
@@ -123,83 +149,118 @@ function setDisplay(r,name,rollingView=false){
  else {n.style.color=r.c;rr.style.color=r.c;}
 }
 function startRoll(){
- if(rolling)return;
- // First roll is free. Every roll after the first costs 100 points.
- if(hasCharacter && coins<100){
-   document.getElementById('resultText').textContent='Você precisa de 100 pontos para rolar novamente!';
-   return;
- }
- if(hasCharacter){
-   coins-=100;
-   document.getElementById('menuScore').textContent=coins;
- }
- rolling=true;
- initAudio();
- const resultName=document.getElementById('resultName');
- const resultRarity=document.getElementById('resultRarity');
- const resultText=document.getElementById('resultText');
- const finalR=pick();
- const finalName=finalR.names[Math.floor(Math.random()*finalR.names.length)];
- const names=R.flatMap(r=>r.names);
- let step=0;
- const total=42;
- resultText.textContent='SORTEANDO...';
- resultName.textContent='???';
- resultRarity.textContent='';
- resultName.classList.remove('rainbowText');
- resultRarity.classList.remove('rainbowText');
+  if(rolling)return;
 
- function tick(){
-   if(step<total){
-     let name;
-     do { name=names[Math.floor(Math.random()*names.length)]; }
-     while(name===resultName.textContent && names.length>1);
-     const r=R.find(x=>x.names.includes(name))||R[0];
-     resultName.textContent=name;
-     resultRarity.textContent=r.n;
-     if(r.k==='secreto'){
-       resultName.classList.add('rainbowText');
-       resultRarity.classList.add('rainbowText');
-       resultName.style.color=''; resultRarity.style.color='';
-     }else{
-       resultName.classList.remove('rainbowText');
-       resultRarity.classList.remove('rainbowText');
-       resultName.style.color=r.c; resultRarity.style.color=r.c;
-     }
-     resultText.textContent='SORTEANDO...';
-     resultName.animate([{transform:'scale(1.02)'},{transform:'scale(1)'}],{duration:70,easing:'ease-out'});
-     rollSound();
-     step++;
-     // Fast at the beginning, increasingly slower at the end.
-     const p=step/total;
-     const delay=28+Math.pow(p,3.1)*520;
-     setTimeout(tick,delay);
-     return;
-   }
+  // The very first roll is FREE. Every roll after getting a character costs 100 points.
+  if(hasCharacter && coins<100){
+    document.getElementById('resultText').textContent='Você precisa de 100 pontos para rolar novamente!';
+    return;
+  }
+  if(hasCharacter){
+    coins-=100;
+    document.getElementById('menuScore').textContent=coins;
+  }
 
-   // Stop on the actual result that was selected at the beginning.
-   resultName.textContent=finalName;
-   resultRarity.textContent=finalR.n;
-   if(finalR.k==='secreto'){
-     resultName.classList.add('rainbowText');
-     resultRarity.classList.add('rainbowText');
-     resultName.style.color=''; resultRarity.style.color='';
-   }else{
-     resultName.classList.remove('rainbowText');
-     resultRarity.classList.remove('rainbowText');
-     resultName.style.color=finalR.c; resultRarity.style.color=finalR.c;
-   }
-   showResult(finalR,finalName);
-   resultText.textContent=finalName+' • '+finalR.n;
-   special(finalR);
-   rolling=false;
- }
- tick();
+  // Always keep the player on the main screen. The old separate RNG screen is not used.
+  menu.style.display='flex';
+  panel.style.display='none';
+
+  rolling=true;
+  const myToken=++rollToken;
+  if(rollTimer){clearTimeout(rollTimer);rollTimer=null;}
+  initAudio();
+
+  const resultName=document.getElementById('resultName');
+  const resultRarity=document.getElementById('resultRarity');
+  const resultText=document.getElementById('resultText');
+  const rollButton=document.getElementById('menuRoll');
+  const finalR=pick();
+  const finalName=finalR.names[Math.floor(Math.random()*finalR.names.length)];
+  const names=R.flatMap(r=>r.names);
+
+  let step=0;
+  const total=52;
+  let lastName='';
+  resultText.textContent='SORTEANDO...';
+  resultName.textContent='???';
+  resultRarity.textContent='';
+  resultName.classList.remove('rainbowText');
+  resultRarity.classList.remove('rainbowText');
+  rollButton.disabled=true;
+  rollButton.textContent='🎲 SORTEANDO...';
+
+  function displayRolling(name,r){
+    resultName.textContent=name;
+    resultRarity.textContent=r.n;
+    if(r.k==='secreto'){
+      resultName.classList.add('rainbowText');
+      resultRarity.classList.add('rainbowText');
+      resultName.style.color='';
+      resultRarity.style.color='';
+    }else{
+      resultName.classList.remove('rainbowText');
+      resultRarity.classList.remove('rainbowText');
+      resultName.style.color=r.c;
+      resultRarity.style.color=r.c;
+    }
+    resultName.animate(
+      [{transform:'scale(1.06)'},{transform:'scale(1)'}],
+      {duration:65,easing:'ease-out'}
+    );
+    rollSnd();
+  }
+
+  function finish(){
+    if(myToken!==rollToken)return;
+    if(rollTimer){clearTimeout(rollTimer);rollTimer=null;}
+    resultName.textContent=finalName;
+    resultRarity.textContent=finalR.n;
+    if(finalR.k==='secreto'){
+      resultName.classList.add('rainbowText');
+      resultRarity.classList.add('rainbowText');
+      resultName.style.color='';
+      resultRarity.style.color='';
+    }else{
+      resultName.classList.remove('rainbowText');
+      resultRarity.classList.remove('rainbowText');
+      resultName.style.color=finalR.c;
+      resultRarity.style.color=finalR.c;
+    }
+    showResult(finalR,finalName);
+    resultText.textContent=finalName+' • '+finalR.n;
+    special(finalR);
+    rolling=false;
+    rollButton.disabled=false;
+    rollButton.textContent=hasCharacter?'🎲 ROLAR (100 Pts)':'🎲 ROLAR';
+  }
+
+  function tick(){
+    if(myToken!==rollToken)return;
+    if(step>=total){finish();return;}
+
+    let name;
+    do{name=names[Math.floor(Math.random()*names.length)];}
+    while(name===lastName && names.length>1);
+    lastName=name;
+    const r=R.find(x=>x.names.includes(name))||R[0];
+    displayRolling(name,r);
+    step++;
+
+    // Starts VERY fast and progressively slows down before stopping.
+    const p=step/total;
+    const delay=30 + Math.pow(p,3.4)*430;
+    rollTimer=setTimeout(tick,delay);
+  }
+
+  // Start immediately so there is never a blank/frozen first frame.
+  tick();
 }
 document.getElementById('menuRoll').onclick=startRoll;
 document.getElementById('again').onclick=startRoll;
 
-document.getElementById('playerName').addEventListener('input',e=>{document.getElementById('hudName').textContent=e.target.value||'Player1'});
+document.getElementById('playerName').addEventListener('input',e=>{document.getElementById('hudName').textContent=e.target.value||'Player1';});
+document.getElementById('playerName').addEventListener('change',saveProfile);
+document.getElementById('playerName').addEventListener('blur',saveProfile);
 
 document.getElementById('playBtn').onclick=()=>{
  if(!hasCharacter){
@@ -208,13 +269,15 @@ document.getElementById('playBtn').onclick=()=>{
    document.getElementById('resultName').animate([{transform:'scale(1)'},{transform:'scale(1.08)'},{transform:'scale(1)'}],{duration:350});
    return;
  }
- menu.style.display='none';document.getElementById('game').style.display='block';document.getElementById('back').style.display='block';resetGame();
+ saveProfile(); menu.style.display='none';document.getElementById('game').style.display='block';document.getElementById('back').style.display='block';resetGame();
 };
 document.getElementById('back').onclick=()=>{document.getElementById('game').style.display='none';document.getElementById('back').style.display='none';document.getElementById('gameOver').style.display='none';menu.style.display='flex';document.getElementById('menuScore').textContent=coins};
 document.getElementById('retryBtn').onclick=()=>{document.getElementById('gameOver').style.display='none';document.getElementById('mobileFire').style.display=deviceMode==='mobile'?'block':'none';resetGame()};
 document.getElementById('overMenuBtn').onclick=()=>document.getElementById('back').click();
 addEventListener('keydown',e=>{
  if(deviceMode==='pc' && e.code==='Space'){e.preventDefault();shoot(aimX||W/2,aimY||H/2)}
+ if(deviceMode==='pc' && e.code==='KeyQ'){e.preventDefault();burstSkill()}
+ if(deviceMode==='pc' && e.code==='KeyE'){e.preventDefault();shieldSkill()}
 });
 
 
@@ -234,25 +297,55 @@ pcMode.onclick=()=>setDevice('pc'); mobileMode.onclick=()=>setDevice('mobile');
 let audioCtx=null;
 function initAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume()}
 function snd(f,d,t='sine',g=.025,slide=0){if(!audioCtx)return;let o=audioCtx.createOscillator(),a=audioCtx.createGain();o.type=t;o.frequency.setValueAtTime(f,audioCtx.currentTime);if(slide)o.frequency.linearRampToValueAtTime(f+slide,audioCtx.currentTime+d);a.gain.setValueAtTime(g,audioCtx.currentTime);a.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+d);o.connect(a);a.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+d)}
-function rollSnd(){initAudio();snd(180,.045,'square',.018,90)}
-function shotSnd(){initAudio();snd(620,.055,'sawtooth',.018,-160)}
-function hitSnd(){initAudio();snd(110,.08,'triangle',.03,70)}
-function destroySnd(){initAudio();snd(360,.09,'square',.025,260)}
+function rollSnd(){initAudio();snd(220,.055,'square',.035,120)}
+function shotSnd(){initAudio();snd(620,.07,'sawtooth',.035,-180)}
+function hitSnd(){initAudio();snd(110,.09,'triangle',.045,90)}
+function destroySnd(){initAudio();snd(360,.11,'square',.04,300)}
+function pvpHitSnd(){initAudio();snd(95,.14,'sawtooth',.06,-55);setTimeout(()=>snd(55,.11,'triangle',.04,-20),55)}
+function pvpWinSnd(){initAudio();snd(523,.12,'square',.045,90);setTimeout(()=>snd(659,.14,'square',.05,110),120);setTimeout(()=>snd(784,.22,'triangle',.055,120),260)}
+function pvpLoseSnd(){initAudio();snd(392,.16,'sawtooth',.05,-90);setTimeout(()=>snd(262,.22,'sawtooth',.055,-80),160);setTimeout(()=>snd(196,.28,'triangle',.045,-50),340)}
+function pvpEnemyHitSnd(){initAudio();snd(180,.08,'square',.035,80)}
 const canvas=document.getElementById('canvas'),ctx=canvas.getContext('2d');
 let W=0,H=0,rocks=[],shots=[],parts=[],score=0,life=100,spawn=0,player={x:0,y:0},gameOver=false;
+let lastShotAt=0, burstReadyAt=0, shieldReadyAt=0, shieldHits=0, shieldActive=false;
+const NORMAL_SHOT_COOLDOWN=0, BURST_COOLDOWN=8000, SHIELD_COOLDOWN=12000;
 function resize(){W=canvas.width=innerWidth*devicePixelRatio;H=canvas.height=innerHeight*devicePixelRatio;canvas.style.width=innerWidth+'px';canvas.style.height=innerHeight+'px';player.x=W/2;player.y=H-100*devicePixelRatio}
 addEventListener('resize',resize);resize();
 function shotCountFor(r){const map={comum:1,raro:2,epico:3,lendario:4,mitico:5,secreto:6};return map[r.k]||1}
-function resetGame(){score=0;life=current?current.h:100;rocks=[];shots=[];parts=[];spawn=0;gameOver=false;player.x=W/2;player.y=H-100*devicePixelRatio;document.getElementById('score').textContent=0;document.getElementById('hp').textContent=life;document.getElementById('shotCount').textContent=shotCountFor(current);document.getElementById('gameOver').style.display='none';document.getElementById('powerName').textContent=currentName+' • '+current.n+' • '+shotCountFor(current)+' TIRO'+(shotCountFor(current)>1?'S':'')}
-function shoot(x,y){initAudio();shotSnd();
- if(gameOver)return;
- const dx=x-player.x,dy=y-player.y,base=Math.atan2(dy,dx),count=shotCountFor(current);
- const spread=count===1?0:(Math.min(.42,.10+count*.045));
+function resetGame(){score=0;life=current?current.h:100;rocks=[];shots=[];parts=[];spawn=1;gameOver=false;lastShotAt=0;burstReadyAt=0;shieldReadyAt=0;shieldHits=0;shieldActive=false;player.x=W/2;player.y=H-100*devicePixelRatio;document.getElementById('score').textContent=0;document.getElementById('hp').textContent=life;document.getElementById('shotCount').textContent=shotCountFor(current);document.getElementById('gameOver').style.display='none';document.getElementById('powerName').textContent=currentName+' • '+current.n+' • '+shotCountFor(current)+' TIRO'+(shotCountFor(current)>1?'S':''); spawnRock();}
+function fireProjectiles(x,y,count=shotCountFor(current),ignoreCooldown=false){
+ if(gameOver)return false;
+ const now=Date.now();
+ if(!ignoreCooldown && now-lastShotAt<NORMAL_SHOT_COOLDOWN)return false;
+ if(!ignoreCooldown)lastShotAt=now;
+ initAudio();shotSnd();
+ const dx=x-player.x,dy=y-player.y,base=Math.atan2(dy,dx);
+ const spread=count===1?0:Math.min(.42,.10+count*.045);
  for(let i=0;i<count;i++){
    const a=base+(i-(count-1)/2)*spread;
    shots.push({x:player.x,y:player.y,vx:Math.cos(a)*18,vy:Math.sin(a)*18,life:70,d:current.d});
  }
+ return true;
 }
+function shoot(x,y){return fireProjectiles(x,y,shotCountFor(current),false)}
+function burstSkill(){
+ const now=Date.now(); if(gameOver||now<burstReadyAt)return;
+ if(fireProjectiles(aimX||W/2,aimY||H/2,5,true)){burstReadyAt=now+BURST_COOLDOWN;skillSnd();}
+}
+function shieldSkill(){
+ const now=Date.now(); if(gameOver||now<shieldReadyAt||shieldActive)return;
+ shieldActive=true;shieldHits=3;shieldReadyAt=now+SHIELD_COOLDOWN;skillSnd();
+}
+function skillSnd(){initAudio();snd(760,.12,'square',.045,260)}
+function updateSkillUI(){
+ const now=Date.now(),fireLeft=Math.max(0,NORMAL_SHOT_COOLDOWN-(now-lastShotAt)),burstLeft=Math.max(0,burstReadyAt-now),shieldLeft=Math.max(0,shieldReadyAt-now);
+ const burst=document.getElementById('skillBurst'),shield=document.getElementById('skillShield'),st=document.getElementById('skillStatus');
+ burst.disabled=gameOver||burstLeft>0; shield.disabled=gameOver||shieldActive||shieldLeft>0;
+ burst.innerHTML=burstLeft>0?'🔥 RAJADA<br><small>'+Math.ceil(burstLeft/1000)+'s</small>':'🔥 RAJADA<br><small>5 TIROS</small>';
+ shield.innerHTML=shieldActive?'🛡️ ESCUDO<br><small>'+shieldHits+' RESTANTES</small>':shieldLeft>0?'🛡️ ESCUDO<br><small>'+Math.ceil(shieldLeft/1000)+'s</small>':'🛡️ ESCUDO<br><small>3 ACERTOS</small>';
+ st.textContent=shieldActive?'🛡️ Escudo ativo: '+shieldHits+' acertos restantes':fireLeft>0?'🔫 Próximo tiro: '+(fireLeft/1000).toFixed(1)+'s':'🔫 Próximo tiro: pronto';
+}
+setInterval(updateSkillUI,100);
 canvas.addEventListener('pointermove',e=>{aimX=e.clientX*devicePixelRatio;aimY=e.clientY*devicePixelRatio});
 canvas.addEventListener('pointerdown',e=>{
   aimX=e.clientX*devicePixelRatio; aimY=e.clientY*devicePixelRatio;
@@ -261,6 +354,9 @@ canvas.addEventListener('pointerdown',e=>{
 document.getElementById('mobileFire').addEventListener('pointerdown',e=>{
   e.preventDefault(); shoot(aimX||W/2,aimY||H/2);
 });
+document.getElementById('skillBurst').addEventListener('pointerdown',e=>{e.preventDefault();burstSkill()});
+document.getElementById('skillShield').addEventListener('pointerdown',e=>{e.preventDefault();shieldSkill()});
+
 function spawnRock(){let r=25+Math.random()*28,h=35+r*1.3+score/1000*10;rocks.push({x:r+Math.random()*(W-r*2),y:-r,r,h,max:h,v:1+Math.random()*1.5})}
 function endGame(){if(gameOver)return;gameOver=true;document.getElementById('finalScore').textContent=score;document.getElementById('gameOver').style.display='flex';document.getElementById('mobileFire').style.display='none';}
 function update(){
@@ -270,8 +366,12 @@ function update(){
  for(const r of rocks)r.y+=r.v;
  for(const s of shots)for(const r of rocks)if(!s.hit&&Math.hypot(s.x-r.x,s.y-r.y)<r.r+7){s.hit=true;r.h-=s.d;hitSnd();parts.push({x:r.x,y:r.y,t:'-'+s.d,life:35,vx:0,vy:-1});break}
  shots=shots.filter(s=>s.life>0&&!s.hit);
- for(const r of rocks)if(r.h<=0&&!r.dead){r.dead=true;score+=100;destroySnd();coins+=100;document.getElementById('menuScore').textContent=coins;for(let i=0;i<15;i++)parts.push({x:r.x,y:r.y,t:'',life:30,vx:(Math.random()-.5)*7,vy:(Math.random()-.5)*7})}
- for(const r of rocks)if(!r.dead&&r.y-r.r>H){r.dead=true;life=Math.max(0,life-10);document.getElementById('hp').textContent=life;if(life<=0){endGame();break}}
+ for(const r of rocks)if(r.h<=0&&!r.dead){r.dead=true;score+=100;addXP(10);destroySnd();coins+=100;document.getElementById('menuScore').textContent=coins;for(let i=0;i<15;i++)parts.push({x:r.x,y:r.y,t:'',life:30,vx:(Math.random()-.5)*7,vy:(Math.random()-.5)*7})}
+ for(const r of rocks)if(!r.dead&&r.y-r.r>H){
+   r.dead=true;
+   if(shieldActive){shieldHits--;if(shieldHits<=0)shieldActive=false;hitSnd();}
+   else {life=Math.max(0,life-10);document.getElementById('hp').textContent=life;if(life<=0){endGame();break}}
+ }
  rocks=rocks.filter(r=>!r.dead);for(const p of parts){p.x+=p.vx;p.y+=p.vy;p.life--}parts=parts.filter(p=>p.life>0);
  document.getElementById('score').textContent=score;
 }
@@ -280,65 +380,52 @@ function draw(){
  const g=ctx.createRadialGradient(W/2,H*.6,10,W/2,H*.6,Math.max(W,H)*.7);g.addColorStop(0,'#142b46');g.addColorStop(1,'#050914');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
  for(let x=0;x<W;x+=70){ctx.strokeStyle='#17324c55';ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()}
  for(const r of rocks){ctx.beginPath();ctx.arc(r.x,r.y,r.r,0,7);ctx.fillStyle='#68727e';ctx.fill();ctx.strokeStyle='#b6bec8';ctx.lineWidth=3;ctx.stroke();ctx.fillStyle='#e14b4b';ctx.fillRect(r.x-r.r,r.y-r.r-10,r.r*2,5);ctx.fillStyle='#49e26d';ctx.fillRect(r.x-r.r,r.y-r.r-10,r.r*2*Math.max(0,r.h/r.max),5);ctx.fillStyle='#fff';ctx.font='bold 12px Arial';ctx.textAlign='center';ctx.fillText(Math.max(0,Math.ceil(r.h)),r.x,r.y+4)}
- for(const s of shots){ctx.beginPath();ctx.arc(s.x,s.y,6,0,7);ctx.fillStyle=current.c==='rgb'?`hsl(${Date.now()/3%360} 100% 60%)`:current.c;ctx.shadowBlur=18;ctx.shadowColor=ctx.fillStyle;ctx.fill();ctx.shadowBlur=0}
- const shipColor=current.c==='rgb'?`hsl(${Date.now()/3%360} 100% 60%)`:current.c;
+ for(const s of shots){ctx.beginPath();ctx.arc(s.x,s.y,6,0,7);const active=current||R[0];ctx.fillStyle=active.c==='rgb'?`hsl(${Date.now()/3%360} 100% 60%)`:active.c;ctx.shadowBlur=18;ctx.shadowColor=ctx.fillStyle;ctx.fill();ctx.shadowBlur=0}
+ const active=current||R[0];const shipColor=active.c==='rgb'?`hsl(${Date.now()/3%360} 100% 60%)`:active.c;
+ if(shieldActive){ctx.save();ctx.beginPath();ctx.arc(player.x,player.y,52*devicePixelRatio,0,Math.PI*2);ctx.strokeStyle='#31c8ff';ctx.lineWidth=5*devicePixelRatio;ctx.shadowBlur=25;ctx.shadowColor='#31c8ff';ctx.stroke();ctx.restore();}
  ctx.save();ctx.translate(player.x,player.y);ctx.shadowBlur=22;ctx.shadowColor=shipColor;ctx.fillStyle=shipColor;ctx.beginPath();ctx.moveTo(0,-34);ctx.lineTo(27,25);ctx.lineTo(0,16);ctx.lineTo(-27,25);ctx.closePath();ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='#07101d';ctx.beginPath();ctx.arc(0,3,7,0,7);ctx.fill();ctx.fillStyle='#dce8f4';ctx.fillRect(-4,8,8,15);ctx.restore();
- ctx.fillStyle=shipColor;ctx.font='bold 13px Arial';ctx.textAlign='center';ctx.fillText(currentName+' • '+current.n,player.x,player.y+48);
  for(const p of parts){ctx.globalAlpha=p.life/35;if(p.t){ctx.fillStyle='#fff';ctx.font='bold 15px Arial';ctx.fillText(p.t,p.x,p.y)}else{ctx.fillStyle='#c8d0da';ctx.beginPath();ctx.arc(p.x,p.y,3,0,7);ctx.fill()}ctx.globalAlpha=1}
  requestAnimationFrame(loop)
 }
 function loop(){update();draw()}
+loadProfile(); loadLeaderboard(); setInterval(()=>{saveProfile();loadLeaderboard()},5000);
 loop();
-\n// ===== PVP ONLINE: tiro lento, habilidade 5 tiros e escudo 3 bloqueios =====
-const pvpScreen=document.getElementById('pvpScreen'),pvpCanvas=document.getElementById('pvpCanvas'),pctx=pvpCanvas.getContext('2d');
-let pvpWS=null,pvpId='',pvpRunning=false,pvpEnemy=null,pvpMe={x:.5,hp:100,shield:0},pvpShots=[],pvpEnemyShots=[],pvpLastShot=0,pvpSkillReady=true,pvpShieldReady=true,pvpRoom='';
-const PVP_SHOT_MS=2000,PVP_SKILL_CD=10000,PVP_SHIELD_CD=15000,PVP_BULLET_SPEED=7.5,PVP_DAMAGE=10;
-function pvpResize(){pvpCanvas.width=innerWidth*devicePixelRatio;pvpCanvas.height=innerHeight*devicePixelRatio;pvpCanvas.style.width=innerWidth+'px';pvpCanvas.style.height=innerHeight+'px'} addEventListener('resize',pvpResize);pvpResize();
-function pvpStatus(t){document.getElementById('pvpStatus').textContent=t}
-function pvpSend(o){if(pvpWS&&pvpWS.readyState===1)pvpWS.send(JSON.stringify(o))}
-function pvpRankWins(){let k='rng_pvp_wins_v1';let w=+(localStorage.getItem(k)||'0');return Math.max(0,w)}
-function pvpSaveWins(w){localStorage.setItem('rng_pvp_wins_v1',String(w));}
-function pvpRank(w){if(w>=30)return 'Champion';if(w>=25)return 'Diamante';if(w>=20)return 'Platina';if(w>=15)return 'Ouro';if(w>=10)return 'Prata';if(w>=5)return 'Bronze';return 'Sem Rank'}
-function pvpCooldown(btn,ms,label){btn.disabled=true;btn.classList.remove('ready');let end=Date.now()+ms;let timer=setInterval(()=>{let left=Math.max(0,end-Date.now());btn.querySelector('small').textContent=(left/1000).toFixed(1)+'s';if(left<=0){clearInterval(timer);btn.disabled=false;btn.classList.add('ready');btn.querySelector('small').textContent=label}},100)}
-function pvpConnect(){if(pvpWS&&pvpWS.readyState<=1)return;const proto=location.protocol==='https:'?'wss':'ws';pvpWS=new WebSocket(`${proto}://${location.host}`);pvpWS.onopen=()=>{pvpSend({type:'join',nick:document.getElementById('playerName').value.trim()||'Player1',wins:pvpRankWins()});pvpStatus('Procurando adversário...')};pvpWS.onmessage=e=>{let m;try{m=JSON.parse(e.data)}catch{return}
- if(m.type==='welcome')pvpId=m.id;
- if(m.type==='waiting')pvpStatus('Aguardando outro jogador...');
- if(m.type==='match'){pvpRoom=m.room;pvpEnemy=m.enemy;pvpMe={x:m.you.x,hp:m.you.hp,shield:m.you.shield||0};document.getElementById('pvpMenu').style.display='none';document.getElementById('pvpEnemyName').textContent=pvpEnemy.nick;document.getElementById('pvpEnemyHp').textContent=pvpEnemy.hp;document.getElementById('pvpMyHp').textContent=pvpMe.hp;document.getElementById('pvpShield').textContent=pvpMe.shield;pvpRunning=true;pvpLastShot=0;pvpStatus('VALENDO!')}
- if(m.type==='state'&&m.id!==pvpId){pvpEnemy=m.player;document.getElementById('pvpEnemyHp').textContent=pvpEnemy.hp}
- if(m.type==='shot'&&m.id!==pvpId){pvpEnemyShots.push({x:m.x*pvpCanvas.width,y:135*devicePixelRatio,v:PVP_BULLET_SPEED*devicePixelRatio,c:'#ff4050',d:m.damage||PVP_DAMAGE})}
- if(m.type==='skill'&&m.id!==pvpId){for(let i=0;i<5;i++)pvpEnemyShots.push({x:(m.x+(i-2)*.035)*pvpCanvas.width,y:135*devicePixelRatio,v:PVP_BULLET_SPEED*devicePixelRatio,c:'#ff9d2e',d:m.damage||PVP_DAMAGE})}
- if(m.type==='shield'&&m.id!==pvpId){pvpEnemy.shield=m.blocks;}
- if(m.type==='hit'&&m.target===pvpId){pvpMe.hp=m.hp;pvpMe.shield=m.shield;document.getElementById('pvpMyHp').textContent=m.hp;document.getElementById('pvpShield').textContent=m.shield}
- if(m.type==='enemyHit'){ }
- if(m.type==='win'||m.type==='lose'){pvpRunning=false;let w=+(m.wins||pvpRankWins());pvpSaveWins(w);localStorage.setItem('rng_pvp_rank_v1',m.rank||pvpRank(w));pvpStatus(m.type==='win'?`🏆 Vitória! ${m.rank||pvpRank(w)} • ${w} vitórias`:`💥 Derrota • ${m.rank||pvpRank(w)} • ${w} vitórias`);document.getElementById('pvpMenu').style.display='flex'}
- if(m.type==='left'){pvpRunning=false;pvpStatus('O adversário saiu.');document.getElementById('pvpMenu').style.display='flex'}
-};pvpWS.onclose=()=>{pvpRunning=false;if(pvpScreen.style.display==='block')pvpStatus('Conexão encerrada.')}}
-function pvpOpen(){document.getElementById('pvpMyName').textContent=document.getElementById('playerName').value.trim()||'Player1';pvpScreen.style.display='block';document.getElementById('pvpMenu').style.display='flex';pvpStatus('Pronto para procurar adversário.');pvpConnect()}
-function pvpClose(){pvpSend({type:'leave'});pvpRunning=false;pvpShots=[];pvpEnemyShots=[];pvpScreen.style.display='none';if(pvpWS){pvpWS.close();pvpWS=null}}
-function pvpFire(){if(!pvpRunning)return;if(Date.now()-pvpLastShot<PVP_SHOT_MS){pvpStatus('⏳ Aguarde o intervalo de 2 segundos do tiro.');return}pvpLastShot=Date.now();pvpShots.push({x:pvpMe.x*pvpCanvas.width,y:pvpCanvas.height-135*devicePixelRatio,v:-PVP_BULLET_SPEED*devicePixelRatio,c:'#55b9ff'});pvpSend({type:'shoot',x:pvpMe.x,damage:PVP_DAMAGE})}
-function pvpSkill(){if(!pvpRunning||!pvpSkillReady)return;pvpSkillReady=false;pvpSend({type:'skill',x:pvpMe.x,damage:PVP_DAMAGE});for(let i=0;i<5;i++)pvpShots.push({x:(pvpMe.x+(i-2)*.035)*pvpCanvas.width,y:pvpCanvas.height-135*devicePixelRatio,v:-PVP_BULLET_SPEED*devicePixelRatio,c:'#ff9d2e'});pvpCooldown(document.getElementById('pvpSkill'),PVP_SKILL_CD,'10s cooldown')}
-function pvpShield(){if(!pvpRunning||!pvpShieldReady)return;pvpShieldReady=false;pvpSend({type:'shield'});pvpMe.shield=3;document.getElementById('pvpShield').textContent=3;pvpCooldown(document.getElementById('pvpShieldBtn'),PVP_SHIELD_CD,'15s cooldown')}
-document.getElementById('pvpBtn').onclick=pvpOpen;document.getElementById('pvpClose').onclick=pvpClose;document.getElementById('pvpBack').onclick=pvpClose;document.getElementById('pvpStart').onclick=()=>{pvpConnect();pvpSend({type:'join',nick:document.getElementById('playerName').value.trim()||'Player1',wins:pvpRankWins()})};document.getElementById('pvpShoot').onclick=pvpFire;document.getElementById('pvpSkill').onclick=pvpSkill;document.getElementById('pvpShieldBtn').onclick=pvpShield;
-function pvpMoveTo(e){if(!pvpRunning)return;const r=pvpCanvas.getBoundingClientRect();pvpMe.x=Math.max(.08,Math.min(.92,(e.clientX-r.left)/r.width));pvpSend({type:'move',x:pvpMe.x})}
-pvpCanvas.addEventListener('pointermove',e=>{if(e.pointerType==='touch'&&e.buttons)pvpMoveTo(e)},{passive:false});pvpCanvas.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'){pvpCanvas.setPointerCapture?.(e.pointerId);pvpMoveTo(e)}},{passive:false});
-function pvpLoop(t){pvpDraw();requestAnimationFrame(pvpLoop)}
-function pvpDraw(){const W=pvpCanvas.width,H=pvpCanvas.height;pctx.fillStyle='#050914';pctx.fillRect(0,0,W,H);pctx.fillStyle='#0b1b30';pctx.fillRect(0,H/2,W,H/2);pctx.strokeStyle='#17324c';pctx.beginPath();pctx.moveTo(0,H/2);pctx.lineTo(W,H/2);pctx.stroke();
- const meX=pvpMe.x*W,enemyX=(pvpEnemy?.x??.5)*W; pctx.save();pctx.translate(meX,H-110*devicePixelRatio);pctx.fillStyle='#55b9ff';pctx.shadowBlur=20;pctx.shadowColor='#55b9ff';pctx.beginPath();pctx.moveTo(0,-32*devicePixelRatio);pctx.lineTo(28*devicePixelRatio,24*devicePixelRatio);pctx.lineTo(0,15*devicePixelRatio);pctx.lineTo(-28*devicePixelRatio,24*devicePixelRatio);pctx.closePath();pctx.fill();if(pvpMe.shield>0){pctx.strokeStyle='#35bfff';pctx.lineWidth=5;pctx.beginPath();pctx.arc(0,0,48*devicePixelRatio,0,Math.PI*2);pctx.stroke()}pctx.restore();
- if(pvpEnemy){pctx.save();pctx.translate(enemyX,110*devicePixelRatio);pctx.rotate(Math.PI);pctx.fillStyle='#ff4050';pctx.shadowBlur=20;pctx.shadowColor='#ff4050';pctx.beginPath();pctx.moveTo(0,-32*devicePixelRatio);pctx.lineTo(28*devicePixelRatio,24*devicePixelRatio);pctx.lineTo(0,15*devicePixelRatio);pctx.lineTo(-28*devicePixelRatio,24*devicePixelRatio);pctx.closePath();pctx.fill();if(pvpEnemy.shield>0){pctx.strokeStyle='#35bfff';pctx.lineWidth=5;pctx.beginPath();pctx.arc(0,0,48*devicePixelRatio,0,Math.PI*2);pctx.stroke()}pctx.restore()}
- for(const s of pvpShots){s.y+=s.v;pctx.fillStyle=s.c;pctx.shadowBlur=18;pctx.shadowColor=s.c;pctx.beginPath();pctx.arc(s.x,s.y,6*devicePixelRatio,0,7);pctx.fill()}pvpShots=pvpShots.filter(s=>s.y>-30);for(const s of pvpEnemyShots){s.y+=s.v;pctx.fillStyle=s.c;pctx.shadowBlur=18;pctx.shadowColor=s.c;pctx.beginPath();pctx.arc(s.x,s.y,6*devicePixelRatio,0,7);pctx.fill()}pvpEnemyShots=pvpEnemyShots.filter(s=>s.y<H+30);}
-requestAnimationFrame(pvpLoop);
-</script>
 
-<section id="pvpScreen" class="pvpScreen">
-  <canvas id="pvpCanvas" class="pvpCanvas"></canvas>
-  <button id="pvpClose" class="pvpClose">✕ SAIR</button>
-  <div class="pvpHud">
-    <div class="pvpInfo">🛡️ VOCÊ <span id="pvpMyName">Player1</span><br>❤️ <span id="pvpMyHp">100</span> • 🛡️ <span id="pvpShield">0</span></div>
-    <div class="pvpInfo">⚔️ ADVERSÁRIO <span id="pvpEnemyName">Aguardando...</span><br>❤️ <span id="pvpEnemyHp">100</span></div>
-  </div>
-  <div class="pvpHelp">🔫 1 tiro a cada 2s • 💥 HABILIDADE = 5 TIROS • 🛡️ ESCUDO = BLOQUEIA 3 TIROS</div>
-  <div class="pvpSkills"><button class="skillBtn ready" id="pvpSkill">💥 5 TIROS<br><small>10s cooldown</small></button><button class="skillBtn ready" id="pvpShieldBtn">🛡️ ESCUDO<br><small>15s cooldown</small></button><button class="skillBtn ready" id="pvpShoot">🔫 ATIRAR<br><small>2s</small></button></div>
-  <div id="pvpMenu" class="pvpMenu"><div class="pvpCard"><h2>⚔️ PVP ONLINE</h2><p>Entre na fila e lute contra outro jogador em tempo real.</p><div id="pvpStatus" class="pvpStatus">Pronto para procurar adversário.</div><div class="pvpBtns"><button id="pvpStart" class="pvpStart">🔎 ENCONTRAR ADVERSÁRIO</button><button id="pvpBack" class="pvpBack">← VOLTAR</button></div></div></div>
-</section>
+// ===== PVP ONLINE =====
+const pvpScreen=document.getElementById('pvpScreen'),pvpCanvas=document.getElementById('pvpCanvas'),pctx=pvpCanvas.getContext('2d');
+let pvpWS=null,pvpId='',pvpRoom='',pvpRunning=false,pvpEnemy=null,pvpMe={x:.5,hp:100,shield:0},pvpShots=[],pvpEnemyShots=[],pvpLastShot=0,pvpMove=0,pvpCountdownTimer=null,pvpSkillReadyAt=0,pvpShieldReadyAt=0,pvpShieldBlocks=0;
+const PVP_SHOT_MS=2000,PVP_SKILL_MS=10000,PVP_SHIELD_MS=15000;
+function pvpResize(){pvpCanvas.width=innerWidth*devicePixelRatio;pvpCanvas.height=innerHeight*devicePixelRatio;pvpCanvas.style.width=innerWidth+'px';pvpCanvas.style.height=innerHeight+'px'} addEventListener('resize',pvpResize);pvpResize();
+function pvpSetStatus(t){document.getElementById('pvpStatus').textContent=t}
+function pvpSend(o){if(pvpWS&&pvpWS.readyState===1)pvpWS.send(JSON.stringify(o))}
+function pvpStopTimers(){if(pvpCountdownTimer){clearInterval(pvpCountdownTimer);pvpCountdownTimer=null}}
+function pvpReset(){pvpLastShot=0;pvpSkillReadyAt=0;pvpShieldReadyAt=0;pvpShieldBlocks=0;pvpMe.shield=0;updatePvpUI()}
+function pvpStartCountdown(){pvpStopTimers();pvpRunning=false;let n=3;pvpSetStatus('🔥 '+n);pvpCountdownTimer=setInterval(()=>{n--;if(n>0)pvpSetStatus('🔥 '+n);else{clearInterval(pvpCountdownTimer);pvpCountdownTimer=null;pvpSetStatus('🚀 VALENDO!');pvpRunning=true;updatePvpUI()}},1000)}
+function pvpConnect(){if(pvpWS&&pvpWS.readyState<=1)return;const proto=location.protocol==='https:'?'wss':'ws';pvpWS=new WebSocket(`${proto}://${location.host}/ws`);pvpWS.onopen=()=>{pvpSend({type:'join',nick:profile.nick||'Player1',level:profile.level||1,rarity:current?.k||'comum',wins:profile.wins});pvpSetStatus('Procurando outro jogador...')};pvpWS.onmessage=e=>{let m;try{m=JSON.parse(e.data)}catch{return}
+ if(m.type==='welcome')pvpId=m.id;
+ if(m.type==='waiting')pvpSetStatus('Aguardando adversário...');
+ if(m.type==='match'){pvpRoom=m.room;pvpEnemy=m.enemy;pvpMe={x:m.you.x,hp:m.you.hp,shield:m.you.shield||0};document.getElementById('pvpMenu').style.display='none';document.getElementById('pvpEnemyName').textContent=m.enemy.nick;document.getElementById('pvpEnemyHp').textContent=m.enemy.hp;pvpReset();pvpStartCountdown()}
+ if(m.type==='state'&&m.id!==pvpId){pvpEnemy=m.player;document.getElementById('pvpEnemyName').textContent=pvpEnemy.nick;document.getElementById('pvpEnemyHp').textContent=pvpEnemy.hp}
+ if(m.type==='shot'&&m.id!==pvpId)pvpEnemyShots.push({x:m.x*pvpCanvas.width,y:145*devicePixelRatio,v:18*devicePixelRatio,c:'#ff4050'});
+ if(m.type==='skill'&&m.id!==pvpId)for(let i=0;i<5;i++)pvpEnemyShots.push({x:(m.x+(i-2)*.035)*pvpCanvas.width,y:145*devicePixelRatio,v:18*devicePixelRatio,c:'#ff9d2e'});
+ if(m.type==='shield'&&m.id!==pvpId&&pvpEnemy)pvpEnemy.shield=m.blocks;
+ if(m.type==='hit'&&m.target===pvpId){pvpMe.hp=m.hp;pvpMe.shield=m.shield||0;document.getElementById('pvpMyHp').textContent=m.hp;updatePvpUI()}
+ if(m.type==='win'||m.type==='lose'){pvpStopTimers();profile.wins=Math.max(profile.wins,+m.wins||0);profile.rank=m.rank||rankForWins(profile.wins);saveProfile();syncPlayer();loadLeaderboard();pvpRunning=false;pvpSetStatus(m.type==='win'?`🏆 Você venceu! ${profile.rank} • ${profile.wins} vitórias`:`💥 Você perdeu! ${profile.rank} • ${profile.wins} vitórias`);document.getElementById('pvpMenu').style.display='flex'}
+ if(m.type==='left'){pvpStopTimers();pvpEnemy=null;pvpRunning=false;pvpSetStatus('O adversário saiu.');document.getElementById('pvpMenu').style.display='flex'}
+};pvpWS.onclose=()=>{pvpStopTimers();pvpRunning=false;if(pvpScreen.style.display==='block')pvpSetStatus('Conexão encerrada. Tente novamente.')}}
+function pvpOpen(){saveProfile();document.getElementById('pvpMyName').textContent=profile.nick||'Player1';pvpScreen.style.display='block';document.getElementById('pvpMenu').style.display='flex';document.getElementById('pvpMyHp').textContent=100;pvpSetStatus('Pronto para procurar adversário.');pvpConnect()}
+function pvpClose(){pvpStopTimers();pvpSend({type:'leave'});pvpRunning=false;pvpShots=[];pvpEnemyShots=[];pvpEnemy=null;pvpScreen.style.display='none';if(pvpWS){pvpWS.close();pvpWS=null}}
+function pvpFire(){if(!pvpRunning)return;const now=Date.now();if(now-pvpLastShot<PVP_SHOT_MS){pvpSetStatus('⏳ Tiro PvP: aguarde 2 segundos.');return}pvpLastShot=now;pvpShots.push({x:pvpMe.x*pvpCanvas.width,y:pvpCanvas.height-145*devicePixelRatio,v:-18*devicePixelRatio,c:current?.c||'#fff'});pvpSend({type:'shoot',x:pvpMe.x});updatePvpUI()}
+function pvpSkill(){if(!pvpRunning||Date.now()<pvpSkillReadyAt)return;pvpSkillReadyAt=Date.now()+PVP_SKILL_MS;pvpSend({type:'skill',x:pvpMe.x});for(let i=0;i<5;i++)pvpShots.push({x:(pvpMe.x+(i-2)*.035)*pvpCanvas.width,y:pvpCanvas.height-145*devicePixelRatio,v:-18*devicePixelRatio,c:'#ff9d2e'});updatePvpUI()}
+function pvpShield(){if(!pvpRunning||pvpShieldBlocks>0||Date.now()<pvpShieldReadyAt)return;pvpShieldBlocks=3;pvpShieldReadyAt=Date.now()+PVP_SHIELD_MS;pvpSend({type:'shield'});updatePvpUI()}
+function updatePvpUI(){const now=Date.now(),shot=Math.max(0,PVP_SHOT_MS-(now-pvpLastShot)),skill=Math.max(0,pvpSkillReadyAt-now),shield=Math.max(0,pvpShieldReadyAt-now);const a=document.getElementById('pvpSkill'),b=document.getElementById('pvpShieldBtn');if(!a||!b)return;a.disabled=!pvpRunning||skill>0;b.disabled=!pvpRunning||pvpShieldBlocks>0||shield>0;a.innerHTML=skill?`🔥 RAJADA<br><small>${Math.ceil(skill/1000)}s</small>`:'🔥 RAJADA<br><small>5 TIROS</small>';b.innerHTML=pvpShieldBlocks?`🛡️ ESCUDO<br><small>${pvpShieldBlocks} BLOQUEIOS</small>`:shield?`🛡️ ESCUDO<br><small>${Math.ceil(shield/1000)}s</small>`:'🛡️ ESCUDO<br><small>3 ACERTOS</small>';document.getElementById('pvpSkillStatus').textContent=`🔫 Tiro: ${shot?(shot/1000).toFixed(1)+'s':'pronto'} • 🔥 Rajada: ${skill?Math.ceil(skill/1000)+'s':'pronta'} • 🛡️ Escudo: ${pvpShieldBlocks?pvpShieldBlocks+' bloqueios':shield?Math.ceil(shield/1000)+'s':'pronto'}`}
+setInterval(updatePvpUI,100);
+function pvpSetTouchX(ev){if(pvpScreen.style.display!=='block'||!pvpRunning)return;ev.preventDefault();const r=pvpCanvas.getBoundingClientRect();pvpMe.x=Math.max(.08,Math.min(.92,(ev.clientX-r.left)/r.width));pvpSend({type:'move',x:pvpMe.x})}
+pvpCanvas.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'){pvpCanvas.setPointerCapture?.(e.pointerId);pvpSetTouchX(e)}},{passive:false});pvpCanvas.addEventListener('pointermove',e=>{if(e.pointerType==='touch'&&e.buttons)pvpSetTouchX(e)},{passive:false});
+function pvpLoop(){drawPvp();requestAnimationFrame(pvpLoop)}
+function drawPvp(){const W=pvpCanvas.width,H=pvpCanvas.height;pctx.fillStyle='#050914';pctx.fillRect(0,0,W,H);pctx.fillStyle='#0b1b30';pctx.fillRect(0,H/2,W,H/2);const meX=pvpMe.x*W,enemyX=(pvpEnemy?.x??.5)*W;drawShipPvp(meX,H-120*devicePixelRatio,current?.c||'#fff',false,pvpMe.shield>0);if(pvpEnemy)drawShipPvp(enemyX,120*devicePixelRatio,pvpEnemy.c||'#ff4050',true,pvpEnemy.shield>0);for(const s of pvpShots){s.y+=s.v;pctx.fillStyle=s.c;pctx.beginPath();pctx.arc(s.x,s.y,7*devicePixelRatio,0,7);pctx.fill()}pvpShots=pvpShots.filter(s=>s.y>-20&&s.y<H+20);for(const s of pvpEnemyShots){s.y+=s.v;pctx.fillStyle=s.c;pctx.beginPath();pctx.arc(s.x,s.y,7*devicePixelRatio,0,7);pctx.fill()}pvpEnemyShots=pvpEnemyShots.filter(s=>s.y>-20&&s.y<H+20)}
+function drawShipPvp(x,y,c,flip,shield){pctx.save();pctx.translate(x,y);if(flip)pctx.rotate(Math.PI);pctx.fillStyle=c;pctx.beginPath();pctx.moveTo(0,-38*devicePixelRatio);pctx.lineTo(32*devicePixelRatio,28*devicePixelRatio);pctx.lineTo(0,18*devicePixelRatio);pctx.lineTo(-32*devicePixelRatio,28*devicePixelRatio);pctx.closePath();pctx.fill();if(shield){pctx.strokeStyle='#35bfff';pctx.lineWidth=5*devicePixelRatio;pctx.beginPath();pctx.arc(0,0,55*devicePixelRatio,0,Math.PI*2);pctx.stroke()}pctx.restore()}
+document.getElementById('pvpBtn').onclick=pvpOpen;document.getElementById('pvpClose').onclick=pvpClose;document.getElementById('pvpStart').onclick=()=>{pvpConnect();pvpSend({type:'join',nick:profile.nick||'Player1',level:profile.level||1,rarity:current?.k||'comum',wins:profile.wins})};document.getElementById('pvpBack').onclick=pvpClose;document.getElementById('pvpSkill').onclick=pvpSkill;document.getElementById('pvpShieldBtn').onclick=pvpShield;addEventListener('keydown',e=>{if(pvpScreen.style.display==='block'){if(e.key==='ArrowLeft'){e.preventDefault();pvpMove=-1}if(e.key==='ArrowRight'){e.preventDefault();pvpMove=1}if(e.code==='Space'){e.preventDefault();pvpFire()}}});addEventListener('keyup',e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight')pvpMove=0});requestAnimationFrame(pvpLoop);
+</script>
 </body>
 </html>
