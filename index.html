@@ -45,7 +45,7 @@ canvas{width:100%;height:100%;display:block}.hintPanel{position:fixed;left:50%;b
       </div>
       <div class="bottomLinks"><span>📜 Histórico</span><span>🏆 Leaderboard Online</span></div>
 <div id="leaderboard" style="margin-top:16px;border:1px solid #283650;border-radius:18px;background:#060b19;padding:14px">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><b>🏆 TOP 5 ONLINE</b><span id="onlineCount" style="color:#55e58a;font-weight:900">🟢 0 online</span></div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><b>🏆 TOP 5</b><span id="onlineCount" style="color:#55e58a;font-weight:900">🟢 0 online</span></div>
   <div id="leaderRows" style="display:grid;gap:7px"><div style="color:#7f8da2;text-align:center">Carregando...</div></div>
 </div>
     </div>
@@ -319,7 +319,7 @@ function update(){
  for(const r of rocks)r.y+=r.v;
  for(const s of shots)for(const r of rocks)if(!s.hit&&Math.hypot(s.x-r.x,s.y-r.y)<r.r+7){s.hit=true;r.h-=s.d;hitSnd();parts.push({x:r.x,y:r.y,t:'-'+s.d,life:35,vx:0,vy:-1});break}
  shots=shots.filter(s=>s.life>0&&!s.hit);
- for(const r of rocks)if(r.h<=0&&!r.dead){r.dead=true;score+=100;destroySnd();coins+=100;document.getElementById('menuScore').textContent=coins;for(let i=0;i<15;i++)parts.push({x:r.x,y:r.y,t:'',life:30,vx:(Math.random()-.5)*7,vy:(Math.random()-.5)*7})}
+ for(const r of rocks)if(r.h<=0&&!r.dead){r.dead=true;score+=100;addXP(10);destroySnd();coins+=100;document.getElementById('menuScore').textContent=coins;for(let i=0;i<15;i++)parts.push({x:r.x,y:r.y,t:'',life:30,vx:(Math.random()-.5)*7,vy:(Math.random()-.5)*7})}
  for(const r of rocks)if(!r.dead&&r.y-r.r>H){r.dead=true;life=Math.max(0,life-10);document.getElementById('hp').textContent=life;if(life<=0){endGame();break}}
  rocks=rocks.filter(r=>!r.dead);for(const p of parts){p.x+=p.vx;p.y+=p.vy;p.life--}parts=parts.filter(p=>p.life>0);
  document.getElementById('score').textContent=score;
@@ -336,7 +336,7 @@ function draw(){
  requestAnimationFrame(loop)
 }
 function loop(){update();draw()}
-loadProfile(); loadLeaderboard(); setInterval(()=>{syncPlayer();loadLeaderboard()},40000);
+loadProfile(); loadLeaderboard(); setInterval(()=>{saveProfile();loadLeaderboard()},5000);
 loop();
 </script>
 </body>
