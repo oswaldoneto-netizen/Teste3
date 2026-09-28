@@ -354,7 +354,7 @@ loop();
 
 // ===== PVP ONLINE =====
 const pvpScreen=document.getElementById('pvpScreen'), pvpCanvas=document.getElementById('pvpCanvas'), pctx=pvpCanvas.getContext('2d');
-let pvpWS=null,pvpId='',pvpRoom='',pvpRunning=false,pvpEnemy=null,pvpMe={x:.5,hp:100},pvpShots=[],pvpLast=0,pvpMove=0,pvpCountdownTimer=null,pvpAutoFireTimer=null;
+let pvpWS=null,pvpId='',pvpRoom='',pvpRunning=false,pvpEnemy=null,pvpMe={x:.5,hp:100},pvpShots=[],pvpEnemyShots=[],pvpLast=0,pvpMove=0,pvpCountdownTimer=null,pvpAutoFireTimer=null;
 function pvpResize(){pvpCanvas.width=innerWidth*devicePixelRatio;pvpCanvas.height=innerHeight*devicePixelRatio;pvpCanvas.style.width=innerWidth+'px';pvpCanvas.style.height=innerHeight+'px'}
 addEventListener('resize',pvpResize);pvpResize();
 function pvpSetStatus(t){document.getElementById('pvpStatus').textContent=t}
@@ -373,6 +373,7 @@ function pvpConnect(){
    if(m.type==='waiting'){pvpSetStatus('Aguardando adversário...')}
    if(m.type==='match'){pvpRoom=m.room;pvpEnemy=m.enemy;pvpMe={x:m.you.x,hp:m.you.hp};document.getElementById('pvpMenu').style.display='none';document.getElementById('pvpEnemyName').textContent=m.enemy.nick;document.getElementById('pvpEnemyHp').textContent=m.enemy.hp;pvpStartCountdown()}
    if(m.type==='state'&&m.id!==pvpId){pvpEnemy=m.player;document.getElementById('pvpEnemyName').textContent=pvpEnemy.nick;document.getElementById('pvpEnemyHp').textContent=pvpEnemy.hp}
+   if(m.type==='shot'&&m.id!==pvpId){pvpEnemyShots.push({x:m.x*pvpCanvas.width,y:145*devicePixelRatio,v:18*devicePixelRatio,c:pvpEnemy?.c||'#ff4050'})}
    if(m.type==='hit'&&m.target===pvpId){pvpMe.hp=m.hp;document.getElementById('pvpMyHp').textContent=m.hp;pvpHitSnd()}
    if(m.type==='enemyHit'){pvpEnemyHitSnd()}
    if(m.type==='win'){pvpStopTimers();profile.wins=Math.max(profile.wins,+m.wins||0);profile.rank=m.rank||rankForWins(profile.wins);saveProfile();syncPlayer();loadLeaderboard();pvpRunning=false;pvpSetStatus(`🏆 Você venceu! ${profile.rank} • ${profile.wins} vitórias`);pvpWinSnd();document.getElementById('pvpMenu').style.display='flex'}
@@ -382,7 +383,7 @@ function pvpConnect(){
  pvpWS.onclose=()=>{pvpStopTimers();pvpRunning=false;if(pvpScreen.style.display==='block')pvpSetStatus('Conexão encerrada. Tente novamente.')};
 }
 function pvpOpen(){saveProfile();document.getElementById('pvpMyName').textContent=profile.nick||'Player1';pvpScreen.style.display='block';document.getElementById('pvpMenu').style.display='flex';document.getElementById('pvpMyHp').textContent=100;pvpSetStatus('Pronto para procurar adversário.');pvpConnect()}
-function pvpClose(){pvpStopTimers();pvpSend({type:'leave'});pvpRunning=false;pvpScreen.style.display='none';if(pvpWS){pvpWS.close();pvpWS=null}}
+function pvpClose(){pvpStopTimers();pvpSend({type:'leave'});pvpRunning=false;pvpShots=[];pvpEnemyShots=[];pvpScreen.style.display='none';if(pvpWS){pvpWS.close();pvpWS=null}}
 function pvpFire(){if(!pvpRunning)return; initAudio();shotSnd();pvpShots.push({x:pvpMe.x*pvpCanvas.width,y:pvpCanvas.height-145*devicePixelRatio,v:-18*devicePixelRatio,c:current?.c||'#fff'});pvpSend({type:'shoot',x:pvpMe.x})}
 function pvpSetTouchX(ev){if(pvpScreen.style.display!=='block'||!pvpRunning)return;ev.preventDefault();const r=pvpCanvas.getBoundingClientRect();const x=Math.max(.08,Math.min(.92,(ev.clientX-r.left)/r.width));pvpMe.x=x;pvpSend({type:'move',x:pvpMe.x})}
 pvpCanvas.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'){pvpCanvas.setPointerCapture?.(e.pointerId);pvpSetTouchX(e)}} ,{passive:false});
@@ -392,7 +393,7 @@ pvpCanvas.addEventListener('selectstart',e=>e.preventDefault());
 function pvpLoop(t){let dt=Math.min(.04,(t-pvpLast)/1000||0);pvpLast=t;if(pvpRunning&&pvpMove){let dx=pvpMove*dt*2.5;pvpMe.x=Math.max(.08,Math.min(.92,pvpMe.x+dx));pvpSend({type:'move',x:pvpMe.x});}drawPvp();requestAnimationFrame(pvpLoop)}
 function drawPvp(){const W=pvpCanvas.width,H=pvpCanvas.height;pctx.fillStyle='#050914';pctx.fillRect(0,0,W,H);pctx.fillStyle='#0b1b30';pctx.fillRect(0,H/2,W,H/2);pctx.strokeStyle='#17324c';pctx.lineWidth=2;pctx.beginPath();pctx.moveTo(0,H/2);pctx.lineTo(W,H/2);pctx.stroke();
  const meX=pvpMe.x*W, enemyX=(pvpEnemy?.x??.5)*W; drawShipPvp(meX,H-120*devicePixelRatio,current?.c||'#fff',false); if(pvpEnemy)drawShipPvp(enemyX,120*devicePixelRatio,pvpEnemy.c||'#ff4050',true);
- for(const s of pvpShots){s.y+=s.v;pctx.fillStyle=s.c;pctx.shadowBlur=18;pctx.shadowColor=s.c;pctx.beginPath();pctx.arc(s.x,s.y,7*devicePixelRatio,0,7);pctx.fill();pctx.shadowBlur=0} pvpShots=pvpShots.filter(s=>s.y>-20&&s.y<H+20);
+ for(const s of pvpShots){s.y+=s.v;pctx.fillStyle=s.c;pctx.shadowBlur=18;pctx.shadowColor=s.c;pctx.beginPath();pctx.arc(s.x,s.y,7*devicePixelRatio,0,7);pctx.fill();pctx.shadowBlur=0} pvpShots=pvpShots.filter(s=>s.y>-20&&s.y<H+20); for(const s of pvpEnemyShots){s.y+=s.v;pctx.fillStyle=s.c;pctx.shadowBlur=18;pctx.shadowColor=s.c;pctx.beginPath();pctx.arc(s.x,s.y,7*devicePixelRatio,0,7);pctx.fill();pctx.shadowBlur=0} pvpEnemyShots=pvpEnemyShots.filter(s=>s.y>-20&&s.y<H+20);
 }
 function drawShipPvp(x,y,c,flip){pctx.save();pctx.translate(x,y);if(flip)pctx.rotate(Math.PI);pctx.fillStyle=c;pctx.shadowBlur=25;pctx.shadowColor=c;pctx.beginPath();pctx.moveTo(0,-38*devicePixelRatio);pctx.lineTo(32*devicePixelRatio,28*devicePixelRatio);pctx.lineTo(0,18*devicePixelRatio);pctx.lineTo(-32*devicePixelRatio,28*devicePixelRatio);pctx.closePath();pctx.fill();pctx.restore()}
 document.getElementById('pvpBtn').onclick=pvpOpen;document.getElementById('pvpClose').onclick=pvpClose;document.getElementById('pvpStart').onclick=()=>{pvpConnect();pvpSend({type:'join',nick:profile.nick||'Player1',level:profile.level||1,rarity:current?.k||'comum',hp:100,wins:profile.wins})};document.getElementById('pvpBack').onclick=pvpClose;

@@ -19,7 +19,7 @@ function makeRoom(a,b){const room={players:[],started:true};room.players=[a,b];a
 wss.on('connection',ws=>{const id=String(nextId++);const c={id,ws,nick:'Player',level:1,rarity:'comum',x:.5,hp:100,room:null,color:'#fff'};clients.set(id,c);ws.send(JSON.stringify({type:'welcome',id}));ws.on('message',raw=>{let m;try{m=JSON.parse(raw)}catch{return}
  if(m.type==='join'){c.nick=safeNick(m.nick);c.level=+m.level||1;c.rarity=String(m.rarity||'comum');const colors={comum:'#fff',raro:'#39a7ff',epico:'#b85cff',lendario:'#ff9b20',mitico:'#ff263c',secreto:'#ff55ff'};c.color=colors[c.rarity]||'#fff'; if(c.room)return; if(waiting&&waiting.ws.readyState===1&&waiting.id!==c.id){const o=waiting;waiting=null;makeRoom(o,c)}else{waiting=c;ws.send(JSON.stringify({type:'waiting'}))}}
  if(m.type==='move'&&c.room){c.x=Math.max(.08,Math.min(.92,+m.x||.5));broadcast(c.room,{type:'state',id:c.id,player:{id:c.id,nick:c.nick,level:c.level,rarity:c.rarity,x:c.x,hp:c.hp,c:c.color}})}
- if(m.type==='shoot'&&c.room){const o=c.room.players.find(p=>p.id!==c.id);if(!o)return;const dist=Math.abs((+m.x||c.x)-o.x);if(dist<.12){o.hp=Math.max(0,o.hp-20);o.ws.send(JSON.stringify({type:'hit',target:o.id,hp:o.hp}));
+ if(m.type==='shoot'&&c.room){const o=c.room.players.find(p=>p.id!==c.id);if(!o)return;const shotX=Math.max(.08,Math.min(.92,Number.isFinite(+m.x)?+m.x:c.x));broadcast(c.room,{type:'shot',id:c.id,x:shotX});const dist=Math.abs(shotX-o.x);if(dist<.12){o.hp=Math.max(0,o.hp-20);o.ws.send(JSON.stringify({type:'hit',target:o.id,hp:o.hp}));
 c.ws.send(JSON.stringify({type:'enemyHit',target:o.id,hp:o.hp}));if(o.hp<=0){
 const winnerId=c.nick.toLowerCase(), loserId=o.nick.toLowerCase();
 const wp=players[winnerId]||{nick:c.nick,level:c.level,xp:0,wins:0,lastSeen:Date.now()};
