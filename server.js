@@ -5,14 +5,82 @@ let players={};
 const activeUsers=new Map();try{const raw=JSON.parse(fs.readFileSync(DB,'utf8')||'{}'); if(Array.isArray(raw)) for(const p of raw){if(p&&p.nick) players[String(p.nick).toLowerCase()]={...p};} else if(raw&&raw.players&&Array.isArray(raw.players)) for(const p of raw.players){if(p&&p.nick) players[String(p.nick).toLowerCase()]={...p};} else if(raw&&typeof raw==='object') players=raw;}catch(e){players={}}
 function save(){try{fs.writeFileSync(DB,JSON.stringify(players,null,2))}catch(e){}}
 function makePlayerId(){return 'p_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,10)}
-function findPlayer(id,nick,previousNick){if(id&&players[id]) return [id,players[id]]; const names=[previousNick,nick].filter(Boolean).map(x=>String(x).trim().toLowerCase()); for(const key of Object.keys(players)){const p=players[key]; if(p&&p.nick&&names.includes(String(p.nick).trim().toLowerCase())) return [key,p];} return [null,null]}
-function normalizePlayers(){let changed=false; const out={}; for(const [key,p0] of Object.entries(players||{})){if(!p0||!p0.nick)continue; const p={...p0}; if(!p.playerId){p.playerId=makePlayerId();changed=true} const k=p.playerId; const old=out[k]; if(!old || (+p.level||1)>(+old.level||1) || (+p.xp||0)>(+old.xp||0) || (+p.wins||0)>(+old.wins||0)){out[k]={...(old||{}),...p};} } if(Object.keys(out).length!==Object.keys(players||{}).length || changed){players=out;save();} else players=out}
+function normNick(v){return String(v||'').trim().toLowerCase()}
+function mergePlayerRecords(preferredId, nick, previousNick){
+  const names=[previousNick,nick].filter(Boolean).map(normNick);
+  let targetId=preferredId && players[preferredId] ? preferredId : null;
+  // Previous Nick has priority: it proves this is a rename, even if a new
+  // browser-generated playerId was accidentally created in an earlier version.
+  if(previousNick){
+    for(const [key,p] of Object.entries(players)){
+      if(p && (normNick(p.nick)===normNick(previousNick) || (Array.isArray(p.nickHistory)&&p.nickHistory.map(normNick).includes(normNick(previousNick))))){
+        targetId=key; break;
+      }
+    }
+  }
+  if(!targetId && nick){
+    for(const [key,p] of Object.entries(players)){
+      if(p && normNick(p.nick)===normNick(nick)){targetId=key;break;}
+    }
+  }
+  return targetId;
+}
+function findPlayer(id,nick,previousNick){
+  const target=mergePlayerRecords(null,nick,previousNick);
+  if(target) return [target,players[target]];
+  if(id&&players[id]) return [id,players[id]];
+  return [null,null];
+}
+function upsertPlayer(d){
+  const nick=String(d.nick||'').trim().slice(0,16);
+  if(!nick) return null;
+  const suppliedId=String(d.playerId||'').trim();
+  const previousNick=String(d.previousNick||'').trim().slice(0,16);
+  // Rename resolution ALWAYS happens before trusting a newly supplied id.
+  let id=mergePlayerRecords(null,nick,previousNick);
+  if(!id && suppliedId && players[suppliedId]) id=suppliedId;
+  if(!id) id=suppliedId||makePlayerId();
+  let old=players[id]||{};
+  const history=new Set([...(Array.isArray(old.nickHistory)?old.nickHistory:[]), ...(previousNick?[previousNick]:[])].filter(Boolean));
+  const player={...old,playerId:id,nick,nickHistory:[...history].slice(-20),level:Math.max(+old.level||1,+d.level||1),xp:Math.max(+old.xp||0,+d.xp||0),wins:Math.max(+old.wins||0,+d.wins||0),lastSeen:Date.now()};
+  // Remove stale duplicate records created by the old Nick-as-key system or a
+  // previous bad playerId. Merge their progress into the canonical record.
+  for(const [key,p] of Object.entries(players)){
+    if(key===id || !p) continue;
+    const aliases=Array.isArray(p.nickHistory)?p.nickHistory.map(normNick):[];
+    const sameAlias=aliases.some(a=>history.has(a));
+    const samePrevious=previousNick && (normNick(p.nick)===normNick(previousNick)||aliases.includes(normNick(previousNick)));
+    if(sameAlias||samePrevious){
+      player.level=Math.max(+player.level||1,+p.level||1);
+      player.xp=Math.max(+player.xp||0,+p.xp||0);
+      player.wins=Math.max(+player.wins||0,+p.wins||0);
+      for(const h of (p.nickHistory||[])) if(h && !history.has(h)){history.add(h);}
+      delete players[key];
+    }
+  }
+  player.nickHistory=[...history].slice(-20);
+  players[id]=player; save(); return player;
+}
+function normalizePlayers(){
+  let changed=false; const out={};
+  for(const [key,p0] of Object.entries(players||{})){
+    if(!p0||!p0.nick) continue;
+    const p={...p0,playerId:p0.playerId||makePlayerId(),nickHistory:Array.isArray(p0.nickHistory)?p0.nickHistory:[]};
+    const k=p.playerId; const old=out[k];
+    if(!old) out[k]=p; else {
+      out[k]={...old,...p,level:Math.max(+old.level||1,+p.level||1),xp:Math.max(+old.xp||0,+p.xp||0),wins:Math.max(+old.wins||0,+p.wins||0),nickHistory:[...new Set([...(old.nickHistory||[]),...(p.nickHistory||[])])].slice(-20)};
+      changed=true;
+    }
+    if(key!==k||!p0.playerId) changed=true;
+  }
+  players=out; if(changed) save();
+}
 normalizePlayers()
 function rankForWins(w){w=+w||0;if(w>=30)return 'Champion';if(w>=25)return 'Diamante';if(w>=20)return 'Platina';if(w>=15)return 'Ouro';if(w>=10)return 'Prata';if(w>=5)return 'Bronze';return 'Sem Rank'}
 function rankColor(r){return ({'Sem Rank':'#fff','Bronze':'#cd7f32','Prata':'#c0c0c0','Ouro':'#ffd700','Platina':'#7ee6e8','Diamante':'#55b9ff','Champion':'#ff4d9d'})[r]||'#fff'}
 function send(res,code,data,type='application/json'){res.writeHead(code,{'Content-Type':type,'Cache-Control':'no-store'});res.end(type==='application/json'?JSON.stringify(data):data)}
 function readBody(req){return new Promise((ok,bad)=>{let s='';req.on('data',c=>s+=c);req.on('end',()=>{try{ok(JSON.parse(s||'{}'))}catch(e){bad(e)}})})}
-const server=http.createServer(async(req,res)=>{try{if(req.url==='/api/player'&&req.method==='POST'){const d=await readBody(req);const nick=String(d.nick||'').trim().slice(0,16);if(!nick)return send(res,400,{error:'nick'});let [id,old]=findPlayer(String(d.playerId||''),nick,d.previousNick);id=id||String(d.playerId||makePlayerId());old=old||{};players[id]={...old,playerId:id,nick,level:Math.max(old.level||1,+d.level||1),xp:Math.max(old.xp||0,+d.xp||0),wins:Math.max(+old.wins||0,+d.wins||0),lastSeen:Date.now()};save();return send(res,200,{ok:true,...players[id],rank:rankForWins(players[id].wins),rankColor:rankColor(rankForWins(players[id].wins))})}if(req.url==='/api/heartbeat'&&req.method==='POST'){const d=await readBody(req);const nick=String(d.nick||'').trim().slice(0,16);if(nick){let [id,old]=findPlayer(String(d.playerId||''),nick,d.previousNick);id=id||String(d.playerId||makePlayerId());old=old||{};players[id]={...old,playerId:id,nick,level:Math.max(1,+old.level||1),xp:+old.xp||0,wins:+old.wins||0,lastSeen:Date.now()};activeUsers.set(id,Date.now());save();}return send(res,200,{ok:true})}if(req.url==='/api/leaderboard'){const now=Date.now();for(const [id,t] of activeUsers){if(now-t>20000)activeUsers.delete(id);}
+const server=http.createServer(async(req,res)=>{try{if(req.url==='/api/player'&&req.method==='POST'){const d=await readBody(req);const player=upsertPlayer(d);if(!player)return send(res,400,{error:'nick'});activeUsers.set(player.playerId,Date.now());return send(res,200,{ok:true,...player,rank:rankForWins(player.wins),rankColor:rankColor(rankForWins(player.wins))})}if(req.url==='/api/heartbeat'&&req.method==='POST'){const d=await readBody(req);const player=upsertPlayer(d);if(player)activeUsers.set(player.playerId,Date.now());return send(res,200,{ok:true,playerId:player?.playerId||null})}if(req.url==='/api/leaderboard'){const now=Date.now();for(const [id,t] of activeUsers){if(now-t>20000)activeUsers.delete(id);}
 for(const [id,t] of activeUsers){if(players[id])players[id].lastSeen=t;}
 const list=Object.values(players).filter(p=>p&&p.nick).sort((a,b)=>(+b.level||1)-(+a.level||1)||(+b.xp||0)-(+a.xp||0)||(+b.wins||0)-(+a.wins||0)||String(a.nick).localeCompare(String(b.nick))).slice(0,10).map(p=>({...p,wins:+p.wins||0,level:+p.level||1,xp:+p.xp||0,rank:rankForWins(p.wins),rankColor:rankColor(rankForWins(p.wins))}));const online=activeUsers.size;return send(res,200,{players:list,online,total:Object.keys(players).length})}let p=req.url.split('?')[0];if(p==='/')p='/index.html';const f=path.join(__dirname,p);if(!f.startsWith(__dirname)||!fs.existsSync(f)||fs.statSync(f).isDirectory())return send(res,404,'Not found','text/plain');const ext=path.extname(f);const types={'.html':'text/html; charset=utf-8','.js':'text/javascript','.css':'text/css','.json':'application/json'};send(res,200,fs.readFileSync(f),types[ext]||'application/octet-stream')}catch(e){send(res,500,{error:'server'})}});
 const wss=new WebSocketServer({server,path:'/ws'});let nextId=1,waiting=null,rooms=new Map(),clients=new Map();
