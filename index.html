@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>RNG Pedras</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;min-height:100%;font-family:Arial,Helvetica,sans-serif;background:#070b19;color:#fff}body{overflow:hidden;touch-action:none}button{font:inherit}
+*{box-sizing:border-box}html,body{overflow-y:auto;min-height:100vh;margin:0;width:100%;min-height:100%;font-family:Arial,Helvetica,sans-serif;background:#070b19;color:#fff}body{overflow-y:auto;min-height:100vh;overflow:hidden;touch-action:none}button{font:inherit}
 .screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
 #menu{overflow-y:auto;overflow-x:hidden;align-items:flex-start;padding:34px 0 90px;min-height:100dvh;-webkit-overflow-scrolling:touch};background:radial-gradient(circle at 35% 18%,#311a5c 0,#15112e 35%,#071020 72%,#050811 100%)}
 .menuWrap{width:min(92vw,560px);margin:auto}
@@ -48,7 +48,7 @@ canvas{width:100%;height:100%;display:block}.hintPanel{position:fixed;left:50%;b
       <div class="bottomLinks"><span>📜 Histórico</span><span>🏆 Leaderboard Online</span></div>
 <div id="leaderboard" style="margin-top:16px;border:1px solid #283650;border-radius:18px;background:#060b19;padding:14px">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><b>🏆 TOP 10</b><span id="onlineCount" style="color:#55e58a;font-weight:900">🟢 0 online</span></div>
-  <div id="leaderRows" style="display:grid;gap:7px;max-height:520px;overflow-y:auto;padding-right:3px"><div style="color:#7f8da2;text-align:center">Carregando...</div></div>
+  <div id="leaderRows" style="display:grid;gap:7px;max-height:none;overflow:visible;padding-right:3px"><div style="color:#7f8da2;text-align:center">Carregando...</div></div>
 </div>
     </div>
   </div>
