@@ -17,3 +17,9 @@ Build: `npm install`
 Start: `npm start`
 
 Persistent Disk mount path: `/data`
+
+## Online + PvP nesta correção
+- Contador online usa uma sessão temporária separada do `playerId`, evitando que heartbeats de jogadores diferentes sobrescrevam o contador.
+- Jogadores online são deduplicados por conta (`playerId`) e expiram após 20s sem heartbeat.
+- O hitbox PvP foi ampliado e centralizado no corpo do jogador; tiros e habilidades usam a mesma área de colisão.
+- O hitbox visual é mostrado de forma discreta ao redor dos jogadores durante o PvP.
