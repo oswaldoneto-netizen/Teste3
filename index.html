@@ -99,15 +99,15 @@ const R=[
 ];
 const STORES={
  seduc:{name:'RNG SEDUC',pools:{
-  comum:['Thales','Pedro','Kailer','Jaque','nicolas'],
+  comum:['Thales','Pedro','Kailer','Jaque','Nicolas','Henrico'],
   raro:['Guilherme','Bruno','Wlissys','Bruna'],
-  epico:['Pietro','Jadrian','Kenedh'],
+  epico:['Pietro','Jadrian','Kenedy'],
   lendario:['Lipão','Leo'],
   mitico:['RL'],
   secreto:['POLO']
  }},
  mecanico:{name:'RNG MECÂNICO',pools:{
-  comum:['Nicolas','Kevin','José','Bagre'],
+  comum:['Nicolas','Kevin','José','Bagre','Henrico'],
   raro:['Murilinho','G7','Tadala'],
   epico:['Vini','Kenedy','Jadrian','Felipinho'],
   lendario:['Da Jega','Bahia'],
@@ -164,30 +164,53 @@ function showResult(r,name){
 }
 function special(r){
  try{
-  if(r.k==='criador'){
-   initAudio();
-   const f=document.getElementById('flash');
-   f.style.background='#ffe100';
-   if(f.animate)f.animate([{opacity:0},{opacity:.85},{opacity:0}],{duration:900});
-   beep(660,.12,'square',.06,440);
-   setTimeout(()=>{try{beep(990,.18,'sine',.05,220)}catch(e){}},120);
-   return;
-  }
-  if(r.k!=='mitico'&&r.k!=='secreto')return;
   initAudio();
   const f=document.getElementById('flash');
-  f.style.background=r.k==='secreto'?'linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,violet)':'#ff173d';
-  if(f.animate)f.animate([{opacity:0},{opacity:.9},{opacity:0}],{duration:1200});
-  if(r.k==='mitico'){
-   beep(220,.15,'sawtooth',.06,440); setTimeout(()=>{try{beep(440,.18,'sine',.05,660)}catch(e){}},120); setTimeout(()=>{try{beep(880,.25,'sine',.04,-120)}catch(e){}},260);
-  }else{
-   beep(330,.13,'square',.055,330); setTimeout(()=>{try{beep(660,.13,'triangle',.05,660)}catch(e){}},100); setTimeout(()=>{try{beep(990,.22,'sine',.045,-250)}catch(e){}},210);
+
+  // Comum, Raro, Épico e Lendário: som padrão de recompensa.
+  if(['comum','raro','epico','lendario'].includes(r.k)){
+   beep(520,.10,'sine',.035,120);
+   setTimeout(()=>{try{beep(700,.12,'sine',.03,80)}catch(e){}},90);
+   return;
+  }
+
+  // CRIADOR: efeito amarelo forte + som exclusivo e mais alto.
+  if(r.k==='criador'){
+   f.style.background='linear-gradient(90deg,#fff700,#ffe100,#ffb300,#fff700)';
+   if(f.animate)f.animate([{opacity:0},{opacity:1},{opacity:.72},{opacity:0}],{duration:1500});
+   beep(440,.16,'square',.12,660);
+   setTimeout(()=>{try{beep(880,.20,'sawtooth',.11,440)}catch(e){}},130);
+   setTimeout(()=>{try{beep(1320,.28,'sine',.10,-180)}catch(e){}},300);
    if(Number.isFinite(W)&&Number.isFinite(H)&&W>0&&H>0){
-    for(let i=0;i<30;i++)parts.push({x:W/2,y:H*.35,t:'',life:35,vx:(Math.random()-.5)*10,vy:(Math.random()-.5)*10});
+    for(let i=0;i<80;i++)parts.push({x:W/2,y:H*.35,t:'',life:55,vx:(Math.random()-.5)*15,vy:(Math.random()-.5)*15});
+   }
+   return;
+  }
+
+  // MÍTICO: som diferente e mais alto + flash vermelho.
+  if(r.k==='mitico'){
+   f.style.background='#ff173d';
+   if(f.animate)f.animate([{opacity:0},{opacity:1},{opacity:0}],{duration:1300});
+   beep(220,.16,'sawtooth',.11,440);
+   setTimeout(()=>{try{beep(440,.20,'sine',.10,660)}catch(e){}},120);
+   setTimeout(()=>{try{beep(880,.28,'sine',.09,-120)}catch(e){}},270);
+   return;
+  }
+
+  // SECRETO: som exclusivo, mais alto + efeito arco-íris.
+  if(r.k==='secreto'){
+   f.style.background='linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,violet)';
+   if(f.animate)f.animate([{opacity:0},{opacity:1},{opacity:.75},{opacity:0}],{duration:1700});
+   beep(330,.15,'square',.13,330);
+   setTimeout(()=>{try{beep(660,.17,'triangle',.12,660)}catch(e){}},100);
+   setTimeout(()=>{try{beep(990,.25,'sine',.11,-250)}catch(e){}},220);
+   if(Number.isFinite(W)&&Number.isFinite(H)&&W>0&&H>0){
+    for(let i=0;i<60;i++)parts.push({x:W/2,y:H*.35,t:'',life:50,vx:(Math.random()-.5)*13,vy:(Math.random()-.5)*13});
    }
   }
  }catch(e){ console.warn('special effect skipped',e); }
 }
+
 function setDisplay(r,name,rollingView=false){
  const n=document.getElementById('resultName'), rr=document.getElementById('resultRarity');
  n.textContent=name; rr.textContent=r.n;
