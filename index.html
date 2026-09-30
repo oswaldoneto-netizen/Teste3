@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>RNG Pedras</title>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2360233538835348" crossorigin="anonymous"></script>
 <style>
 *{box-sizing:border-box}html,body{overflow-y:auto;min-height:100vh;margin:0;width:100%;min-height:100%;font-family:Arial,Helvetica,sans-serif;background:#070b19;color:#fff}body{overflow-y:auto;min-height:100vh;overflow:hidden;touch-action:none}button{font:inherit}
 .screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
@@ -31,7 +32,7 @@ canvas{width:100%;height:100%;display:block}.hintPanel{position:fixed;left:50%;b
 
 <section id="menu" class="screen">
   <div class="menuWrap">
-    <div class="header"><h1>🎲 RNG DE APELIDOS</h1><p>Gaste pontos para rolar novos apelidos e enfrente pedras espaciais!</p></div>
+    <div class="header"><h1>🎲 RNG DE APELIDOS</h1><div style="font-weight:1000;color:#ffe100;margin-top:4px">👑 RNG CRIADO POR OSWALDO</div><p>Gaste pontos para rolar novos apelidos e enfrente pedras espaciais!</p></div>
     <div class="playerCard">
       <div class="playerRow"><label>👤 Player:</label><input class="playerInput" id="playerName" value="Player1" maxlength="16"></div>
       <div class="stats"><div class="stat gold">🪙 <span id="menuScore">100</span> Pontos</div><div class="stat blue">⭐ Nível <span id="menuLevel">1</span></div><div class="muted">XP: <span id="menuXp">0</span>/100</div></div>
@@ -39,7 +40,7 @@ canvas{width:100%;height:100%;display:block}.hintPanel{position:fixed;left:50%;b
     <div class="mainCard">
       <div class="resultBox"><div id="resultName" class="resultName">???</div><div id="resultRarity" class="resultRarity"></div></div>
       <div class="resultTitle"><small>RESULTADO</small><b id="resultText">Pronto para rolar</b></div>
-      <div class="buttons"><button class="btn roll" id="menuRoll">🎲 ROLAR</button><button class="btn play" id="playBtn">🚀 JOGAR SHOOTER</button><button class="btn pvp" id="pvpBtn">⚔️ PVP ONLINE</button></div><div class="rollHelp">A primeira rolagem é grátis. Depois, cada roll custa <b>100 pontos</b>. Derrote pedras no shooter para ganhar pontos.</div>
+      <div class="buttons"><button class="btn roll" id="menuRoll">🎲 ROLAR</button><button class="btn play" id="playBtn">🚀 JOGAR SHOOTER</button><button class="btn pvp" id="pvpBtn">⚔️ PVP ONLINE</button></div><div id="storeInfo" style="margin:10px 0 2px;padding:10px 12px;border:1px solid #283650;border-radius:12px;background:#070d1e;text-align:center;font-weight:1000;color:#dce7f5">🏪 RNG SEDUC • atualiza em 15:00</div><div class="rollHelp">A primeira rolagem é grátis. Depois, cada roll custa <b>100 pontos</b>. Derrote pedras no shooter para ganhar pontos.</div>
       <div class="deviceTitle">ESCOLHA O CONTROLE</div>
       <div class="deviceButtons"><button class="deviceBtn active" id="pcMode">🖥️ COMPUTADOR</button><button class="deviceBtn" id="mobileMode">📱 CELULAR</button></div>
       <div class="rarityGrid">
@@ -50,6 +51,10 @@ canvas{width:100%;height:100%;display:block}.hintPanel{position:fixed;left:50%;b
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><b>🏆 TOP 10</b><span id="onlineCount" style="color:#55e58a;font-weight:900">🟢 0 online</span></div>
   <div id="leaderRows" style="display:grid;gap:7px;max-height:none;overflow:visible;padding-right:3px"><div style="color:#7f8da2;text-align:center">Carregando...</div></div>
 </div>
+      <div id="adsenseBottom" style="margin-top:16px;padding:12px;border:1px solid #283650;border-radius:18px;background:#060b19;text-align:center">
+        <div style="color:#718099;font-size:11px;font-weight:1000;letter-spacing:3px;margin-bottom:8px">PUBLICIDADE</div>
+        <div style="min-height:90px;display:flex;align-items:center;justify-content:center;color:#5f6e84;font-size:12px">📢 PUBLICIDADE • aguardando aprovação do Google</div>
+      </div>
     </div>
   </div>
 </section>
@@ -84,13 +89,40 @@ canvas{width:100%;height:100%;display:block}.hintPanel{position:fixed;left:50%;b
 
 <script>
 const R=[
- {k:'comum',n:'COMUM',c:'#ffffff',p:50,d:8,h:100,names:['Nicolas','Henrico','Thales','Pedro']},
- {k:'raro',n:'RARO',c:'#39a7ff',p:25,d:14,h:130,names:['Wlissys','Jaque','Bruno','Bagre']},
- {k:'epico',n:'ÉPICO',c:'#b85cff',p:15,d:22,h:165,names:['Jadrian','Felipin','Kenedy','Vini']},
- {k:'lendario',n:'LENDÁRIO',c:'#ff9b20',p:5,d:34,h:210,names:['Leo','Lipão','Jão']},
- {k:'mitico',n:'MÍTICO',c:'#ff263c',p:1,d:55,h:270,names:['RL','FEFA']},
- {k:'secreto',n:'SECRETO',c:'rgb',p:.5,d:90,h:360,names:['POLO']}
+ {k:'comum',n:'COMUM',c:'#ffffff',p:50,d:8,h:100,names:[]},
+ {k:'raro',n:'RARO',c:'#39a7ff',p:25,d:14,h:130,names:[]},
+ {k:'epico',n:'ÉPICO',c:'#b85cff',p:15,d:22,h:165,names:[]},
+ {k:'lendario',n:'LENDÁRIO',c:'#ff9b20',p:5,d:34,h:210,names:[]},
+ {k:'mitico',n:'MÍTICO',c:'#ff263c',p:1,d:55,h:270,names:[]},
+ {k:'secreto',n:'SECRETO',c:'rgb',p:.5,d:90,h:360,names:[]},
+ {k:'criador',n:'CRIADOR',c:'#ffe100',p:.1,d:999,h:999,names:['Oswaldo'],shots:20,creator:true}
 ];
+const STORES={
+ seduc:{name:'RNG SEDUC',pools:{
+  comum:['Thales','Pedro','Kailer','Jaque','nicolas'],
+  raro:['Guilherme','Bruno','Wlissys','Bruna'],
+  epico:['Pietro','Jadrian','Kenedh'],
+  lendario:['Lipão','Leo'],
+  mitico:['RL'],
+  secreto:['POLO']
+ }},
+ mecanico:{name:'RNG MECÂNICO',pools:{
+  comum:['Nicolas','Kevin','José','Bagre'],
+  raro:['Murilinho','G7','Tadala'],
+  epico:['Vini','Kenedy','Jadrian','Felipinho'],
+  lendario:['Da Jega','Bahia'],
+  mitico:['FEFA'],
+  secreto:['Serjão']
+ }}
+};
+const STORE_INTERVAL=15*60*1000;
+function getActiveStore(){return Math.floor(Date.now()/STORE_INTERVAL)%2===0?'seduc':'mecanico'}
+function getStoreRarity(r){return STORES[getActiveStore()].pools[r.k]||[]}
+function refreshStoreUI(){
+ const key=getActiveStore(), store=STORES[key], remain=STORE_INTERVAL-(Date.now()%STORE_INTERVAL);
+ const total=Math.max(0,Math.ceil(remain/1000)), mm=String(Math.floor(total/60)).padStart(2,'0'), ss=String(total%60).padStart(2,'0');
+ const el=document.getElementById('storeInfo'); if(el)el.textContent='🏪 '+store.name+' • troca em '+mm+':'+ss;
+}
 let current=null, currentName='???', rolling=false, coins=100, hasCharacter=false, rollTimer=null, rollToken=0;
 const PROFILE_KEY='rng_pedras_profile_v2';
 let profile={playerId:'',nick:'',previousNick:'',level:1,xp:0,wins:0,rank:'Sem Rank'};
@@ -98,10 +130,11 @@ function rankForWins(w){w=+w||0;if(w>=30)return 'Champion';if(w>=25)return 'Diam
 function rankColor(r){return ({'Sem Rank':'#fff','Bronze':'#cd7f32','Prata':'#c0c0c0','Ouro':'#ffd700','Platina':'#7ee6e8','Diamante':'#55b9ff','Champion':'#ff4d9d'})[r]||'#fff'}
 function loadProfile(){try{const p=JSON.parse(localStorage.getItem(PROFILE_KEY)||'null');if(p){profile.playerId=String(p.playerId||''); profile.nick=String(p.nick||'').slice(0,16); profile.previousNick=String(p.previousNick||profile.nick||'').slice(0,16);profile.level=Math.max(1,+p.level||1);profile.xp=Math.max(0,+p.xp||0);profile.wins=Math.max(0,+p.wins||0);profile.rank=String(p.rank||rankForWins(profile.wins));}}catch(e){} const el=document.getElementById('playerName'); if(!profile.playerId){const m=document.cookie.match(/(?:^|; )rngPlayerId=([^;]+)/); profile.playerId=m?decodeURIComponent(m[1]):'p_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,10); document.cookie='rngPlayerId='+encodeURIComponent(profile.playerId)+'; Max-Age=31536000; Path=/; SameSite=Lax';} if(profile.nick) el.value=profile.nick; updateProfileUI(); syncPlayer();}
 function saveProfile(){const old=profile.nick; profile.nick=(document.getElementById('playerName').value||'').trim().slice(0,16)||'Player1'; if(!profile.playerId){profile.playerId='p_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,10); document.cookie='rngPlayerId='+encodeURIComponent(profile.playerId)+'; Max-Age=31536000; Path=/; SameSite=Lax';} if(old && old!==profile.nick) profile.previousNick=old; try{localStorage.setItem(PROFILE_KEY,JSON.stringify(profile));}catch(e){} updateProfileUI(); syncPlayer();}
-function updateProfileUI(){document.getElementById('menuLevel').textContent=profile.level;document.getElementById('menuXp').textContent=profile.xp;document.getElementById('hudName').textContent=profile.nick||'Player1';}
-function addXP(n){profile.xp+=n;while(profile.xp>=100){profile.xp-=100;profile.level++;} saveProfile();}
+function xpNeededForLevel(level){return Math.max(1,Number(level)||1)*100;}
+function updateProfileUI(){const need=xpNeededForLevel(profile.level);document.getElementById('menuLevel').textContent=profile.level;document.getElementById('menuXp').textContent=profile.xp+'/'+need;document.getElementById('hudName').textContent=profile.nick||'Player1';}
+function addXP(n){profile.xp+=Math.max(0,Number(n)||0);while(profile.xp>=xpNeededForLevel(profile.level)){profile.xp-=xpNeededForLevel(profile.level);profile.level++;}updateProfileUI();saveProfile();}
 async function syncPlayer(){if(!profile.nick)return;try{const r=await fetch('/api/player',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({playerId:profile.playerId,nick:profile.nick,previousNick:profile.previousNick,level:profile.level,xp:profile.xp,wins:profile.wins})});const d=await r.json();if(d.playerId&&d.playerId!==profile.playerId){profile.playerId=d.playerId;document.cookie='rngPlayerId='+encodeURIComponent(profile.playerId)+'; Max-Age=31536000; Path=/; SameSite=Lax';try{localStorage.setItem(PROFILE_KEY,JSON.stringify(profile));}catch(e){}}}catch(e){}}
-async function loadLeaderboard(){try{const r=await fetch('/api/leaderboard',{cache:'no-store'});if(!r.ok)return;const d=await r.json();document.getElementById('onlineCount').textContent='🟢 '+(d.online||0)+' online';const rows=(d.players||[]).slice(0,10);document.getElementById('leaderRows').innerHTML=rows.map((p,i)=>{const r=p.rank||rankForWins(p.wins||0);const col=p.rankColor||rankColor(r);return `<div style="display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:8px;align-items:center;background:#0b1225;border-radius:10px;padding:10px;min-height:44px"><b>${i+1}º</b><span style="font-weight:900;color:${col};text-shadow:0 0 10px ${col}44;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.nick)} <small style="opacity:.9">• ${r}</small></span><span style="color:#42a9ff;font-weight:900;white-space:nowrap">Nv.${p.level} • ${p.xp}/100 XP</span></div>`}).join('')||'<div style="color:#7f8da2;text-align:center">Nenhum jogador salvo</div>';}catch(e){}}
+async function loadLeaderboard(){try{const r=await fetch('/api/leaderboard',{cache:'no-store'});if(!r.ok)return;const d=await r.json();document.getElementById('onlineCount').textContent='🟢 '+(d.online||0)+' online';const rows=(d.players||[]).slice(0,10);document.getElementById('leaderRows').innerHTML=rows.map((p,i)=>{const r=p.rank||rankForWins(p.wins||0);const col=p.rankColor||rankColor(r);return `<div style="display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:8px;align-items:center;background:#0b1225;border-radius:10px;padding:10px;min-height:44px"><b>${i+1}º</b><span style="font-weight:900;color:${col};text-shadow:0 0 10px ${col}44;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.nick)} <small style="opacity:.9">• ${r}</small></span><span style="color:#42a9ff;font-weight:900;white-space:nowrap">Nv.${p.level} • ${p.xp}/${xpNeededForLevel(p.level||1)} XP</span></div>`}).join('')||'<div style="color:#7f8da2;text-align:center">Nenhum jogador salvo</div>';}catch(e){}}
 function esc(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[c]));}
 
 const menu=document.getElementById('menu'), panel=document.getElementById('rngPanel');
@@ -130,17 +163,30 @@ function showResult(r,name){
  document.getElementById('powerName').textContent=name+' • '+r.n+' • '+shotCountFor(r)+' TIRO'+(shotCountFor(r)>1?'S':'');
 }
 function special(r){
- if(r.k!=='mitico'&&r.k!=='secreto')return;
- initAudio();
- const f=document.getElementById('flash');
- f.style.background=r.k==='secreto'?'linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,violet)':'#ff173d';
- f.animate([{opacity:0},{opacity:.9},{opacity:0}],{duration:1200});
- if(r.k==='mitico'){
-  beep(220,.15,'sawtooth',.06,440); setTimeout(()=>beep(440,.18,'sine',.05,660),120); setTimeout(()=>beep(880,.25,'sine',.04,-120),260);
- }else{
-  beep(330,.13,'square',.055,330); setTimeout(()=>beep(660,.13,'triangle',.05,660),100); setTimeout(()=>beep(990,.22,'sine',.045,-250),210);
-  for(let i=0;i<60;i++)parts.push({x:W/2,y:H*.35,t:'',life:50,vx:(Math.random()-.5)*13,vy:(Math.random()-.5)*13});
- }
+ try{
+  if(r.k==='criador'){
+   initAudio();
+   const f=document.getElementById('flash');
+   f.style.background='#ffe100';
+   if(f.animate)f.animate([{opacity:0},{opacity:.85},{opacity:0}],{duration:900});
+   beep(660,.12,'square',.06,440);
+   setTimeout(()=>{try{beep(990,.18,'sine',.05,220)}catch(e){}},120);
+   return;
+  }
+  if(r.k!=='mitico'&&r.k!=='secreto')return;
+  initAudio();
+  const f=document.getElementById('flash');
+  f.style.background=r.k==='secreto'?'linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,violet)':'#ff173d';
+  if(f.animate)f.animate([{opacity:0},{opacity:.9},{opacity:0}],{duration:1200});
+  if(r.k==='mitico'){
+   beep(220,.15,'sawtooth',.06,440); setTimeout(()=>{try{beep(440,.18,'sine',.05,660)}catch(e){}},120); setTimeout(()=>{try{beep(880,.25,'sine',.04,-120)}catch(e){}},260);
+  }else{
+   beep(330,.13,'square',.055,330); setTimeout(()=>{try{beep(660,.13,'triangle',.05,660)}catch(e){}},100); setTimeout(()=>{try{beep(990,.22,'sine',.045,-250)}catch(e){}},210);
+   if(Number.isFinite(W)&&Number.isFinite(H)&&W>0&&H>0){
+    for(let i=0;i<30;i++)parts.push({x:W/2,y:H*.35,t:'',life:35,vx:(Math.random()-.5)*10,vy:(Math.random()-.5)*10});
+   }
+  }
+ }catch(e){ console.warn('special effect skipped',e); }
 }
 function setDisplay(r,name,rollingView=false){
  const n=document.getElementById('resultName'), rr=document.getElementById('resultRarity');
@@ -176,8 +222,10 @@ function startRoll(){
   const resultText=document.getElementById('resultText');
   const rollButton=document.getElementById('menuRoll');
   const finalR=pick();
-  const finalName=finalR.names[Math.floor(Math.random()*finalR.names.length)];
-  const names=R.flatMap(r=>r.names);
+  const finalPool=finalR.k==='criador'?['Oswaldo']:getStoreRarity(finalR);
+  const finalName=finalPool[Math.floor(Math.random()*finalPool.length)];
+  const activeStore=STORES[getActiveStore()];
+  const names=R.flatMap(r=>r.k==='criador'?['Oswaldo']:(activeStore.pools[r.k]||[]));
 
   let step=0;
   const total=52;
@@ -229,7 +277,7 @@ function startRoll(){
     }
     showResult(finalR,finalName);
     resultText.textContent=finalName+' • '+finalR.n;
-    special(finalR);
+    try{special(finalR)}catch(e){console.warn(e)}
     rolling=false;
     rollButton.disabled=false;
     rollButton.textContent=hasCharacter?'🎲 ROLAR (100 Pts)':'🎲 ROLAR';
@@ -243,7 +291,7 @@ function startRoll(){
     do{name=names[Math.floor(Math.random()*names.length)];}
     while(name===lastName && names.length>1);
     lastName=name;
-    const r=R.find(x=>x.names.includes(name))||R[0];
+    const r=name==='Oswaldo'?R.find(x=>x.k==='criador'):(R.find(x=>(STORES[getActiveStore()].pools[x.k]||[]).includes(name))||R[0]);
     displayRolling(name,r);
     step++;
 
@@ -312,7 +360,7 @@ let lastShotAt=0, burstReadyAt=0, shieldReadyAt=0, shieldHits=0, shieldActive=fa
 const NORMAL_SHOT_COOLDOWN=0, BURST_COOLDOWN=8000, SHIELD_COOLDOWN=12000;
 function resize(){W=canvas.width=innerWidth*devicePixelRatio;H=canvas.height=innerHeight*devicePixelRatio;canvas.style.width=innerWidth+'px';canvas.style.height=innerHeight+'px';player.x=W/2;player.y=H-100*devicePixelRatio}
 addEventListener('resize',resize);resize();
-function shotCountFor(r){const map={comum:1,raro:2,epico:3,lendario:4,mitico:5,secreto:6};return map[r.k]||1}
+function shotCountFor(r){const map={comum:1,raro:2,epico:3,lendario:4,mitico:5,secreto:6,criador:20};return r&&r.shots||map[r?.k]||1}
 function resetGame(){score=0;life=current?current.h:100;rocks=[];shots=[];parts=[];spawn=1;gameOver=false;lastShotAt=0;burstReadyAt=0;shieldReadyAt=0;shieldHits=0;shieldActive=false;player.x=W/2;player.y=H-100*devicePixelRatio;document.getElementById('score').textContent=0;document.getElementById('hp').textContent=life;document.getElementById('shotCount').textContent=shotCountFor(current);document.getElementById('gameOver').style.display='none';document.getElementById('powerName').textContent=currentName+' • '+current.n+' • '+shotCountFor(current)+' TIRO'+(shotCountFor(current)>1?'S':''); spawnRock();}
 function fireProjectiles(x,y,count=shotCountFor(current),ignoreCooldown=false){
  if(gameOver)return false;
@@ -389,7 +437,7 @@ function draw(){
  requestAnimationFrame(loop)
 }
 function loop(){update();draw()}
-loadProfile(); loadLeaderboard(); setInterval(()=>{saveProfile();fetch('/api/heartbeat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({playerId:profile.playerId,nick:profile.nick,previousNick:profile.previousNick})}).catch(()=>{});loadLeaderboard()},5000);
+loadProfile(); loadLeaderboard(); refreshStoreUI(); setInterval(refreshStoreUI,1000); setInterval(()=>{saveProfile();fetch('/api/heartbeat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({playerId:profile.playerId,nick:profile.nick,previousNick:profile.previousNick})}).catch(()=>{});loadLeaderboard()},5000);
 loop();
 
 // ===== PVP ONLINE =====
