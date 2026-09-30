@@ -1,9 +1,17 @@
 const http=require('http'),fs=require('fs'),path=require('path');
 const {WebSocketServer}=require('ws');
-const PORT=process.env.PORT||3000, DB=path.join(__dirname,'players.json');
+const PORT=process.env.PORT||3000;
+// Use Render Persistent Disk (recommended mount path: /data).
+// You can override with PERSISTENT_DATA_DIR.
+const DATA_DIR=process.env.PERSISTENT_DATA_DIR||'/data';
+const LOCAL_DB=path.join(__dirname,'players.json');
+let DB=path.join(DATA_DIR,'players.json');
+try{fs.mkdirSync(DATA_DIR,{recursive:true});}catch(e){DB=LOCAL_DB; console.warn('Persistent disk not mounted; using local players.json.');}
+// On first boot with a persistent disk, migrate the existing save once.
+try{if(!fs.existsSync(DB)&&fs.existsSync(LOCAL_DB)){fs.copyFileSync(LOCAL_DB,DB);}}catch(e){}
 let players={};
 const activeUsers=new Map();try{const raw=JSON.parse(fs.readFileSync(DB,'utf8')||'{}'); if(Array.isArray(raw)) for(const p of raw){if(p&&p.nick) players[String(p.nick).toLowerCase()]={...p};} else if(raw&&raw.players&&Array.isArray(raw.players)) for(const p of raw.players){if(p&&p.nick) players[String(p.nick).toLowerCase()]={...p};} else if(raw&&typeof raw==='object') players=raw;}catch(e){players={}}
-function save(){try{fs.writeFileSync(DB,JSON.stringify(players,null,2))}catch(e){}}
+function save(){try{fs.writeFileSync(DB,JSON.stringify(players,null,2))}catch(e){console.error('Save failed:',e.message)}}
 function makePlayerId(){return 'p_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,10)}
 function normNick(v){return String(v||'').trim().toLowerCase()}
 function mergePlayerRecords(preferredId, nick, previousNick){
