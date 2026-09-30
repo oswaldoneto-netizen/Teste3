@@ -1,22 +1,19 @@
-# RNG Pedras Online — TOP 10 persistente
+# RNG Online — Leaderboard TOP 10 corrigido
 
-Esta versão mantém o leaderboard e o progresso dos jogadores depois de reiniciar/redeployar o serviço, **desde que o Render Persistent Disk esteja configurado**.
+Esta versão corrige o bug em que jogadores desapareciam do TOP 10.
+
+- Cada jogador é identificado pelo `playerId` persistente.
+- Dois jogadores com o mesmo nível continuam sendo dois jogadores diferentes.
+- Dois jogadores com o mesmo Nick também não são fundidos automaticamente.
+- Troca de Nick continua sendo reconhecida usando `previousNick`/`nickHistory` quando o ID antigo não está disponível.
+- O leaderboard sempre retorna até 10 jogadores reais.
+- Celular e PC consultam a mesma lista no servidor.
+- Se houver Persistent Disk montado em `/data`, o save fica em `/data/players.json`.
 
 ## Render
 
-- Build Command: `npm install`
-- Start Command: `npm start`
-- Adicione um **Persistent Disk** ao Web Service.
-- Mount Path: `/data`
+Build: `npm install`
 
-O servidor grava o save em `/data/players.json`.
+Start: `npm start`
 
-Se quiser usar outro caminho, defina a variável de ambiente:
-`PERSISTENT_DATA_DIR=/seu/caminho`
-
-### Importante
-Na primeira inicialização, se `/data/players.json` ainda não existir e existir um `players.json` antigo junto do código, ele é copiado para o disco persistente. Depois disso, o arquivo do disco passa a ser o save principal.
-
-**Não apague o Persistent Disk nem o `/data/players.json`.**
-
-Players online continuam sendo temporários: após reinício, o contador começa em 0 e volta a contar conforme os jogadores entram.
+Persistent Disk mount path: `/data`

@@ -1,42 +1,28 @@
 const http=require('http'),fs=require('fs'),path=require('path');
 const {WebSocketServer}=require('ws');
 const PORT=process.env.PORT||3000;
-// Use Render Persistent Disk (recommended mount path: /data).
-// You can override with PERSISTENT_DATA_DIR.
-const DATA_DIR=process.env.PERSISTENT_DATA_DIR||'/data';
-const LOCAL_DB=path.join(__dirname,'players.json');
-let DB=path.join(DATA_DIR,'players.json');
-try{fs.mkdirSync(DATA_DIR,{recursive:true});}catch(e){DB=LOCAL_DB; console.warn('Persistent disk not mounted; using local players.json.');}
-// On first boot with a persistent disk, migrate the existing save once.
-try{if(!fs.existsSync(DB)&&fs.existsSync(LOCAL_DB)){fs.copyFileSync(LOCAL_DB,DB);}}catch(e){}
+const DATA_DIR=fs.existsSync('/data')?'/data':__dirname;
+const DB=path.join(DATA_DIR,'players.json');
 let players={};
 const activeUsers=new Map();try{const raw=JSON.parse(fs.readFileSync(DB,'utf8')||'{}'); if(Array.isArray(raw)) for(const p of raw){if(p&&p.nick) players[String(p.nick).toLowerCase()]={...p};} else if(raw&&raw.players&&Array.isArray(raw.players)) for(const p of raw.players){if(p&&p.nick) players[String(p.nick).toLowerCase()]={...p};} else if(raw&&typeof raw==='object') players=raw;}catch(e){players={}}
-function save(){try{fs.writeFileSync(DB,JSON.stringify(players,null,2))}catch(e){console.error('Save failed:',e.message)}}
+function save(){try{fs.writeFileSync(DB,JSON.stringify(players,null,2))}catch(e){}}
 function makePlayerId(){return 'p_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,10)}
 function normNick(v){return String(v||'').trim().toLowerCase()}
-function mergePlayerRecords(preferredId, nick, previousNick){
-  const names=[previousNick,nick].filter(Boolean).map(normNick);
-  let targetId=preferredId && players[preferredId] ? preferredId : null;
-  // Previous Nick has priority: it proves this is a rename, even if a new
-  // browser-generated playerId was accidentally created in an earlier version.
-  if(previousNick){
+function findByNickOrHistory(nick, previousNick){
+  const nn=normNick(nick), pp=normNick(previousNick);
+  if(pp){
     for(const [key,p] of Object.entries(players)){
-      if(p && (normNick(p.nick)===normNick(previousNick) || (Array.isArray(p.nickHistory)&&p.nickHistory.map(normNick).includes(normNick(previousNick))))){
-        targetId=key; break;
-      }
+      if(p && (normNick(p.nick)===pp || (Array.isArray(p.nickHistory)&&p.nickHistory.map(normNick).includes(pp)))) return key;
     }
   }
-  if(!targetId && nick){
-    for(const [key,p] of Object.entries(players)){
-      if(p && normNick(p.nick)===normNick(nick)){targetId=key;break;}
-    }
-  }
-  return targetId;
+  return null;
 }
 function findPlayer(id,nick,previousNick){
-  const target=mergePlayerRecords(null,nick,previousNick);
-  if(target) return [target,players[target]];
-  if(id&&players[id]) return [id,players[id]];
+  // The persistent playerId is the identity. Never merge two accounts just
+  // because they happen to have the same Nick.
+  if(id && players[id]) return [id,players[id]];
+  const byRename=findByNickOrHistory(nick,previousNick);
+  if(byRename) return [byRename,players[byRename]];
   return [null,null];
 }
 function upsertPlayer(d){
@@ -44,30 +30,28 @@ function upsertPlayer(d){
   if(!nick) return null;
   const suppliedId=String(d.playerId||'').trim();
   const previousNick=String(d.previousNick||'').trim().slice(0,16);
-  // Rename resolution ALWAYS happens before trusting a newly supplied id.
-  let id=mergePlayerRecords(null,nick,previousNick);
-  if(!id && suppliedId && players[suppliedId]) id=suppliedId;
+
+  // Identity rules:
+  // 1) Existing playerId always wins.
+  // 2) If this is a rename from an older client, previousNick/history can
+  //    recover the old account when the browser lost its cookie.
+  // 3) A matching current Nick alone NEVER merges two different accounts.
+  let id=suppliedId && players[suppliedId] ? suppliedId : null;
+  if(!id && previousNick) id=findByNickOrHistory(nick,previousNick);
   if(!id) id=suppliedId||makePlayerId();
-  let old=players[id]||{};
+
+  const old=players[id]||{};
   const history=new Set([...(Array.isArray(old.nickHistory)?old.nickHistory:[]), ...(previousNick?[previousNick]:[])].filter(Boolean));
-  const player={...old,playerId:id,nick,nickHistory:[...history].slice(-20),level:Math.max(+old.level||1,+d.level||1),xp:Math.max(+old.xp||0,+d.xp||0),wins:Math.max(+old.wins||0,+d.wins||0),lastSeen:Date.now()};
-  // Remove stale duplicate records created by the old Nick-as-key system or a
-  // previous bad playerId. Merge their progress into the canonical record.
-  for(const [key,p] of Object.entries(players)){
-    if(key===id || !p) continue;
-    const aliases=Array.isArray(p.nickHistory)?p.nickHistory.map(normNick):[];
-    const sameAlias=aliases.some(a=>history.has(a));
-    const samePrevious=previousNick && (normNick(p.nick)===normNick(previousNick)||aliases.includes(normNick(previousNick)));
-    if(sameAlias||samePrevious){
-      player.level=Math.max(+player.level||1,+p.level||1);
-      player.xp=Math.max(+player.xp||0,+p.xp||0);
-      player.wins=Math.max(+player.wins||0,+p.wins||0);
-      for(const h of (p.nickHistory||[])) if(h && !history.has(h)){history.add(h);}
-      delete players[key];
-    }
-  }
-  player.nickHistory=[...history].slice(-20);
-  players[id]=player; save(); return player;
+  const player={
+    ...old, playerId:id, nick, nickHistory:[...history].slice(-20),
+    level:Math.max(+old.level||1,+d.level||1),
+    xp:Math.max(+old.xp||0,+d.xp||0),
+    wins:Math.max(+old.wins||0,+d.wins||0),
+    lastSeen:Date.now()
+  };
+  players[id]=player;
+  save();
+  return player;
 }
 function normalizePlayers(){
   let changed=false; const out={};
