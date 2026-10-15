@@ -23,3 +23,13 @@ Persistent Disk mount path: `/data`
 - Jogadores online são deduplicados por conta (`playerId`) e expiram após 20s sem heartbeat.
 - O hitbox PvP foi ampliado e centralizado no corpo do jogador; tiros e habilidades usam a mesma área de colisão.
 - O hitbox visual é mostrado de forma discreta ao redor dos jogadores durante o PvP.
+
+## Bosses no Shooter
+- A cada 30 pedras destruídas aparece um boss aleatório: RL ODIO (10.000 HP, 25 de dano, tiro a cada 10s, recompensa 1 giro), JADRIAN PELUDO (25.000 HP, 50 de dano, tiro a cada 5s, recompensa 2 giros) ou LEO ATIÇADO (50.000 HP, 100 de dano, tiro a cada 4s, recompensa 3 giros).
+- Os bosses mostram nome e barra de vida, atiram projéteis contra o jogador e precisam ser derrotados rapidamente.
+- Giros especiais ficam salvos no perfil local. Só podem premiar MÍTICO (RL), SECRETO (POLO), GOD (RL CHARRADO) ou CRIADOR (Oswaldo), com as probabilidades configuradas no jogo.
+
+## Giros especiais atualizados
+- Enquanto um boss estiver ativo, a tecla Espaço não dispara; o disparo por clique continua funcionando. Fora dos bosses, Espaço funciona normalmente.
+- Giros especiais sempre dão recompensa: Míticos FEFA, RL, LIPE FF e SOSO TETE; Secretos SERJÃO, POLO e TUNG TUNG; GOD RL CHARRADO; Criador OSWALDO. Não existe mais resultado sem recompensa.
+- Os pesos 50/5/1/0,7 foram normalizados para não haver giros vazios.

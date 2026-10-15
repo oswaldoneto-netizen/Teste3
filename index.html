@@ -40,7 +40,7 @@ canvas{width:100%;height:100%;display:block}.hintPanel{position:fixed;left:50%;b
     <div class="mainCard">
       <div class="resultBox"><div id="resultName" class="resultName">???</div><div id="resultRarity" class="resultRarity"></div></div>
       <div class="resultTitle"><small>RESULTADO</small><b id="resultText">Pronto para rolar</b></div>
-      <div class="buttons"><button class="btn roll" id="menuRoll">🎲 ROLAR</button><button class="btn play" id="playBtn">🚀 JOGAR SHOOTER</button><button class="btn pvp" id="pvpBtn">⚔️ PVP ONLINE</button></div><div id="storeInfo" style="margin:10px 0 2px;padding:10px 12px;border:1px solid #283650;border-radius:12px;background:#070d1e;text-align:center;font-weight:1000;color:#dce7f5">🏪 RNG SEDUC • atualiza em 15:00</div><div id="pityInfo" style="margin:6px 0;padding:8px;border:1px solid #3a2858;border-radius:10px;background:#100c22;color:#e7c7ff;text-align:center;font-size:11px;font-weight:900">🎁 Pity: Secreto 0/500 • GOD 0/1000 • Criador 0/2000</div><div class="rollHelp">A primeira rolagem é grátis. Depois, cada roll custa <b>100 pontos</b>. Derrote pedras no shooter para ganhar pontos.</div>
+      <div class="buttons"><button class="btn roll" id="menuRoll">🎲 ROLAR NORMAL</button><button class="btn" id="menuSpecialSpinBtn" style="background:linear-gradient(90deg,#6725b8,#e22c91);border:2px solid #ffb5ef;color:white">✨ GIROS ESPECIAIS: <span id="menuSpecialSpinCount">0</span></button><button class="btn play" id="playBtn">🚀 JOGAR SHOOTER</button><button class="btn pvp" id="pvpBtn">⚔️ PVP ONLINE</button></div><div id="storeInfo" style="margin:10px 0 2px;padding:10px 12px;border:1px solid #283650;border-radius:12px;background:#070d1e;text-align:center;font-weight:1000;color:#dce7f5">🏪 RNG SEDUC • atualiza em 15:00</div><div id="pityInfo" style="margin:6px 0;padding:8px;border:1px solid #3a2858;border-radius:10px;background:#100c22;color:#e7c7ff;text-align:center;font-size:11px;font-weight:900">🎁 Pity: Secreto 0/500 • GOD 0/1000 • Criador 0/2000</div><div class="rollHelp">A primeira rolagem é grátis. Depois, cada roll custa <b>100 pontos</b>. Derrote pedras no shooter para ganhar pontos.</div>
       <div class="deviceTitle">ESCOLHA O CONTROLE</div>
       <div class="deviceButtons"><button class="deviceBtn active" id="pcMode">🖥️ COMPUTADOR</button><button class="deviceBtn" id="mobileMode">📱 CELULAR</button></div>
       <div class="rarityGrid">
@@ -71,6 +71,8 @@ canvas{width:100%;height:100%;display:block}.hintPanel{position:fixed;left:50%;b
 
 <section id="game">
   <canvas id="canvas"></canvas>
+  <div id="bossInfo" style="display:none;position:fixed;top:100px;left:50%;transform:translateX(-50%);z-index:9;background:#180b20ed;border:2px solid #ff4fd8;border-radius:14px;padding:9px 15px;text-align:center;color:#fff;font-weight:1000;min-width:240px;box-shadow:0 0 24px #ff4fd855"><div id="bossName">👹 BOSS</div><div style="height:8px;background:#4b1728;border-radius:99px;overflow:hidden;margin:6px 0"><div id="bossHpBar" style="height:100%;width:100%;background:#ff335d"></div></div><small id="bossHpText">0 / 0 HP</small></div>
+  <button id="specialSpinBtn" style="display:none;position:fixed;left:14px;bottom:18px;z-index:9;background:linear-gradient(90deg,#6725b8,#e22c91);color:white;border:2px solid #ffb5ef;border-radius:14px;padding:12px 15px;font-weight:1000;box-shadow:0 0 20px #db3aff55">✨ GIROS ESPECIAIS: <span id="specialSpinCount">0</span></button>
   <div class="gameTop"><div class="gameHud"><div class="hudBox"><span class="tiny">Apelido</span><b id="hudName">Nicolas</b><div id="hudRarity">COMUM</div></div><div class="hudBox"><span class="tiny">Pontos</span><b id="score">0</b></div><div class="hudBox"><span class="tiny">Vida</span><b id="hp">100</b></div><div class="hudBox"><span class="tiny">Dano</span><b id="damage">8</b></div><div class="hudBox"><span class="tiny">Tiros/clique</span><b id="shotCount">1</b></div></div><button id="back" class="exitBtn">✕ SAIR</button></div>
   <div class="hintPanel"><b id="powerName">Nicolas • COMUM</b></div>
   <div id="skillStatus">🔫 Próximo tiro: pronto</div><div id="skillPanel"><button id="skillBurst">🔥 RAJADA<br><small>5 TIROS</small></button><button id="skillShield">🛡️ ESCUDO<br><small>3 ACERTOS</small></button></div><button id="mobileFire">🔫<br>ATIRAR</button><div id="mobileTip">Arraste o dedo para mirar e aperte ATIRAR</div>
@@ -127,12 +129,12 @@ function refreshStoreUI(){
 }
 let current=null, currentName='???', rolling=false, coins=100, hasCharacter=false, rollTimer=null, rollToken=0;
 const PROFILE_KEY='rng_pedras_profile_v2';
-let profile={playerId:'',nick:'',previousNick:'',level:1,xp:0,wins:0,rank:'Sem Rank',pityRolls:0,pitySecret:0,pityGod:0,pityCreator:0};
+let profile={playerId:'',nick:'',previousNick:'',level:1,xp:0,wins:0,rank:'Sem Rank',pityRolls:0,pitySecret:0,pityGod:0,pityCreator:0,specialSpins:0};
 const SESSION_KEY='rngSessionId';
 let sessionId=localStorage.getItem(SESSION_KEY); if(!sessionId){sessionId='s_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,10); localStorage.setItem(SESSION_KEY,sessionId);}
 function rankForWins(w){w=+w||0;if(w>=30)return 'Champion';if(w>=25)return 'Diamante';if(w>=20)return 'Platina';if(w>=15)return 'Ouro';if(w>=10)return 'Prata';if(w>=5)return 'Bronze';return 'Sem Rank'}
 function rankColor(r){return ({'Sem Rank':'#fff','Bronze':'#cd7f32','Prata':'#c0c0c0','Ouro':'#ffd700','Platina':'#7ee6e8','Diamante':'#55b9ff','Champion':'#ff4d9d'})[r]||'#fff'}
-function loadProfile(){try{const p=JSON.parse(localStorage.getItem(PROFILE_KEY)||'null');if(p){profile.playerId=String(p.playerId||''); profile.nick=String(p.nick||'').slice(0,16); profile.previousNick=String(p.previousNick||profile.nick||'').slice(0,16);profile.level=Math.max(1,+p.level||1);profile.xp=Math.max(0,+p.xp||0);profile.wins=Math.max(0,+p.wins||0);profile.rank=String(p.rank||rankForWins(profile.wins)); profile.pityRolls=Math.max(0,+p.pityRolls||0);profile.pitySecret=Math.max(0,+p.pitySecret||0);profile.pityGod=Math.max(0,+p.pityGod||0);profile.pityCreator=Math.max(0,+p.pityCreator||0);}}catch(e){} const el=document.getElementById('playerName'); if(!profile.playerId){const m=document.cookie.match(/(?:^|; )rngPlayerId=([^;]+)/); profile.playerId=m?decodeURIComponent(m[1]):'p_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,10); document.cookie='rngPlayerId='+encodeURIComponent(profile.playerId)+'; Max-Age=31536000; Path=/; SameSite=Lax';} if(profile.nick) el.value=profile.nick; updateProfileUI(); syncPlayer();}
+function loadProfile(){try{const p=JSON.parse(localStorage.getItem(PROFILE_KEY)||'null');if(p){profile.playerId=String(p.playerId||''); profile.nick=String(p.nick||'').slice(0,16); profile.previousNick=String(p.previousNick||profile.nick||'').slice(0,16);profile.level=Math.max(1,+p.level||1);profile.xp=Math.max(0,+p.xp||0);profile.wins=Math.max(0,+p.wins||0);profile.rank=String(p.rank||rankForWins(profile.wins)); profile.pityRolls=Math.max(0,+p.pityRolls||0);profile.pitySecret=Math.max(0,+p.pitySecret||0);profile.pityGod=Math.max(0,+p.pityGod||0);profile.pityCreator=Math.max(0,+p.pityCreator||0);profile.specialSpins=Math.max(0,+p.specialSpins||0);}}catch(e){} const el=document.getElementById('playerName'); if(!profile.playerId){const m=document.cookie.match(/(?:^|; )rngPlayerId=([^;]+)/); profile.playerId=m?decodeURIComponent(m[1]):'p_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,10); document.cookie='rngPlayerId='+encodeURIComponent(profile.playerId)+'; Max-Age=31536000; Path=/; SameSite=Lax';} if(profile.nick) el.value=profile.nick; updateProfileUI(); syncPlayer();}
 function saveProfile(){const old=profile.nick; profile.nick=(document.getElementById('playerName').value||'').trim().slice(0,16)||'Player1'; if(!profile.playerId){profile.playerId='p_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,10); document.cookie='rngPlayerId='+encodeURIComponent(profile.playerId)+'; Max-Age=31536000; Path=/; SameSite=Lax';} if(old && old!==profile.nick) profile.previousNick=old; try{localStorage.setItem(PROFILE_KEY,JSON.stringify(profile));}catch(e){} updateProfileUI(); syncPlayer();}
 function xpNeededForLevel(level){return Math.max(1,Number(level)||1)*100;}
 function updateProfileUI(){const need=xpNeededForLevel(profile.level);document.getElementById('menuLevel').textContent=profile.level;document.getElementById('menuXp').textContent=profile.xp+'/'+need;document.getElementById('hudName').textContent=profile.nick||'Player1';}
@@ -344,6 +346,7 @@ function startRoll(){
   tick();
 }
 document.getElementById('menuRoll').onclick=startRoll;
+updateSpecialSpinUI();
 document.getElementById('again').onclick=startRoll;
 
 document.getElementById('playerName').addEventListener('input',e=>{document.getElementById('hudName').textContent=e.target.value||'Player1';});
@@ -357,13 +360,13 @@ document.getElementById('playBtn').onclick=()=>{
    document.getElementById('resultName').animate([{transform:'scale(1)'},{transform:'scale(1.08)'},{transform:'scale(1)'}],{duration:350});
    return;
  }
- saveProfile(); menu.style.display='none';document.getElementById('game').style.display='block';document.getElementById('back').style.display='block';resetGame();
+ saveProfile(); menu.style.display='none';document.getElementById('game').style.display='block';document.getElementById('back').style.display='block';updateSpecialSpinUI();resetGame();
 };
-document.getElementById('back').onclick=()=>{document.getElementById('game').style.display='none';document.getElementById('back').style.display='none';document.getElementById('gameOver').style.display='none';menu.style.display='flex';document.getElementById('menuScore').textContent=coins};
+document.getElementById('back').onclick=()=>{document.getElementById('game').style.display='none';document.getElementById('specialSpinBtn').style.display='none';document.getElementById('back').style.display='none';document.getElementById('gameOver').style.display='none';menu.style.display='flex';document.getElementById('menuScore').textContent=coins};
 document.getElementById('retryBtn').onclick=()=>{document.getElementById('gameOver').style.display='none';document.getElementById('mobileFire').style.display=deviceMode==='mobile'?'block':'none';resetGame()};
 document.getElementById('overMenuBtn').onclick=()=>document.getElementById('back').click();
 addEventListener('keydown',e=>{
- if(deviceMode==='pc' && e.code==='Space'){e.preventDefault();shoot(aimX||W/2,aimY||H/2)}
+ if(deviceMode==='pc' && e.code==='Space'){e.preventDefault();if(!boss)shoot(aimX||W/2,aimY||H/2)}
  if(deviceMode==='pc' && e.code==='KeyQ'){e.preventDefault();burstSkill()}
  if(deviceMode==='pc' && e.code==='KeyE'){e.preventDefault();shieldSkill()}
 });
@@ -394,13 +397,13 @@ function pvpWinSnd(){initAudio();snd(523,.12,'square',.045,90);setTimeout(()=>sn
 function pvpLoseSnd(){initAudio();snd(392,.16,'sawtooth',.05,-90);setTimeout(()=>snd(262,.22,'sawtooth',.055,-80),160);setTimeout(()=>snd(196,.28,'triangle',.045,-50),340)}
 function pvpEnemyHitSnd(){initAudio();snd(180,.08,'square',.035,80)}
 const canvas=document.getElementById('canvas'),ctx=canvas.getContext('2d');
-let W=0,H=0,rocks=[],shots=[],parts=[],score=0,life=100,spawn=0,player={x:0,y:0},gameOver=false;
+let W=0,H=0,rocks=[],shots=[],bossShots=[],parts=[],score=0,life=100,spawn=0,player={x:0,y:0},gameOver=false,boss=null,killsSinceBoss=0;
 let lastShotAt=0, burstReadyAt=0, shieldReadyAt=0, shieldHits=0, shieldActive=false;
 const NORMAL_SHOT_COOLDOWN=0, BURST_COOLDOWN=8000, SHIELD_COOLDOWN=12000;
 function resize(){W=canvas.width=innerWidth*devicePixelRatio;H=canvas.height=innerHeight*devicePixelRatio;canvas.style.width=innerWidth+'px';canvas.style.height=innerHeight+'px';player.x=W/2;player.y=H-100*devicePixelRatio}
 addEventListener('resize',resize);resize();
 function shotCountFor(r){const map={comum:1,raro:2,epico:3,lendario:4,mitico:5,secreto:6,god:10,criador:20};return r&&r.shots||map[r?.k]||1}
-function resetGame(){score=0;life=current?current.h:100;rocks=[];shots=[];parts=[];spawn=1;gameOver=false;lastShotAt=0;burstReadyAt=0;shieldReadyAt=0;shieldHits=0;shieldActive=false;player.x=W/2;player.y=H-100*devicePixelRatio;document.getElementById('score').textContent=0;document.getElementById('hp').textContent=life;document.getElementById('shotCount').textContent=shotCountFor(current);document.getElementById('gameOver').style.display='none';document.getElementById('powerName').textContent=currentName+' • '+current.n+' • '+shotCountFor(current)+' TIRO'+(shotCountFor(current)>1?'S':''); spawnRock();}
+function resetGame(){score=0;life=current?current.h:100;rocks=[];shots=[];bossShots=[];parts=[];boss=null;killsSinceBoss=0;spawn=1;gameOver=false;lastShotAt=0;burstReadyAt=0;shieldReadyAt=0;shieldHits=0;shieldActive=false;player.x=W/2;player.y=H-100*devicePixelRatio;document.getElementById('score').textContent=0;document.getElementById('hp').textContent=life;document.getElementById('shotCount').textContent=shotCountFor(current);document.getElementById('gameOver').style.display='none';document.getElementById('bossInfo').style.display='none';document.getElementById('specialSpinBtn').style.display='block';updateSpecialSpinUI();document.getElementById('powerName').textContent=currentName+' • '+current.n+' • '+shotCountFor(current)+' TIRO'+(shotCountFor(current)>1?'S':''); spawnRock();}
 function fireProjectiles(x,y,count=shotCountFor(current),ignoreCooldown=false){
  if(gameOver)return false;
  const now=Date.now();
@@ -445,29 +448,74 @@ document.getElementById('mobileFire').addEventListener('pointerdown',e=>{
 document.getElementById('skillBurst').addEventListener('pointerdown',e=>{e.preventDefault();burstSkill()});
 document.getElementById('skillShield').addEventListener('pointerdown',e=>{e.preventDefault();shieldSkill()});
 
-function spawnRock(){let r=25+Math.random()*28,h=35+r*1.3+score/1000*10;rocks.push({x:r+Math.random()*(W-r*2),y:-r,r,h,max:h,v:1+Math.random()*1.5})}
-function endGame(){if(gameOver)return;gameOver=true;document.getElementById('finalScore').textContent=score;document.getElementById('gameOver').style.display='flex';document.getElementById('mobileFire').style.display='none';}
+const BOSS_TYPES=[
+ {name:'RL ODIO',hp:10000,damage:25,interval:10000,reward:1,color:'#ff526b',weight:50},
+ {name:'JADRIAN PELUDO',hp:25000,damage:50,interval:5000,reward:2,color:'#ff9b32',weight:30},
+ {name:'LEO ATIÇADO',hp:50000,damage:100,interval:4000,reward:3,color:'#c34cff',weight:10}
+];
+function chooseBoss(){let x=Math.random()*90;if(x<50)return BOSS_TYPES[0];if(x<80)return BOSS_TYPES[1];return BOSS_TYPES[2]}
+function spawnBoss(){if(boss||gameOver)return;const b=chooseBoss();boss={...b,x:W*.5,y:H*.24,r:Math.min(62,Math.max(40,W*.055)),hp:b.hp,max:b.hp,nextShot:Date.now()+b.interval};rocks=[];bossShots=[];document.getElementById('bossInfo').style.display='block';document.getElementById('bossName').textContent='👹 '+boss.name+' • '+boss.damage+' DANO';updateBossUI();initAudio();snd(140,.35,'sawtooth',.09,-80)}
+function updateBossUI(){if(!boss)return;document.getElementById('bossName').textContent='👹 '+boss.name+' • '+boss.damage+' DANO';document.getElementById('bossHpText').textContent=Math.max(0,Math.ceil(boss.hp))+' / '+boss.max+' HP';document.getElementById('bossHpBar').style.width=Math.max(0,boss.hp/boss.max*100)+'%';document.getElementById('bossHpBar').style.background=boss.color;document.getElementById('bossInfo').style.borderColor=boss.color}
+function updateSpecialSpinUI(){
+ const count=profile.specialSpins||0;
+ const gameBtn=document.getElementById('specialSpinBtn');
+ const menuBtn=document.getElementById('menuSpecialSpinBtn');
+ if(gameBtn){gameBtn.style.display=document.getElementById('game').style.display==='block'?'block':'none';document.getElementById('specialSpinCount').textContent=count;gameBtn.disabled=count<=0||rolling;gameBtn.style.opacity=gameBtn.disabled?'.6':'1';}
+ if(menuBtn){document.getElementById('menuSpecialSpinCount').textContent=count;menuBtn.disabled=count<=0||rolling;menuBtn.style.opacity=menuBtn.disabled?'.6':'1';menuBtn.title=count>0?'Usar 1 giro especial':'Derrote um boss no Shooter para ganhar giros especiais';}
+}
+function specialSpin(){
+ if(rolling)return;
+ if(!(profile.specialSpins>0)){document.getElementById('resultText').textContent='Derrote um boss no Shooter para ganhar giros especiais!';return;}
+ profile.specialSpins--;saveProfile();updateSpecialSpinUI();
+ // Todos os giros especiais dão uma recompensa: nenhuma raridade comum/rara/épica/lendária e sem resultado vazio.
+ // Pesos anteriores (50/5/1/0,7) são normalizados para somar 100%.
+ const x=Math.random()*56.7;let r,name;
+ if(x<50){r=R.find(a=>a.k==='mitico');name=['FEFA','RL','LIPE FF','SOSO TETE'][Math.floor(Math.random()*4)];}
+ else if(x<55){r=R.find(a=>a.k==='secreto');name=['SERJÃO','POLO','TUNG TUNG'][Math.floor(Math.random()*3)];}
+ else if(x<56){r=R.find(a=>a.k==='god');name='RL CHARRADO';}
+ else {r=R.find(a=>a.k==='criador');name='OSWALDO';}
+ rolling=true;
+ const menuBtn=document.getElementById('menuSpecialSpinBtn'), gameBtn=document.getElementById('specialSpinBtn');
+ if(menuBtn)menuBtn.disabled=true;if(gameBtn)gameBtn.disabled=true;
+ const resultName=document.getElementById('resultName'), resultRarity=document.getElementById('resultRarity'), resultText=document.getElementById('resultText');
+ const pool=[['FEFA','MÍTICO','#ff263c'],['RL','MÍTICO','#ff263c'],['LIPE FF','MÍTICO','#ff263c'],['SOSO TETE','MÍTICO','#ff263c'],['SERJÃO','SECRETO','rgb'],['POLO','SECRETO','rgb'],['TUNG TUNG','SECRETO','rgb'],['RL CHARRADO','GOD','#ff4fd8'],['OSWALDO','CRIADOR','#ffe100']];
+ let i=0;const total=28;
+ resultText.textContent='✨ GIRANDO COM GIRO ESPECIAL...';
+ function tick(){
+   if(i>=total){showResult(r,name);special(r);resultText.textContent='✨ GIRO ESPECIAL: '+name+' • '+r.n;rolling=false;updateSpecialSpinUI();return;}
+   const item=pool[Math.floor(Math.random()*pool.length)];resultName.textContent=item[0];resultRarity.textContent=item[1];
+   if(item[2]==='rgb'){resultName.classList.add('rainbowText');resultRarity.classList.add('rainbowText');resultName.style.color='';resultRarity.style.color='';}
+   else {resultName.classList.remove('rainbowText');resultRarity.classList.remove('rainbowText');resultName.style.color=item[2];resultRarity.style.color=item[2];}
+   rollSnd();i++;setTimeout(tick,25+Math.pow(i/total,3)*150);
+ }
+ tick();
+}
+document.getElementById('specialSpinBtn').addEventListener('click',specialSpin);
+document.getElementById('menuSpecialSpinBtn').addEventListener('click',specialSpin);
+function spawnRock(){if(boss)return;let r=25+Math.random()*28,h=35+r*1.3+score/1000*10;rocks.push({x:r+Math.random()*(W-r*2),y:-r,r,h,max:h,v:1+Math.random()*1.5})}
+function endGame(){if(gameOver)return;gameOver=true;document.getElementById('finalScore').textContent=score;document.getElementById('gameOver').style.display='flex';document.getElementById('mobileFire').style.display='none';document.getElementById('specialSpinBtn').style.display='none';}
 function update(){
  if(gameOver)return;
- spawn--;if(spawn<=0){spawnRock();spawn=38+Math.random()*38}
+ spawn--;if(spawn<=0&&!boss){spawnRock();spawn=38+Math.random()*38}
  for(const s of shots){s.x+=s.vx;s.y+=s.vy;s.life--}
  for(const r of rocks)r.y+=r.v;
+ if(boss&&Date.now()>=boss.nextShot){const dx=player.x-boss.x,dy=player.y-boss.y,len=Math.max(1,Math.hypot(dx,dy));bossShots.push({x:boss.x,y:boss.y+boss.r*.55,vx:dx/len*5*devicePixelRatio,vy:dy/len*5*devicePixelRatio,r:9*devicePixelRatio,damage:boss.damage,life:180});boss.nextShot=Date.now()+boss.interval;initAudio();snd(280,.12,'square',.06,-100)}
+ for(const s of bossShots){s.x+=s.vx;s.y+=s.vy;s.life--;if(Math.hypot(s.x-player.x,s.y-player.y)<30*devicePixelRatio){s.life=0;if(shieldActive){shieldHits--;if(shieldHits<=0)shieldActive=false;}else{life=Math.max(0,life-s.damage);document.getElementById('hp').textContent=life;initAudio();snd(90,.18,'sawtooth',.07,-60);document.getElementById('flash').animate([{opacity:0},{opacity:.25},{opacity:0}],{duration:180});if(life<=0)endGame();}}}
+ bossShots=bossShots.filter(s=>s.life>0&&s.y<H+30&&s.x>-30&&s.x<W+30);
+ for(const s of shots){if(boss&&!s.hit&&Math.hypot(s.x-boss.x,s.y-boss.y)<boss.r+9){s.hit=true;boss.hp-=s.d;hitSnd();parts.push({x:boss.x,y:boss.y,t:'-'+s.d,life:35,vx:0,vy:-1});if(boss.hp<=0){const defeated=boss;boss=null;bossShots=[];document.getElementById('bossInfo').style.display='none';profile.specialSpins=(profile.specialSpins||0)+defeated.reward;saveProfile();updateSpecialSpinUI();score+=500;coins+=500;document.getElementById('menuScore').textContent=coins;document.getElementById('resultText').textContent='🏆 '+defeated.name+' derrotado! +'+defeated.reward+' GIRO(S) ESPECIAL(IS)!';destroySnd();for(let i=0;i<35;i++)parts.push({x:W*.5,y:H*.24,t:'✨',life:40,vx:(Math.random()-.5)*12,vy:(Math.random()-.5)*12});}else updateBossUI();}}
  for(const s of shots)for(const r of rocks)if(!s.hit&&Math.hypot(s.x-r.x,s.y-r.y)<r.r+7){s.hit=true;r.h-=s.d;hitSnd();parts.push({x:r.x,y:r.y,t:'-'+s.d,life:35,vx:0,vy:-1});break}
  shots=shots.filter(s=>s.life>0&&!s.hit);
- for(const r of rocks)if(r.h<=0&&!r.dead){r.dead=true;score+=100;addXP(10);destroySnd();coins+=100;document.getElementById('menuScore').textContent=coins;for(let i=0;i<15;i++)parts.push({x:r.x,y:r.y,t:'',life:30,vx:(Math.random()-.5)*7,vy:(Math.random()-.5)*7})}
- for(const r of rocks)if(!r.dead&&r.y-r.r>H){
-   r.dead=true;
-   if(shieldActive){shieldHits--;if(shieldHits<=0)shieldActive=false;hitSnd();}
-   else {life=Math.max(0,life-10);document.getElementById('hp').textContent=life;if(life<=0){endGame();break}}
- }
- rocks=rocks.filter(r=>!r.dead);for(const p of parts){p.x+=p.vx;p.y+=p.vy;p.life--}parts=parts.filter(p=>p.life>0);
- document.getElementById('score').textContent=score;
+ for(const r of rocks)if(r.h<=0&&!r.dead){r.dead=true;score+=100;addXP(10);destroySnd();coins+=100;document.getElementById('menuScore').textContent=coins;killsSinceBoss++;for(let i=0;i<15;i++)parts.push({x:r.x,y:r.y,t:'',life:30,vx:(Math.random()-.5)*7,vy:(Math.random()-.5)*7});if(killsSinceBoss>=30&&!boss){killsSinceBoss=0;spawnBoss();}}
+ for(const r of rocks)if(!r.dead&&r.y-r.r>H){r.dead=true;if(shieldActive){shieldHits--;if(shieldHits<=0)shieldActive=false;hitSnd();}else{life=Math.max(0,life-10);document.getElementById('hp').textContent=life;if(life<=0){endGame();break}}}
+ rocks=rocks.filter(r=>!r.dead);for(const p of parts){p.x+=p.vx;p.y+=p.vy;p.life--}parts=parts.filter(p=>p.life>0);document.getElementById('score').textContent=score;
 }
 function draw(){
  ctx.fillStyle='#050914';ctx.fillRect(0,0,W,H);
  const g=ctx.createRadialGradient(W/2,H*.6,10,W/2,H*.6,Math.max(W,H)*.7);g.addColorStop(0,'#142b46');g.addColorStop(1,'#050914');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
  for(let x=0;x<W;x+=70){ctx.strokeStyle='#17324c55';ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()}
  for(const r of rocks){ctx.beginPath();ctx.arc(r.x,r.y,r.r,0,7);ctx.fillStyle='#68727e';ctx.fill();ctx.strokeStyle='#b6bec8';ctx.lineWidth=3;ctx.stroke();ctx.fillStyle='#e14b4b';ctx.fillRect(r.x-r.r,r.y-r.r-10,r.r*2,5);ctx.fillStyle='#49e26d';ctx.fillRect(r.x-r.r,r.y-r.r-10,r.r*2*Math.max(0,r.h/r.max),5);ctx.fillStyle='#fff';ctx.font='bold 12px Arial';ctx.textAlign='center';ctx.fillText(Math.max(0,Math.ceil(r.h)),r.x,r.y+4)}
+ if(boss){ctx.save();ctx.translate(boss.x,boss.y);ctx.shadowBlur=28;ctx.shadowColor=boss.color;ctx.fillStyle=boss.color;ctx.beginPath();ctx.arc(0,0,boss.r,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle='#fff';ctx.lineWidth=4*devicePixelRatio;ctx.stroke();ctx.fillStyle='#180b20';ctx.beginPath();ctx.arc(-boss.r*.32,-boss.r*.12,boss.r*.13,0,Math.PI*2);ctx.arc(boss.r*.32,-boss.r*.12,boss.r*.13,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fff';ctx.font='bold '+(Math.max(12,boss.r*.35))+'px Arial';ctx.textAlign='center';ctx.fillText(boss.name,0,boss.r+24*devicePixelRatio);ctx.restore()}
+ for(const s of bossShots){ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle='#ff416a';ctx.shadowBlur=18;ctx.shadowColor='#ff416a';ctx.fill();ctx.shadowBlur=0;}
  for(const s of shots){ctx.beginPath();ctx.arc(s.x,s.y,6,0,7);const active=current||R[0];ctx.fillStyle=active.c==='rgb'?`hsl(${Date.now()/3%360} 100% 60%)`:active.c;ctx.shadowBlur=18;ctx.shadowColor=ctx.fillStyle;ctx.fill();ctx.shadowBlur=0}
  const active=current||R[0];const shipColor=active.c==='rgb'?`hsl(${Date.now()/3%360} 100% 60%)`:active.c;
  if(shieldActive){ctx.save();ctx.beginPath();ctx.arc(player.x,player.y,52*devicePixelRatio,0,Math.PI*2);ctx.strokeStyle='#31c8ff';ctx.lineWidth=5*devicePixelRatio;ctx.shadowBlur=25;ctx.shadowColor='#31c8ff';ctx.stroke();ctx.restore();}
