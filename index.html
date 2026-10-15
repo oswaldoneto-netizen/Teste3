@@ -40,11 +40,11 @@ canvas{width:100%;height:100%;display:block}.hintPanel{position:fixed;left:50%;b
     <div class="mainCard">
       <div class="resultBox"><div id="resultName" class="resultName">???</div><div id="resultRarity" class="resultRarity"></div></div>
       <div class="resultTitle"><small>RESULTADO</small><b id="resultText">Pronto para rolar</b></div>
-      <div class="buttons"><button class="btn roll" id="menuRoll">🎲 ROLAR</button><button class="btn play" id="playBtn">🚀 JOGAR SHOOTER</button><button class="btn pvp" id="pvpBtn">⚔️ PVP ONLINE</button></div><div id="storeInfo" style="margin:10px 0 2px;padding:10px 12px;border:1px solid #283650;border-radius:12px;background:#070d1e;text-align:center;font-weight:1000;color:#dce7f5">🏪 RNG SEDUC • atualiza em 15:00</div><div class="rollHelp">A primeira rolagem é grátis. Depois, cada roll custa <b>100 pontos</b>. Derrote pedras no shooter para ganhar pontos.</div>
+      <div class="buttons"><button class="btn roll" id="menuRoll">🎲 ROLAR</button><button class="btn play" id="playBtn">🚀 JOGAR SHOOTER</button><button class="btn pvp" id="pvpBtn">⚔️ PVP ONLINE</button></div><div id="storeInfo" style="margin:10px 0 2px;padding:10px 12px;border:1px solid #283650;border-radius:12px;background:#070d1e;text-align:center;font-weight:1000;color:#dce7f5">🏪 RNG SEDUC • atualiza em 15:00</div><div id="pityInfo" style="margin:6px 0;padding:8px;border:1px solid #3a2858;border-radius:10px;background:#100c22;color:#e7c7ff;text-align:center;font-size:11px;font-weight:900">🎁 Pity: Secreto 0/500 • GOD 0/1000 • Criador 0/2000</div><div class="rollHelp">A primeira rolagem é grátis. Depois, cada roll custa <b>100 pontos</b>. Derrote pedras no shooter para ganhar pontos.</div>
       <div class="deviceTitle">ESCOLHA O CONTROLE</div>
       <div class="deviceButtons"><button class="deviceBtn active" id="pcMode">🖥️ COMPUTADOR</button><button class="deviceBtn" id="mobileMode">📱 CELULAR</button></div>
       <div class="rarityGrid">
-        <div class="rarity c-white"><span>Comum</span><b>50%</b></div><div class="rarity c-blue"><span>Raro</span><b>25%</b></div><div class="rarity c-purple"><span>Épico</span><b>15%</b></div><div class="rarity c-orange"><span>Lendário</span><b>5%</b></div><div class="rarity c-red"><span>Mítico</span><b>1%</b></div><div class="rarity c-rgb"><span>Secreto</span><b>0,5%</b></div>
+        <div class="rarity c-white"><span>Comum</span><b>50%</b></div><div class="rarity c-blue"><span>Raro</span><b>25%</b></div><div class="rarity c-purple"><span>Épico</span><b>15%</b></div><div class="rarity c-orange"><span>Lendário</span><b>5%</b></div><div class="rarity c-red"><span>Mítico</span><b>1%</b></div><div class="rarity c-rgb"><span>Secreto</span><b>0,5%</b></div><div class="rarity" style="border-color:#ff4fd866"><span>GOD</span><b style="color:#ff4fd8">0,3%</b></div>
       </div>
       <div class="bottomLinks"><span>📜 Histórico</span><span>🏆 Leaderboard Online</span></div>
 <div id="leaderboard" style="margin-top:16px;border:1px solid #283650;border-radius:18px;background:#060b19;padding:14px">
@@ -95,16 +95,18 @@ const R=[
  {k:'lendario',n:'LENDÁRIO',c:'#ff9b20',p:5,d:34,h:210,names:[]},
  {k:'mitico',n:'MÍTICO',c:'#ff263c',p:1,d:55,h:270,names:[]},
  {k:'secreto',n:'SECRETO',c:'rgb',p:.5,d:90,h:360,names:[]},
+ {k:'god',n:'GOD',c:'#ff4fd8',p:.3,d:160,h:500,names:['RL CHARRADO'],shots:10},
  {k:'criador',n:'CRIADOR',c:'#ffe100',p:.1,d:999,h:999,names:['Oswaldo'],shots:20,creator:true}
 ];
 const STORES={
  seduc:{name:'RNG SEDUC',pools:{
   comum:['Thales','Pedro','Kailer','Jaque','Nicolas','Henrico'],
-  raro:['Guilherme','Bruno','Wlissys','Bruna'],
-  epico:['Pietro','Jadrian','Kenedy'],
+  raro:['Guilherme','Pietro','Wlissys','Bruna'],
+  epico:['Bruno','Jadrian','Kenedy'],
   lendario:['Lipão','Leo'],
   mitico:['RL'],
-  secreto:['POLO']
+  secreto:['POLO'],
+  god:['RL CHARRADO']
  }},
  mecanico:{name:'RNG MECÂNICO',pools:{
   comum:['Nicolas','Kevin','José','Bagre','Henrico'],
@@ -125,12 +127,12 @@ function refreshStoreUI(){
 }
 let current=null, currentName='???', rolling=false, coins=100, hasCharacter=false, rollTimer=null, rollToken=0;
 const PROFILE_KEY='rng_pedras_profile_v2';
-let profile={playerId:'',nick:'',previousNick:'',level:1,xp:0,wins:0,rank:'Sem Rank'};
+let profile={playerId:'',nick:'',previousNick:'',level:1,xp:0,wins:0,rank:'Sem Rank',pityRolls:0,pitySecret:0,pityGod:0,pityCreator:0};
 const SESSION_KEY='rngSessionId';
 let sessionId=localStorage.getItem(SESSION_KEY); if(!sessionId){sessionId='s_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,10); localStorage.setItem(SESSION_KEY,sessionId);}
 function rankForWins(w){w=+w||0;if(w>=30)return 'Champion';if(w>=25)return 'Diamante';if(w>=20)return 'Platina';if(w>=15)return 'Ouro';if(w>=10)return 'Prata';if(w>=5)return 'Bronze';return 'Sem Rank'}
 function rankColor(r){return ({'Sem Rank':'#fff','Bronze':'#cd7f32','Prata':'#c0c0c0','Ouro':'#ffd700','Platina':'#7ee6e8','Diamante':'#55b9ff','Champion':'#ff4d9d'})[r]||'#fff'}
-function loadProfile(){try{const p=JSON.parse(localStorage.getItem(PROFILE_KEY)||'null');if(p){profile.playerId=String(p.playerId||''); profile.nick=String(p.nick||'').slice(0,16); profile.previousNick=String(p.previousNick||profile.nick||'').slice(0,16);profile.level=Math.max(1,+p.level||1);profile.xp=Math.max(0,+p.xp||0);profile.wins=Math.max(0,+p.wins||0);profile.rank=String(p.rank||rankForWins(profile.wins));}}catch(e){} const el=document.getElementById('playerName'); if(!profile.playerId){const m=document.cookie.match(/(?:^|; )rngPlayerId=([^;]+)/); profile.playerId=m?decodeURIComponent(m[1]):'p_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,10); document.cookie='rngPlayerId='+encodeURIComponent(profile.playerId)+'; Max-Age=31536000; Path=/; SameSite=Lax';} if(profile.nick) el.value=profile.nick; updateProfileUI(); syncPlayer();}
+function loadProfile(){try{const p=JSON.parse(localStorage.getItem(PROFILE_KEY)||'null');if(p){profile.playerId=String(p.playerId||''); profile.nick=String(p.nick||'').slice(0,16); profile.previousNick=String(p.previousNick||profile.nick||'').slice(0,16);profile.level=Math.max(1,+p.level||1);profile.xp=Math.max(0,+p.xp||0);profile.wins=Math.max(0,+p.wins||0);profile.rank=String(p.rank||rankForWins(profile.wins)); profile.pityRolls=Math.max(0,+p.pityRolls||0);profile.pitySecret=Math.max(0,+p.pitySecret||0);profile.pityGod=Math.max(0,+p.pityGod||0);profile.pityCreator=Math.max(0,+p.pityCreator||0);}}catch(e){} const el=document.getElementById('playerName'); if(!profile.playerId){const m=document.cookie.match(/(?:^|; )rngPlayerId=([^;]+)/); profile.playerId=m?decodeURIComponent(m[1]):'p_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,10); document.cookie='rngPlayerId='+encodeURIComponent(profile.playerId)+'; Max-Age=31536000; Path=/; SameSite=Lax';} if(profile.nick) el.value=profile.nick; updateProfileUI(); syncPlayer();}
 function saveProfile(){const old=profile.nick; profile.nick=(document.getElementById('playerName').value||'').trim().slice(0,16)||'Player1'; if(!profile.playerId){profile.playerId='p_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,10); document.cookie='rngPlayerId='+encodeURIComponent(profile.playerId)+'; Max-Age=31536000; Path=/; SameSite=Lax';} if(old && old!==profile.nick) profile.previousNick=old; try{localStorage.setItem(PROFILE_KEY,JSON.stringify(profile));}catch(e){} updateProfileUI(); syncPlayer();}
 function xpNeededForLevel(level){return Math.max(1,Number(level)||1)*100;}
 function updateProfileUI(){const need=xpNeededForLevel(profile.level);document.getElementById('menuLevel').textContent=profile.level;document.getElementById('menuXp').textContent=profile.xp+'/'+need;document.getElementById('hudName').textContent=profile.nick||'Player1';}
@@ -143,10 +145,20 @@ const menu=document.getElementById('menu'), panel=document.getElementById('rngPa
 const rn=document.getElementById('rollingName'), rr=document.getElementById('rollingRarity'), bar=document.getElementById('bar');
 
 function pick(){
- let x=Math.random()*96.5,s=0;
+ let x=Math.random()*96.9,s=0;
  for(const r of R){s+=r.p;if(x<s)return r}
  return R[0];
 }
+function chooseRollResult(storeKey){
+ profile.pityRolls++; profile.pitySecret++; profile.pityGod++; profile.pityCreator++;
+ let forced=null;
+ if(profile.pityCreator>=2000){forced=R.find(r=>r.k==='criador');profile.pityCreator=0;profile.pityGod=0;profile.pitySecret=0;}
+ else if(profile.pityGod>=1000 && storeKey==='seduc'){forced=R.find(r=>r.k==='god');profile.pityGod=0;profile.pitySecret=0;}
+ else if(profile.pitySecret>=500){forced=R.find(r=>r.k==='secreto');profile.pitySecret=0;}
+ if(!forced){const candidates=R.filter(r=>r.k!=='god'||storeKey==='seduc');let x=Math.random()*candidates.reduce((a,r)=>a+r.p,0),sum=0;forced=candidates[candidates.length-1];for(const r of candidates){sum+=r.p;if(x<sum){forced=r;break;}}}
+ try{localStorage.setItem(PROFILE_KEY,JSON.stringify(profile));}catch(e){} updatePityUI(); syncPlayer(); return forced;
+}
+function updatePityUI(){const el=document.getElementById('pityInfo');if(el)el.textContent=`🎁 Pity: Secreto ${profile.pitySecret}/500 • GOD ${profile.pityGod}/1000 • Criador ${profile.pityCreator}/2000`;}
 function colorFor(r){return r.c==='rgb'?`hsl(${Date.now()/4%360} 100% 60%)`:r.c}
 function showResult(r,name){
  current=r;currentName=name;hasCharacter=true;
@@ -246,11 +258,13 @@ function startRoll(){
   const resultRarity=document.getElementById('resultRarity');
   const resultText=document.getElementById('resultText');
   const rollButton=document.getElementById('menuRoll');
-  const finalR=pick();
-  const finalPool=finalR.k==='criador'?['Oswaldo']:getStoreRarity(finalR);
-  const finalName=finalPool[Math.floor(Math.random()*finalPool.length)];
-  const activeStore=STORES[getActiveStore()];
-  const names=R.flatMap(r=>r.k==='criador'?['Oswaldo']:(activeStore.pools[r.k]||[]));
+  const storeKey=getActiveStore();
+  const finalR=chooseRollResult(storeKey);
+  const finalPool=finalR.k==='criador'?['Oswaldo']:((STORES[storeKey].pools[finalR.k]||finalR.names||[]));
+  const safeFinalPool=finalPool.length?finalPool:['Oswaldo'];
+  const finalName=safeFinalPool[Math.floor(Math.random()*safeFinalPool.length)];
+  const activeStore=STORES[storeKey];
+  const names=R.flatMap(r=>r.k==='criador'?['Oswaldo']:(activeStore.pools[r.k]||r.names||[]));
 
   let step=0;
   const total=52;
@@ -316,7 +330,7 @@ function startRoll(){
     do{name=names[Math.floor(Math.random()*names.length)];}
     while(name===lastName && names.length>1);
     lastName=name;
-    const r=name==='Oswaldo'?R.find(x=>x.k==='criador'):(R.find(x=>(STORES[getActiveStore()].pools[x.k]||[]).includes(name))||R[0]);
+    const r=name==='Oswaldo'?R.find(x=>x.k==='criador'):(R.find(x=>((STORES[getActiveStore()].pools[x.k]||x.names||[]).includes(name)))||R[0]);
     displayRolling(name,r);
     step++;
 
@@ -385,7 +399,7 @@ let lastShotAt=0, burstReadyAt=0, shieldReadyAt=0, shieldHits=0, shieldActive=fa
 const NORMAL_SHOT_COOLDOWN=0, BURST_COOLDOWN=8000, SHIELD_COOLDOWN=12000;
 function resize(){W=canvas.width=innerWidth*devicePixelRatio;H=canvas.height=innerHeight*devicePixelRatio;canvas.style.width=innerWidth+'px';canvas.style.height=innerHeight+'px';player.x=W/2;player.y=H-100*devicePixelRatio}
 addEventListener('resize',resize);resize();
-function shotCountFor(r){const map={comum:1,raro:2,epico:3,lendario:4,mitico:5,secreto:6,criador:20};return r&&r.shots||map[r?.k]||1}
+function shotCountFor(r){const map={comum:1,raro:2,epico:3,lendario:4,mitico:5,secreto:6,god:10,criador:20};return r&&r.shots||map[r?.k]||1}
 function resetGame(){score=0;life=current?current.h:100;rocks=[];shots=[];parts=[];spawn=1;gameOver=false;lastShotAt=0;burstReadyAt=0;shieldReadyAt=0;shieldHits=0;shieldActive=false;player.x=W/2;player.y=H-100*devicePixelRatio;document.getElementById('score').textContent=0;document.getElementById('hp').textContent=life;document.getElementById('shotCount').textContent=shotCountFor(current);document.getElementById('gameOver').style.display='none';document.getElementById('powerName').textContent=currentName+' • '+current.n+' • '+shotCountFor(current)+' TIRO'+(shotCountFor(current)>1?'S':''); spawnRock();}
 function fireProjectiles(x,y,count=shotCountFor(current),ignoreCooldown=false){
  if(gameOver)return false;
@@ -462,7 +476,7 @@ function draw(){
  requestAnimationFrame(loop)
 }
 function loop(){update();draw()}
-loadProfile(); loadLeaderboard(); refreshStoreUI(); setInterval(refreshStoreUI,1000); setInterval(()=>{saveProfile();fetch('/api/heartbeat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId,playerId:profile.playerId,nick:profile.nick,previousNick:profile.previousNick})}).catch(()=>{});loadLeaderboard()},5000);
+loadProfile(); updatePityUI(); loadLeaderboard(); refreshStoreUI(); setInterval(refreshStoreUI,1000); setInterval(()=>{saveProfile();fetch('/api/heartbeat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId,playerId:profile.playerId,nick:profile.nick,previousNick:profile.previousNick})}).catch(()=>{});loadLeaderboard()},5000);
 loop();
 
 // ===== PVP ONLINE =====
