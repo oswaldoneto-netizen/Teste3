@@ -10,7 +10,7 @@
 - CRIADOR: Oswaldo dispara laser no Q e invoca clones automáticos por 7 segundos no R. Não aparece na grade de raridades.
 - Nomes longos não redimensionam a caixa de resultado.
 - Maestria aumenta ao derrotar inimigos e bosses; inimigos com mais vida concedem mais XP de maestria.
-- Modo de teste: digite `TORTA1234` no pequeno campo **Comando** do menu e pressione Enter para abrir a seleção de personagens.
+- O modo de teste para escolher qualquer personagem foi removido.
 
 ## Chances
 As chances solicitadas somam 97,4%. Para garantir que toda rolagem entregue um personagem, os 2,6% restantes são atribuídos a Comum; a interface indica a chance total como 52,6%*.
@@ -70,3 +70,11 @@ O dano recebido é ajustado por raridade contra tiros inimigos, ataques de bosse
 
 
 - Bosses now appear after 75 total kills (rocks and enemy ships), instead of 30, giving players more time to prepare.
+
+
+## Novo modo online: Raid cooperativa
+- O botão PVP ONLINE agora abre uma raid cooperativa: dois jogadores se unem contra o mesmo chefe, em vez de lutar um contra o outro.
+- Os tiros e a rajada de cada jogador reduzem a mesma barra de vida do chefe.
+- O chefe ataca periodicamente um dos aliados; use movimento e escudo para sobreviver.
+- Cada chefe derrotado inicia uma nova fase. A vida do chefe cresce 70% por fase e o dano/ritmo dos ataques aumenta.
+- Para testar online, publique os arquivos no Render com `npm install` e `npm start`; duas pessoas precisam entrar no modo online para começar a raid.
