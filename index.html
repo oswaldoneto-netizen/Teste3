@@ -41,16 +41,6 @@ canvas{width:100%;height:100%;display:block}.hintPanel{position:fixed;left:50%;b
       <div class="resultBox"><div id="resultName" class="resultName">???</div><div id="resultRarity" class="resultRarity"></div></div>
       <div class="resultTitle"><small>RESULTADO</small><b id="resultText">Pronto para rolar</b></div>
       <div class="buttons"><button class="btn roll" id="menuRoll">🎲 ROLAR NORMAL</button><button class="btn" id="menuSpecialSpinBtn" style="background:linear-gradient(90deg,#6725b8,#e22c91);border:2px solid #ffb5ef;color:white">✨ GIROS ESPECIAIS: <span id="menuSpecialSpinCount">0</span></button><button class="btn play" id="playBtn">🚀 JOGAR SHOOTER</button><button class="btn pvp" id="pvpBtn">⚔️ PVP ONLINE</button></div><div id="storeInfo" style="margin:10px 0 2px;padding:10px 12px;border:1px solid #283650;border-radius:12px;background:#070d1e;text-align:center;font-weight:1000;color:#dce7f5">🏪 RNG SEDUC • atualiza em 15:00</div><div id="pityInfo" style="margin:6px 0;padding:8px;border:1px solid #3a2858;border-radius:10px;background:#100c22;color:#e7c7ff;text-align:center;font-size:11px;font-weight:900">🎁 Pity: Secreto 0/500 • GOD 0/1000 • Criador 0/2000</div><div class="rollHelp">A primeira rolagem é grátis. Depois, cada roll custa <b>100 pontos</b>. Derrote pedras no shooter para ganhar pontos.</div>
-      <div id="creatorTestPanel" style="display:none;margin:14px 0;padding:14px;border:2px solid #ffe100;border-radius:16px;background:linear-gradient(135deg,#161300,#080d1b);box-shadow:0 0 22px #ffe10022;text-align:left">
-        <div style="font-weight:1000;color:#ffe100;font-size:15px">🛠️ MODO CRIADOR — TESTAR PERSONAGENS</div>
-        <div style="font-size:11px;color:#b9c5d8;margin:5px 0 10px">Digite TORTA1234 no campo Comando e aperte Enter para desbloquear a seleção de personagens.</div>
-        <select id="creatorCharacterSelect" style="width:100%;padding:12px;border-radius:10px;background:#080f20;color:#fff;border:1px solid #5b5420;font-weight:900;margin-bottom:9px"></select>
-        <button id="creatorEquipBtn" class="btn" style="width:100%;background:linear-gradient(90deg,#ffe100,#ff9b20);color:#171300">👑 EQUIPAR PARA TESTAR</button>
-        <div id="creatorTestStatus" style="font-size:11px;color:#ffe100;margin-top:8px">Escolha um personagem e equipe-o para testar suas habilidades.</div>
-      </div>
-      <div id="adminChat" style="margin:10px 0 14px;padding:8px;border:1px solid #283650;border-radius:12px;background:#060b19;display:flex;gap:6px;align-items:center">
-        <span style="font-size:11px;color:#aab6c7;white-space:nowrap">⌨️ Comando</span><input id="adminCommandInput" autocomplete="off" placeholder="Digite a senha e aperte Enter" style="min-width:0;flex:1;padding:9px;border:1px solid #354660;border-radius:8px;background:#0b1225;color:#fff;font-size:12px"><button id="adminCommandSend" style="padding:9px 12px;border:0;border-radius:8px;background:#ffe100;color:#171300;font-weight:1000">Enter</button>
-      </div><div id="adminCommandStatus" style="display:none;color:#ffe100;font-size:11px;text-align:center;margin:-7px 0 12px"></div>
       <div class="deviceTitle">ESCOLHA O CONTROLE</div>
       <div class="deviceButtons"><button class="deviceBtn active" id="pcMode">🖥️ COMPUTADOR</button><button class="deviceBtn" id="mobileMode">📱 CELULAR</button></div>
       <div class="rarityGrid">
@@ -351,25 +341,8 @@ document.getElementById('menuRoll').onclick=startRoll;
 updateSpecialSpinUI();
 document.getElementById('again').onclick=startRoll;
 
-const CREATOR_TEST_CHARACTERS = R.flatMap(r=>(r.names||[]).map(name=>({name,key:r.k,rarity:r.n,color:r.c,damage:r.d,hp:r.h,shots:shotCountFor(r)}))).sort((a,b)=>R.findIndex(r=>r.k===a.key)-R.findIndex(r=>r.k===b.key)||a.name.localeCompare(b.name,'pt-BR'));
-let adminTestUnlocked=false;
-function updateCreatorTestVisibility(){const panel=document.getElementById('creatorTestPanel');if(!panel)return;panel.style.display=adminTestUnlocked?'block':'none';if(adminTestUnlocked&&!document.getElementById('creatorCharacterSelect').options.length){const select=document.getElementById('creatorCharacterSelect');for(const c of CREATOR_TEST_CHARACTERS){const opt=document.createElement('option');opt.value=c.name;opt.textContent=`${c.name} — ${c.rarity}`;select.appendChild(opt);}}}
-function submitAdminCommand(){const input=document.getElementById('adminCommandInput'),status=document.getElementById('adminCommandStatus');const val=(input.value||'').trim();if(val==='TORTA1234'){adminTestUnlocked=true;status.style.display='block';status.textContent='✅ Modo Admin ativado! Escolha um apelido no painel.';input.value='';updateCreatorTestVisibility();}else{status.style.display='block';status.style.color='#ff6b6b';status.textContent='Senha incorreta.';}}
-document.getElementById('adminCommandSend').addEventListener('click',submitAdminCommand);document.getElementById('adminCommandInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();submitAdminCommand();}});
-document.getElementById('creatorEquipBtn').addEventListener('click',()=>{
- if(!adminTestUnlocked){updateCreatorTestVisibility();return;}
- const selected=document.getElementById('creatorCharacterSelect').value;
- const data=CREATOR_TEST_CHARACTERS.find(c=>c.name===selected); if(!data)return;
- const r=R.find(x=>x.k===data.key)||R[0];
- showResult(r,data.name); hasCharacter=true;
- document.getElementById('resultText').textContent='🛠️ MODO TESTE: '+data.name+' • '+r.n+' (sem gastar pontos)';
- document.getElementById('creatorTestStatus').textContent='Equipado: '+data.name+' • '+r.n+' • dano '+r.d+' • vida '+r.h+'. Clique em JOGAR SHOOTER para testar.';
- const play=document.getElementById('playBtn');play.classList.add('enabled');play.style.color='#fff';
- try{localStorage.setItem(PROFILE_KEY,JSON.stringify(profile));}catch(e){}
-});
 document.getElementById('playerName').addEventListener('input',e=>{document.getElementById('hudName').textContent=e.target.value||'Player1';});
-updateCreatorTestVisibility();
-document.getElementById('playerName').addEventListener('change',()=>{saveProfile();updateCreatorTestVisibility();});
+document.getElementById('playerName').addEventListener('change',saveProfile);
 document.getElementById('playerName').addEventListener('blur',saveProfile);
 
 document.getElementById('playBtn').onclick=()=>{
@@ -704,7 +677,7 @@ function draw(){
  requestAnimationFrame(loop)
 }
 function loop(){update();draw()}
-loadProfile(); updateCreatorTestVisibility(); updatePityUI(); loadLeaderboard(); refreshStoreUI(); setInterval(refreshStoreUI,1000); setInterval(updateMasteryUI,1000); setInterval(()=>{saveProfile();fetch('/api/heartbeat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId,playerId:profile.playerId,nick:profile.nick,previousNick:profile.previousNick})}).catch(()=>{});loadLeaderboard()},5000);
+loadProfile(); updatePityUI(); loadLeaderboard(); refreshStoreUI(); setInterval(refreshStoreUI,1000); setInterval(updateMasteryUI,1000); setInterval(()=>{saveProfile();fetch('/api/heartbeat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId,playerId:profile.playerId,nick:profile.nick,previousNick:profile.previousNick})}).catch(()=>{});loadLeaderboard()},5000);
 loop();
 
 // ===== PVP ONLINE =====
