@@ -1,17 +1,19 @@
 # RNG Pedras — Raid Cooperativa
 
-Modo online cooperativo contra chefes, com salas de até 10 jogadores.
+Modo online cooperativo contra bosses do modo Shooter, com salas de até 10 jogadores e fases progressivamente mais difíceis.
 
-## O que foi corrigido
-- Movimentação local preditiva e sincronização de posição no servidor, com setas/WASD no PC e controles direcionais por toque no celular.
-- A nave da raid usa o personagem salvo pelo jogador: nome, raridade/cor, dano e vida base.
-- O personagem escolhido é salvo no perfil local e restaurado ao reabrir o site.
-- Habilidade especial com cooldown, dano ajustado à raridade/personagem e escudo com dois bloqueios.
-- Sala de espera de 15 segundos, inicia antes se atingir 10 jogadores.
-- Boss compartilhado e fases progressivamente mais difíceis.
+## Melhorias desta versão
+- Tiro manual: Espaço ou botão 🔫; sem disparo automático.
+- Movimento com setas/WASD no PC e botões direcionais no celular, com previsão local para reduzir travamentos e correções bruscas.
+- Personagem selecionado entra na raid com nome, raridade, cor, dano, vida e habilidades correspondentes.
+- Habilidade principal Q, habilidade extra R para personagens compatíveis e escudo E com três bloqueios.
+- Habilidades específicas para Oswaldo, Leo Pedreiro, RL Charrado, Jadrian Sandan, Pollo, Serjão e raridades especiais.
+- Bosses RL ODIO, JADRIAN PELUDO, LEO ATIÇADO e LEO INFIEL; HP compartilhado entre a equipe.
+- Ataques direcionados, rajadas quando o boss perde vida, chuva de fogo e áreas de explosão marcadas para desviar.
+- Raid para até 10 jogadores, com lobby de 15 segundos e cura parcial entre fases.
 
-## Render
-Build command: `npm install`
-Start command: `npm start`
+## Publicar no Render
+- Build command: `npm install`
+- Start command: `npm start`
 
-Não apague `players.json` no servidor em produção; ele contém o progresso salvo.
+**Não apague nem substitua `players.json` na hospedagem existente.** Este ZIP não inclui esse arquivo de progresso. A pasta de dados do servidor continua sendo usada pelo código.
