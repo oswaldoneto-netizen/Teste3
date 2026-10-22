@@ -5,6 +5,8 @@ const DB=path.join(DATA_DIR,'players.json');
 let players={};
 const activeUsers=new Map(); // sessionId -> {playerId,lastSeen}
 const TEST_MODE_PASSWORD='02072482';
+const testTokens=new Map();
+function cleanTestTokens(){const now=Date.now();for(const [token,expires] of testTokens)if(expires<now)testTokens.delete(token);}
 let globalEvent={id:'',type:'',active:false,until:0,doubleLuck:false,rewards:{},claimed:new Set(),startedAt:0};
 function cleanOnline(){const now=Date.now();for(const [sid,info] of activeUsers){if(now-(info?.lastSeen||0)>20000)activeUsers.delete(sid);}}
 const PLAYER_HITBOX=0.16;try{const raw=JSON.parse(fs.readFileSync(DB,'utf8')||'{}'); if(Array.isArray(raw)) for(const p of raw){if(p&&p.nick) players[String(p.nick).toLowerCase()]={...p};} else if(raw&&raw.players&&Array.isArray(raw.players)) for(const p of raw.players){if(p&&p.nick) players[String(p.nick).toLowerCase()]={...p};} else if(raw&&typeof raw==='object') players=raw;}catch(e){players={}}
@@ -76,16 +78,26 @@ function rankColor(r){return ({'Sem Rank':'#fff','Bronze':'#cd7f32','Prata':'#c0
 function send(res,code,data,type='application/json'){res.writeHead(code,{'Content-Type':type,'Cache-Control':'no-store'});res.end(type==='application/json'?JSON.stringify(data):data)}
 function readBody(req){return new Promise((ok,bad)=>{let s='';req.on('data',c=>s+=c);req.on('end',()=>{try{ok(JSON.parse(s||'{}'))}catch(e){bad(e)}})})}
 const server=http.createServer(async(req,res)=>{try{
+if(req.url==='/api/test-auth'&&req.method==='POST'){
+ const d=await readBody(req);if(String(d.password||'')!==TEST_MODE_PASSWORD)return send(res,403,{ok:false,error:'forbidden'});
+ cleanTestTokens();const token='test_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2)+'_'+Math.random().toString(36).slice(2);testTokens.set(token,Date.now()+12*60*60*1000);return send(res,200,{ok:true,token,expiresIn:12*60*60*1000});
+}
 if(req.url.startsWith('/api/event')&&req.method==='GET'){
  const u=new URL(req.url,'http://localhost');const playerId=String(u.searchParams.get('playerId')||'');const session=String(u.searchParams.get('sessionId')||playerId);const nick=String(u.searchParams.get('nick')||'').trim().slice(0,16);cleanOnline();
  if(playerId){activeUsers.set(session,{playerId,lastSeen:Date.now()});}
  if(globalEvent.active&&Date.now()>=globalEvent.until)globalEvent.active=false;
- let reward=null;if(playerId&&globalEvent.id&&globalEvent.rewards[playerId]&&!globalEvent.claimed.has(playerId)){reward={eventId:globalEvent.id,points:globalEvent.rewards[playerId]};globalEvent.claimed.add(playerId);}
+ const rewardAvailable=!!(playerId&&globalEvent.id&&globalEvent.rewards[playerId]&&!globalEvent.claimed.has(playerId));
  const online=new Set([...activeUsers.values()].filter(x=>x?.playerId&&Date.now()-(x.lastSeen||0)<=20000).map(x=>x.playerId));
- return send(res,200,{ok:true,active:globalEvent.active,until:globalEvent.until,type:globalEvent.type,id:globalEvent.id,doubleLuck:globalEvent.doubleLuck,online:online.size,reward});
+ return send(res,200,{ok:true,active:globalEvent.active,until:globalEvent.until,type:globalEvent.type,id:globalEvent.id,doubleLuck:globalEvent.doubleLuck,online:online.size,rewardAvailable,rewardEventId:rewardAvailable?globalEvent.id:''});
+}
+if(req.url==='/api/event/claim'&&req.method==='POST'){
+ const d=await readBody(req);const playerId=String(d.playerId||'');const eventId=String(d.eventId||'');
+ if(!playerId||!eventId||eventId!==globalEvent.id||!Object.prototype.hasOwnProperty.call(globalEvent.rewards,playerId))return send(res,404,{ok:false,error:'no-reward'});
+ if(globalEvent.claimed.has(playerId))return send(res,200,{ok:true,points:0,alreadyClaimed:true});
+ globalEvent.claimed.add(playerId);return send(res,200,{ok:true,points:Number(globalEvent.rewards[playerId])||0,alreadyClaimed:false});
 }
 if(req.url==='/api/event'&&req.method==='POST'){
- const d=await readBody(req);if(String(d.password||'')!==TEST_MODE_PASSWORD)return send(res,403,{ok:false,error:'forbidden'});
+ const d=await readBody(req);cleanTestTokens();const authToken=String(d.token||'');if(!testTokens.has(authToken)||testTokens.get(authToken)<Date.now())return send(res,403,{ok:false,error:'forbidden'});
  cleanOnline();const now=Date.now();const onlineIds=[...new Set([...activeUsers.values()].filter(x=>x?.playerId&&now-(x.lastSeen||0)<=20000).map(x=>x.playerId))];
  const type=['luck','points','full'].includes(String(d.type))?String(d.type):'full';const id='event_'+now.toString(36)+'_'+Math.random().toString(36).slice(2,8);
  const rewards={};if(type==='points'||type==='full')for(const pid of onlineIds)rewards[pid]=200;
