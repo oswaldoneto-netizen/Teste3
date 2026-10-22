@@ -141,7 +141,13 @@ canvas{width:100%;height:100%;display:block}.hintPanel{position:fixed;left:50%;b
     <div class="mainCard">
       <div class="resultBox"><div id="resultName" class="resultName">???</div><div id="resultRarity" class="resultRarity"></div></div>
       <div class="resultTitle"><small>RESULTADO</small><b id="resultText">Pronto para rolar</b></div>
-      <div class="buttons"><button class="btn roll" id="menuRoll">🎲 ROLAR NORMAL</button><button class="btn" id="menuSpecialSpinBtn" style="background:linear-gradient(90deg,#6725b8,#e22c91);border:2px solid #ffb5ef;color:white">✨ GIROS ESPECIAIS: <span id="menuSpecialSpinCount">0</span></button><button class="btn play" id="playBtn">🚀 JOGAR SHOOTER</button><button class="btn testModeBtn" id="testModeOpen">🧪 MODO TESTE</button></div><div id="storeInfo" style="margin:10px 0 2px;padding:10px 12px;border:1px solid #283650;border-radius:12px;background:#070d1e;text-align:center;font-weight:1000;color:#dce7f5">🏪 RNG SEDUC • atualiza em 15:00</div><div id="pityInfo" style="margin:6px 0;padding:8px;border:1px solid #3a2858;border-radius:10px;background:#100c22;color:#e7c7ff;text-align:center;font-size:11px;font-weight:900">🎁 Chances de raridade ativas</div><div id="globalEventBanner" class="globalEventBanner" style="display:none"></div><div class="rollHelp">A primeira rolagem é grátis. Depois, cada roll custa <b>100 pontos</b>. Derrote pedras no shooter para ganhar pontos.</div>
+      <div class="buttons"><button class="btn roll" id="menuRoll">🎲 ROLAR NORMAL</button><button class="btn" id="menuSpecialSpinBtn" style="background:linear-gradient(90deg,#6725b8,#e22c91);border:2px solid #ffb5ef;color:white">✨ GIROS ESPECIAIS: <span id="menuSpecialSpinCount">0</span></button><button class="btn play" id="playBtn">🚀 JOGAR SHOOTER</button><button class="btn testModeBtn" id="testModeOpen">🧪 MODO TESTE</button></div>
+      <div style="margin-top:12px;padding:12px;border:1px solid #4b347a;border-radius:15px;background:linear-gradient(135deg,#17102d,#091526);text-align:center">
+        <div style="font-weight:1000;color:#e8d7ff;margin-bottom:8px">🎬 ANÚNCIO RECOMPENSADO</div>
+        <button class="btn" id="watch-ad-btn" style="width:100%;background:linear-gradient(90deg,#7c3aed,#2563eb);color:white">▶️ ASSISTIR VÍDEO E GANHAR +100 PONTOS</button>
+        <div id="applixir-ad-message" role="status" style="font-size:12px;color:#a9b9d0;margin-top:8px">Assista ao vídeo até o final para receber 100 pontos.</div>
+        <div id="applixir-ad-container" style="margin-top:8px"></div>
+      </div><div id="storeInfo" style="margin:10px 0 2px;padding:10px 12px;border:1px solid #283650;border-radius:12px;background:#070d1e;text-align:center;font-weight:1000;color:#dce7f5">🏪 RNG SEDUC • atualiza em 15:00</div><div id="pityInfo" style="margin:6px 0;padding:8px;border:1px solid #3a2858;border-radius:10px;background:#100c22;color:#e7c7ff;text-align:center;font-size:11px;font-weight:900">🎁 Chances de raridade ativas</div><div id="globalEventBanner" class="globalEventBanner" style="display:none"></div><div class="rollHelp">A primeira rolagem é grátis. Depois, cada roll custa <b>100 pontos</b>. Derrote pedras no shooter para ganhar pontos.</div>
       <div class="deviceTitle">ESCOLHA O CONTROLE</div>
       <div class="deviceButtons"><button class="deviceBtn active" id="pcMode">🖥️ COMPUTADOR</button><button class="deviceBtn" id="mobileMode">📱 CELULAR</button></div>
       <div class="rarityGrid">
@@ -222,6 +228,7 @@ canvas{width:100%;height:100%;display:block}.hintPanel{position:fixed;left:50%;b
 <div id="flash" class="flash"></div>
 
 
+<script src="https://cdn.applixir.com/applixir.app.v6.1.0.js"></script>
 <script>
 const R=[
  {k:'comum',n:'COMUM',c:'#ffffff',p:50,d:20,h:600,names:['Henrico','Jaqueline','Wlissys','Thales','Pedro'],shots:1},
@@ -910,6 +917,33 @@ function refreshEventAdminUI(data){const m=document.getElementById('eventAdminMe
 async function launchGlobalEvent(type){const msg=document.getElementById('eventAdminMessage');if(msg)msg.textContent='Ativando evento para jogadores online...';try{const r=await fetch('/api/event',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:testAuthToken,type,playerId:profile.playerId,sessionId})});const d=await r.json();if(!r.ok||!d.ok){if(msg)msg.textContent='❌ Não foi possível ativar. Confira a senha do modo teste.';return;}if(msg)msg.textContent='✅ Evento ativado por 5 minutos para '+d.online+' jogador(es) online.';await pollGlobalEvent();}catch(e){if(msg)msg.textContent='❌ Erro de conexão com o servidor.';}}
 document.querySelectorAll('[data-event]').forEach(b=>b.addEventListener('click',()=>launchGlobalEvent(b.dataset.event)));
 setInterval(pollGlobalEvent,3000);
+
+// AppLixir rewarded video (sandbox key supplied by the user).
+const applixirKey = "5a4db0c5-0000-4000-8000-5a4db0c50001";
+let applixirAdRunning = false;
+let applixirRewardGranted = false;
+const applixirButton = document.getElementById('watch-ad-btn');
+const applixirMessage = document.getElementById('applixir-ad-message');
+function finishApplixirAd(){applixirAdRunning=false;if(applixirButton){applixirButton.disabled=false;applixirButton.textContent='▶️ ASSISTIR VÍDEO E GANHAR +100 PONTOS';}}
+if(applixirButton){
+ applixirButton.addEventListener('click',()=>{
+  if(applixirAdRunning)return;
+  if(typeof initializeAndOpenPlayer!=='function'){applixirMessage.textContent='O player de anúncios ainda está carregando. Tente novamente em alguns segundos.';return;}
+  applixirAdRunning=true;applixirRewardGranted=false;applixirButton.disabled=true;applixirButton.textContent='⏳ CARREGANDO ANÚNCIO...';applixirMessage.textContent='Carregando vídeo recompensado...';
+  const options={apiKey:applixirKey,injectionElementId:'applixir-ad-container',
+   adStatusCallbackFn:(status)=>{
+    if(status&&status.type==='complete'&&!applixirRewardGranted){
+     applixirRewardGranted=true;coins+=100;document.getElementById('menuScore').textContent=coins;persistCoins();saveProfile();
+     applixirMessage.textContent='✅ Vídeo concluído! Você recebeu +100 pontos.';finishApplixirAd();
+    } else if(status&&['close','closed','error','failed'].includes(String(status.type||'').toLowerCase())){
+     applixirMessage.textContent='Anúncio encerrado. A recompensa é liberada somente ao concluir o vídeo.';finishApplixirAd();
+    }
+   },
+   adErrorCallbackFn:(error)=>{console.error('AppLixir ad error:',error);applixirMessage.textContent='Nenhum anúncio disponível agora ou houve um erro. Tente novamente mais tarde.';finishApplixirAd();}
+  };
+  try{initializeAndOpenPlayer(options);}catch(error){console.error('AppLixir init error:',error);applixirMessage.textContent='Não foi possível abrir o anúncio. Tente novamente.';finishApplixirAd();}
+ });
+}
 
 loadProfile(); updatePityUI(); loadLeaderboard(); loadRockLeaderboard(); refreshStoreUI(); setInterval(refreshStoreUI,1000); setInterval(updateMasteryUI,1000); setInterval(()=>{saveProfile();fetch('/api/heartbeat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId,playerId:profile.playerId,nick:profile.nick,previousNick:profile.previousNick})}).then(async r=>{const d=await r.json().catch(()=>({}));if(r.status===403&&d.banned){alert('Sua conta foi banida pelo administrador.');location.reload();return;}if(r.ok&&d.ok){if(Number(d.level)>Number(profile.level||1)){profile.level=Number(d.level);profile.xp=Number(d.xp)||0;try{localStorage.setItem(PROFILE_KEY,JSON.stringify(profile))}catch(e){}}if(d.adminCommand&&d.adminCommand.type==='setLevel'){profile.level=Math.max(1,Number(d.adminCommand.level)||1);profile.xp=0;try{localStorage.setItem(PROFILE_KEY,JSON.stringify(profile))}catch(e){}}if(d.adminCommand&&d.adminCommand.type==='setClass'){const cmd=d.adminCommand;const rarity=cmd.classKey==='event'?EVENT_RARITY:(R.find(x=>x.k===cmd.classKey)||[...BOSS_REWARDS.map(b=>bossRewardCharacter(b))].find(x=>x.k===cmd.classKey));if(rarity&&Array.isArray(rarity.names)){const chosen=rarity.names.includes(cmd.className)?cmd.className:cmd.className;showResult(rarity,chosen);saveProfile();const m=document.getElementById('resultText');if(m)m.textContent='🛡️ Administrador equipou: '+chosen;}}}}).catch(()=>{});loadLeaderboard()},5000);
 loop();
