@@ -203,6 +203,16 @@ canvas{width:100%;height:100%;display:block}.hintPanel{position:fixed;left:50%;b
   </div>
   <div id="gameOver"><div class="gameOverCard"><h2>💥 VOCÊ PERDEU!</h2><p>Suas vidas chegaram a <b>0</b>.</p><p>Pontuação da partida: <b id="finalScore">0</b></p><div class="overBtns"><button class="retry" id="retryBtn">🔄 JOGAR NOVAMENTE</button><button class="menuBtn" id="overMenuBtn">✕ SAIR</button></div></div></div>
 </section>
+<div id="bossRoulette" style="display:none;position:fixed;inset:0;z-index:100;background:#030611ed;backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:18px;color:#fff">
+ <div style="width:min(92vw,560px);text-align:center;background:linear-gradient(145deg,#111b30,#080c18);border:2px solid #5de7ff;border-radius:24px;padding:22px;box-shadow:0 0 55px #42dfff44">
+  <div style="font-size:12px;letter-spacing:4px;color:#7ceaff;font-weight:1000">RECOMPENSA DE BOSS</div>
+  <h2 style="margin:10px 0 4px;font-size:clamp(24px,6vw,38px)">🎁 ROLETA AUTOMÁTICA!</h2>
+  <div id="bossRouletteName" style="min-height:95px;display:flex;align-items:center;justify-content:center;font-size:clamp(28px,8vw,54px);font-weight:1000;text-shadow:0 0 22px currentColor">???</div>
+  <div id="bossRouletteRarity" style="font-weight:1000;letter-spacing:2px;margin:5px 0">SORTEANDO...</div>
+  <div style="height:8px;background:#172437;border-radius:99px;overflow:hidden;margin:18px 0"><div id="bossRouletteBar" style="height:100%;width:0;background:linear-gradient(90deg,#26d9ff,#a7ff36)"></div></div>
+  <div id="bossRouletteMessage" style="color:#b8c8d8;font-size:13px">Sua recompensa será equipada automaticamente.</div>
+ </div>
+</div>
 <div id="flash" class="flash"></div>
 
 
@@ -216,7 +226,8 @@ const R=[
  {k:'secreto',n:'SECRETO',c:'rgb',p:.7,d:90,h:2000,names:['Pollo','Serjão'],shots:6},
  {k:'god',n:'GOD',c:'#ff4fd8',p:.4,d:120,h:2300,names:['RL CHARRADO','JADRIAN SANDAN'],shots:10},
  {k:'admin',n:'ADMIN',c:'#ffffff',p:.2,d:150,h:2700,names:['LEO PEDREIRO'],shots:12,admin:true},
- {k:'criador',n:'CRIADOR',c:'#ffe100',p:.1,d:999,h:3000,names:['Oswaldo'],shots:20,creator:true}
+ {k:'criador',n:'CRIADOR',c:'#ffe100',p:.1,d:999,h:3000,names:['Oswaldo'],shots:20,creator:true},
+ {k:'cuseco',n:'RL DO CU SECO',c:'#00ffd5',p:0,d:1200,h:600000,names:['RL DO CU SECO'],shots:24,specialClass:true}
 ];
 const STORES={
  seduc:{name:'RNG SEDUC',pools:{comum:['Henrico','Jaqueline','Wlissys','Thales','Pedro'],raro:['Bruno','Kailer','Guilherme'],epico:['Pietro','Kenedy','Bruna','Nicolas'],lendario:['Leonardo','Luiz Felipe','Jadrian'],mitico:['RL','Victor','LIPE FF','Presidente'],secreto:['Pollo','Serjão'],god:['RL CHARRADO','JADRIAN SANDAN'],admin:['LEO PEDREIRO'],criador:['Oswaldo']}},
@@ -234,12 +245,12 @@ let current=null, currentName='???', rolling=false, coins=100, hasCharacter=fals
 const EVENT_RARITY={k:'event',n:'EVENT',c:'#b7ff00',p:.1,d:850,h:2850,names:['RL EVENT','LIPE EVENT','POLO EVENT','VT POD'],shots:18,event:true};
 let globalEvent={active:false,until:0,type:'',id:'',doubleLuck:false};let lastEventId='';
 const PROFILE_KEY='rng_pedras_profile_v2';
-let profile={playerId:'',nick:'',previousNick:'',level:1,xp:0,wins:0,coins:100,rank:'Sem Rank',pityRolls:0,pitySecret:0,pityGod:0,pityCreator:0,specialSpins:0,mastery:{}};
+let profile={playerId:'',nick:'',previousNick:'',level:1,xp:0,wins:0,coins:100,rank:'Sem Rank',pityRolls:0,pitySecret:0,pityGod:0,pityCreator:0,pityAdmin:0,pityEvent:0,specialSpins:0,mastery:{}};
 const SESSION_KEY='rngSessionId';
 let sessionId=localStorage.getItem(SESSION_KEY); if(!sessionId){sessionId='s_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,10); localStorage.setItem(SESSION_KEY,sessionId);}
 function rankForWins(w){w=+w||0;if(w>=30)return 'Champion';if(w>=25)return 'Diamante';if(w>=20)return 'Platina';if(w>=15)return 'Ouro';if(w>=10)return 'Prata';if(w>=5)return 'Bronze';return 'Sem Rank'}
 function rankColor(r){return ({'Sem Rank':'#fff','Bronze':'#cd7f32','Prata':'#c0c0c0','Ouro':'#ffd700','Platina':'#7ee6e8','Diamante':'#55b9ff','Champion':'#ff4d9d'})[r]||'#fff'}
-function loadProfile(){try{const p=JSON.parse(localStorage.getItem(PROFILE_KEY)||'null');if(p){profile.playerId=String(p.playerId||''); profile.nick=String(p.nick||'').slice(0,16); profile.previousNick=String(p.previousNick||profile.nick||'').slice(0,16);profile.level=Math.max(1,+p.level||1);profile.xp=Math.max(0,+p.xp||0);profile.wins=Math.max(0,+p.wins||0);coins=Math.max(0,Number.isFinite(Number(p.coins))?Number(p.coins):100);document.getElementById('menuScore').textContent=coins;profile.rank=String(p.rank||rankForWins(profile.wins)); profile.pityRolls=Math.max(0,+p.pityRolls||0);profile.pitySecret=Math.max(0,+p.pitySecret||0);profile.pityGod=Math.max(0,+p.pityGod||0);profile.pityCreator=Math.max(0,+p.pityCreator||0);profile.specialSpins=Math.max(0,+p.specialSpins||0);profile.characterKey=String(p.characterKey||'');profile.characterName=String(p.characterName||'');profile.characterDamage=Math.max(1,+p.characterDamage||20);profile.characterHp=Math.max(100,+p.characterHp||600);profile.characterShots=Math.max(1,+p.characterShots||1);profile.specialTitle=String(p.specialTitle||'');profile.unlockedTitles=Array.isArray(p.unlockedTitles)?p.unlockedTitles:[];profile.mastery=(p.mastery&&typeof p.mastery==='object')?p.mastery:{};}}catch(e){} const el=document.getElementById('playerName'); if(!profile.playerId){const m=document.cookie.match(/(?:^|; )rngPlayerId=([^;]+)/); profile.playerId=m?decodeURIComponent(m[1]):'p_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,10); document.cookie='rngPlayerId='+encodeURIComponent(profile.playerId)+'; Max-Age=31536000; Path=/; SameSite=Lax';} if(profile.nick) el.value=profile.nick; updateProfileUI(); syncPlayer(); if(profile.characterKey&&profile.characterName){const savedR=R.find(r=>r.k===profile.characterKey);if(savedR)showResult(savedR,profile.characterName);}}
+function loadProfile(){try{const p=JSON.parse(localStorage.getItem(PROFILE_KEY)||'null');if(p){profile.playerId=String(p.playerId||''); profile.nick=String(p.nick||'').slice(0,16); profile.previousNick=String(p.previousNick||profile.nick||'').slice(0,16);profile.level=Math.max(1,+p.level||1);profile.xp=Math.max(0,+p.xp||0);profile.wins=Math.max(0,+p.wins||0);coins=Math.max(0,Number.isFinite(Number(p.coins))?Number(p.coins):100);document.getElementById('menuScore').textContent=coins;profile.rank=String(p.rank||rankForWins(profile.wins)); profile.pityRolls=Math.max(0,+p.pityRolls||0);profile.pitySecret=Math.max(0,+p.pitySecret||0);profile.pityGod=Math.max(0,+p.pityGod||0);profile.pityCreator=Math.max(0,+p.pityCreator||0);profile.pityAdmin=Math.max(0,+p.pityAdmin||0);profile.pityEvent=Math.max(0,+p.pityEvent||0);profile.specialSpins=Math.max(0,+p.specialSpins||0);profile.characterKey=String(p.characterKey||'');profile.characterName=String(p.characterName||'');profile.characterDamage=Math.max(1,+p.characterDamage||20);profile.characterHp=Math.max(100,+p.characterHp||600);profile.characterShots=Math.max(1,+p.characterShots||1);profile.specialTitle=String(p.specialTitle||'');profile.unlockedTitles=Array.isArray(p.unlockedTitles)?p.unlockedTitles:[];profile.mastery=(p.mastery&&typeof p.mastery==='object')?p.mastery:{};}}catch(e){} const el=document.getElementById('playerName'); if(!profile.playerId){const m=document.cookie.match(/(?:^|; )rngPlayerId=([^;]+)/); profile.playerId=m?decodeURIComponent(m[1]):'p_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,10); document.cookie='rngPlayerId='+encodeURIComponent(profile.playerId)+'; Max-Age=31536000; Path=/; SameSite=Lax';} if(profile.nick) el.value=profile.nick; updateProfileUI(); syncPlayer(); if(profile.characterKey&&profile.characterName){const savedR=R.find(r=>r.k===profile.characterKey);if(savedR)showResult(savedR,profile.characterName);}}
 function saveProfile(){profile.coins=coins;const old=profile.nick; profile.nick=(document.getElementById('playerName').value||'').trim().slice(0,16)||'Player1'; if(!profile.playerId){profile.playerId='p_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,10); document.cookie='rngPlayerId='+encodeURIComponent(profile.playerId)+'; Max-Age=31536000; Path=/; SameSite=Lax';} if(old && old!==profile.nick) profile.previousNick=old; try{localStorage.setItem(PROFILE_KEY,JSON.stringify(profile));}catch(e){} updateProfileUI(); syncPlayer();}
 function persistCoins(){profile.coins=coins;try{localStorage.setItem(PROFILE_KEY,JSON.stringify(profile))}catch(e){}}
 function xpNeededForLevel(level){return Math.max(1,Number(level)||1)*100;}
@@ -258,16 +269,20 @@ function pick(){
  return R[0];
 }
 function chooseRollResult(storeKey){
- profile.pityRolls++;profile.pitySecret++;profile.pityGod++;profile.pityCreator++;
- // A raridade EVENT tem 0,1% fixos durante qualquer evento ativo.
- if(globalEvent.active && Math.random()<0.001){try{localStorage.setItem(PROFILE_KEY,JSON.stringify(profile))}catch(e){}updatePityUI();syncPlayer();return EVENT_RARITY;}
- const base=[['comum',52.6],['raro',25],['epico',15],['lendario',5],['mitico',1],['secreto',.7],['god',.4],['admin',.2],['criador',.1]];
- let weights=base.map(([k,w])=>({k,w:(globalEvent.active&&globalEvent.doubleLuck&&k!=='comum'?w*2:w)}));
- let total=weights.reduce((a,x)=>a+x.w,0),roll=Math.random()*total,acc=0,key='comum';
- for(const item of weights){acc+=item.w;if(roll<acc){key=item.k;break;}}
- const r=R.find(a=>a.k===key)||R[0];try{localStorage.setItem(PROFILE_KEY,JSON.stringify(profile))}catch(e){}updatePityUI();syncPlayer();return r;
+ profile.pityRolls=(profile.pityRolls||0)+1;profile.pitySecret=(profile.pitySecret||0)+1;profile.pityGod=(profile.pityGod||0)+1;profile.pityAdmin=(profile.pityAdmin||0)+1;profile.pityCreator=(profile.pityCreator||0)+1;profile.pityEvent=(profile.pityEvent||0)+1;
+ // Pity: these classes are roll-only (except RL DO CU SECO, which is boss-reward-only).
+ let key=null;
+ if(globalEvent.active&&profile.pityEvent>=500){key='event';profile.pityEvent=0;}
+ else if(profile.pityCreator>=800){key='criador';profile.pityCreator=0;profile.pityAdmin=0;profile.pityGod=0;profile.pitySecret=0;}
+ else if(profile.pityAdmin>=400){key='admin';profile.pityAdmin=0;profile.pityGod=0;profile.pitySecret=0;}
+ else if(profile.pityGod>=200){key='god';profile.pityGod=0;profile.pitySecret=0;}
+ else if(profile.pitySecret>=100){key='secreto';profile.pitySecret=0;}
+ if(!key&&globalEvent.active&&Math.random()<0.001){key='event';profile.pityEvent=0;}
+ if(!key){const base=[['comum',52.6],['raro',25],['epico',15],['lendario',5],['mitico',1],['secreto',.7],['god',.4],['admin',.2],['criador',.1]];let weights=base.map(([k,w])=>({k,w:(globalEvent.active&&globalEvent.doubleLuck&&k!=='comum'?w*2:w)}));let total=weights.reduce((a,x)=>a+x.w,0),roll=Math.random()*total,acc=0;key='comum';for(const item of weights){acc+=item.w;if(roll<acc){key=item.k;break;}}}
+ const r=key==='event'?EVENT_RARITY:(R.find(a=>a.k===key&&a.k!=='cuseco')||R[0]);try{localStorage.setItem(PROFILE_KEY,JSON.stringify(profile))}catch(e){}updatePityUI();syncPlayer();return r;
 }
-function updatePityUI(){const el=document.getElementById('pityInfo');if(el)el.textContent='🎲 Chances ativas'+(globalEvent.active?' • EVENTO GLOBAL • '+(globalEvent.doubleLuck?'2x SORTE':'BÔNUS ESPECIAL'):'')+' • Maestria aumenta ao derrotar inimigos';const card=document.getElementById('eventRarityCard');if(card)card.style.display=globalEvent.active?'flex':'none';}
+
+function updatePityUI(){const el=document.getElementById('pityInfo');if(el)el.textContent='🎲 PITY • Secreto '+Math.min(100,profile.pitySecret||0)+'/100 • GOD '+Math.min(200,profile.pityGod||0)+'/200 • ADMIN '+Math.min(400,profile.pityAdmin||0)+'/400 • Criador '+Math.min(800,profile.pityCreator||0)+'/800'+(globalEvent.active?' • EVENTO '+Math.min(500,profile.pityEvent||0)+'/500':'');const card=document.getElementById('eventRarityCard');if(card)card.style.display=globalEvent.active?'flex':'none';}
 function colorFor(r){return r.c==='rgb'?`hsl(${Date.now()/4%360} 100% 60%)`:r.c}
 function showResult(r,name){
  current=r;currentName=name;hasCharacter=true;profile.characterKey=r.k;profile.characterName=name;profile.characterDamage=Number(r.d)||20;profile.characterHp=Number(r.h)||600;profile.characterShots=shotCountFor(r);try{localStorage.setItem(PROFILE_KEY,JSON.stringify(profile))}catch(e){}updateEvolutionHUD();
@@ -283,7 +298,7 @@ function showResult(r,name){
  document.getElementById('damage').textContent=r.d;
  maxLife=Math.max(1,Number(r.h)||100);life=maxLife;updateHealthHud();
  document.getElementById('shotCount').textContent=shotCountFor(r);
- document.getElementById('powerName').textContent=name+' • '+r.n+' • '+shotCountFor(r)+' TIRO'+(shotCountFor(r)>1?'S':'');updateMasteryUI();
+ document.getElementById('powerName').textContent=name+' • '+r.n+' • '+shotCountFor(r)+' TIRO'+(shotCountFor(r)>1?'S':'');if(r.k==='cuseco')document.getElementById('powerName').style.color='#00ffd5';else document.getElementById('powerName').style.color='';updateMasteryUI();
 }
 function special(r){
  try{
@@ -378,7 +393,7 @@ function startRoll(){
   const safeFinalPool=finalPool.length?finalPool:['Oswaldo'];
   const finalName=safeFinalPool[Math.floor(Math.random()*safeFinalPool.length)];
   const activeStore=STORES[storeKey];
-  const names=R.flatMap(r=>r.names||[]).concat(globalEvent.active?EVENT_RARITY.names:[]);
+  const names=R.filter(r=>r.k!=='cuseco').flatMap(r=>r.names||[]).concat(globalEvent.active?EVENT_RARITY.names:[]);
 
   let step=0;
   const total=52;
@@ -633,6 +648,12 @@ function burstSkill(){
   for(let i=0;i<7;i++){const a=Math.atan2(ty-player.y,tx-player.x)+(Math.random()-.5)*.5;shots.push({x:player.x,y:player.y,vx:Math.cos(a)*20,vy:Math.sin(a)*20,life:100,d:damage*1.6,explosive:true});}impact(tx,ty,damage*3,100,'#ff4fd8');parts.push({x:tx,y:ty-30,t:'🛶 BARQUINHA!',life:45,vx:0,vy:-1});
  } else if(kind==='admin'){
   const now2=Date.now();for(let i=0;i<5;i++)creatorClones.push({x:player.x+(i-2)*36*devicePixelRatio,y:player.y,expires:now2+5000,nextShot:now2+100,phase:i,adminClone:true});for(let i=0;i<12;i++){const a=Math.atan2(ty-player.y,tx-player.x)+(Math.random()-.5)*.8;shots.push({x:player.x,y:player.y,vx:Math.cos(a)*22,vy:Math.sin(a)*22,life:100,d:damage*1.5});}parts.push({x:player.x,y:player.y-55,t:'⚫⚪ MULTIPLICAÇÃO!',life:55,vx:0,vy:-1});
+ } else if(kind==='cuseco'){
+  // RL DO CU SECO: chuva de meteoros converge para o boss e termina com um raio ciano.
+  const targetX=boss?boss.x:tx, targetY=boss?boss.y:ty, meteorCount=18;
+  for(let i=0;i<meteorCount;i++){const ox=(Math.random()-.5)*Math.max(180,W*.48),oy=-(120+Math.random()*180)*devicePixelRatio;shots.push({x:targetX+ox,y:targetY+oy,vx:-ox*.055,vy:14+Math.random()*5,life:55,d:damage*2.2,explosive:true,meteor:true});}
+  skillEffects.push({type:'lightning',x1:player.x,y1:player.y,x2:targetX,y2:targetY,life:55,max:55,wide:90,color:'#00ffd5'});
+  impact(targetX,targetY,damage*5,190,'#00ffd5');parts.push({x:targetX,y:targetY-55*devicePixelRatio,t:'☄️ CHUVA DE METEOROS + RAIO!',life:75,vx:0,vy:-1.4});
  } else if(kind==='event'){
   // EVENT: um raio gigante central e cinco clones que disparam como os do Leo Pedreiro.
   const targetX=boss?boss.x:tx, targetY=boss?boss.y:ty;
@@ -666,6 +687,11 @@ function adminBuffSkill(){
  }else if(current.k==='event'){
   if(now<adminBuffReadyAt)return;adminBuffReadyAt=now+18000;for(let i=0;i<7;i++)creatorClones.push({x:player.x+(i-3)*40*devicePixelRatio,y:player.y,expires:now+7000,nextShot:now+60+i*55,phase:i,eventClone:true});
   skillEffects.push({type:'lightning',x1:player.x,y1:player.y,x2:aimX||W/2,y2:aimY||H/2,life:35,max:35,wide:45,color:'#b7ff00'});parts.push({x:player.x,y:player.y-55,t:'🟢 EVENT: CLONES!',life:65,vx:0,vy:-1.1});
+ }else if(current.k==='cuseco'){
+  if(now<adminBuffReadyAt)return;adminBuffReadyAt=now+22000;
+  for(let i=0;i<5;i++)creatorClones.push({x:player.x+(i-2)*45*devicePixelRatio,y:player.y,expires:now+7000,nextShot:now+80+i*65,phase:i,cusecoClone:true});
+  const targetX=boss?boss.x:(aimX||W/2),targetY=boss?boss.y:(aimY||H/2);skillEffects.push({type:'lightning',x1:player.x,y1:player.y,x2:targetX,y2:targetY,life:48,max:48,wide:72,color:'#00ffd5'});
+  if(boss){boss.hp-=damage*8;if(boss.hp<=0)defeatBoss();else updateBossUI();}parts.push({x:player.x,y:player.y-55,t:'🩵 RL DO CU SECO: CLONES + RAIO!',life:70,vx:0,vy:-1.1});
  }else if(current.k==='criador'){
   if(now<adminBuffReadyAt)return;adminBuffReadyAt=now+20000;for(let i=0;i<5;i++)creatorClones.push({x:player.x+(i-2)*45*devicePixelRatio,y:player.y,expires:now+7000,nextShot:now+100+i*80,phase:i});parts.push({x:player.x,y:player.y-55,t:'👑 CLONES • 7 SEGUNDOS!',life:65,vx:0,vy:-1.1});
  }else return;
@@ -674,8 +700,8 @@ function adminBuffSkill(){
 function skillSnd(){initAudio();snd(760,.12,'square',.045,260)}
 function updateSkillUI(){
  const now=Date.now(),fireLeft=Math.max(0,NORMAL_SHOT_COOLDOWN-(now-lastShotAt)),burstLeft=Math.max(0,burstReadyAt-now),shieldLeft=Math.max(0,shieldReadyAt-now);
- const k=current?.k||'comum',skillNames={comum:'⚪ 5 TIROS',raro:'🔵 5 TIROS RAROS',epico:'🟣 5 TIROS ÉPICOS',lendario:'🟠 5 TIROS LENDÁRIOS',mitico:'🔴 RAIO 3s • 40/s',secreto:currentName==='Pollo'?'🛠️ FERRAMENTAS':currentName==='Serjão'?'🚗 CARRO':'🌌 ATAQUE SECRETO',god:currentName==='RL CHARRADO'?'🍃 AURA VERDE':'🛶 BARQUINHAS',criador:'👑 LASER',admin:'⚫⚪ MULTIPLICAR',event:'⚡ RAIO GIGANTE + CLONES'};
- const burst=document.getElementById('skillBurst'),shield=document.getElementById('skillShield'),st=document.getElementById('skillStatus'),rbtn=document.getElementById('skillR');const hasR=!!current&&(['god','admin','criador','event'].includes(current.k)||(current.k==='secreto'));const rReady=current?.k==='secreto'?(currentName.toLowerCase()==='pollo'?greaseReadyAt:playerBoostReadyAt):(current?.k==='god'?(currentName==='JADRIAN SANDAN'?damageBuffReadyAt:playerBoostReadyAt):adminBuffReadyAt);if(rbtn){const rLeft=Math.max(0,rReady-now),rTotal=current?.k==='god'?(currentName==='JADRIAN SANDAN'?20000:22000):(current?.k==='secreto'?18000:(current?.k==='event'?18000:20000)),rPct=Math.max(0,Math.min(100,100-rLeft/rTotal*100));rbtn.style.display=hasR?'block':'none';rbtn.disabled=!hasR||rLeft>0;rbtn.innerHTML='R<br><small>'+(rLeft>0?'CARREGANDO '+Math.ceil(rLeft/1000)+'s':'ESPECIAL • USAR')+'</small><span class="skillCdTrack"><i style="width:'+rPct+'%"></i></span>'; }
+ const k=current?.k||'comum',skillNames={comum:'⚪ 5 TIROS',raro:'🔵 5 TIROS RAROS',epico:'🟣 5 TIROS ÉPICOS',lendario:'🟠 5 TIROS LENDÁRIOS',mitico:'🔴 RAIO 3s • 40/s',secreto:currentName==='Pollo'?'🛠️ FERRAMENTAS':currentName==='Serjão'?'🚗 CARRO':'🌌 ATAQUE SECRETO',god:currentName==='RL CHARRADO'?'🍃 AURA VERDE':'🛶 BARQUINHAS',criador:'👑 LASER',admin:'⚫⚪ MULTIPLICAR',event:'⚡ RAIO GIGANTE + CLONES',cuseco:'☄️ CHUVA DE METEOROS + RAIO'};
+ const burst=document.getElementById('skillBurst'),shield=document.getElementById('skillShield'),st=document.getElementById('skillStatus'),rbtn=document.getElementById('skillR');const hasR=!!current&&(['god','admin','criador','event','cuseco'].includes(current.k)||(current.k==='secreto'));const rReady=current?.k==='secreto'?(currentName.toLowerCase()==='pollo'?greaseReadyAt:playerBoostReadyAt):(current?.k==='god'?(currentName==='JADRIAN SANDAN'?damageBuffReadyAt:playerBoostReadyAt):adminBuffReadyAt);if(rbtn){const rLeft=Math.max(0,rReady-now),rTotal=current?.k==='god'?(currentName==='JADRIAN SANDAN'?20000:22000):(current?.k==='secreto'?18000:(current?.k==='event'?18000:(current?.k==='cuseco'?22000:20000))),rPct=Math.max(0,Math.min(100,100-rLeft/rTotal*100));rbtn.style.display=hasR?'block':'none';rbtn.disabled=!hasR||rLeft>0;rbtn.innerHTML='R<br><small>'+(rLeft>0?'CARREGANDO '+Math.ceil(rLeft/1000)+'s':'ESPECIAL • USAR')+'</small><span class="skillCdTrack"><i style="width:'+rPct+'%"></i></span>'; }
  burst.disabled=gameOver||burstLeft>0; shield.disabled=gameOver||shieldActive||shieldLeft>0;
  const burstPct=Math.max(0,Math.min(100,100-(burstLeft/Math.max(1,BURST_COOLDOWN))*100));
  const shieldPct=Math.max(0,Math.min(100,100-(shieldLeft/Math.max(1,SHIELD_COOLDOWN))*100));
@@ -705,7 +731,7 @@ const BOSS_TYPES=[
  {name:'LEO INFIEL',hp:65000,damage:115,interval:3200,reward:3,xp:4000,color:'#36d9ff',weight:15}
 ];
 let bossesDefeated=Number(localStorage.getItem('rngBossesDefeated')||0);
-function chooseBoss(){if(bossesDefeated>=3 && Math.random()<0.35)return {name:'RL CU SECO',hp:600000,damage:260,interval:1250,reward:8,xp:30000,color:'#ff244f',weight:0,special:true};let x=Math.random()*100;let acc=0;for(const b of BOSS_TYPES){acc+=b.weight;if(x<acc)return b;}return BOSS_TYPES[0]}
+function chooseBoss(){if((bossesDefeated+1)%3===0)return {name:'RL CU SECO',hp:600000,damage:260,interval:1250,reward:8,xp:30000,color:'#ff244f',weight:0,special:true};let x=Math.random()*100;let acc=0;for(const b of BOSS_TYPES){acc+=b.weight;if(x<acc)return b;}return BOSS_TYPES[0]}
 function spawnBoss(){if(boss||gameOver)return;const b=chooseBoss();boss={...b,x:W*.5,y:H*.24,r:b.special?Math.min(88,Math.max(64,W*.075)):Math.min(62,Math.max(40,W*.055)),hp:b.hp,max:b.hp,nextShot:Date.now()+b.interval,shotsSinceRain:0,nextSpecialThreshold:.8};bossWarnings=[];moveKeys.left=moveKeys.right=moveKeys.up=moveKeys.down=false;document.getElementById('bossMoveControls').style.display='none';document.getElementById('commandControls').style.display='grid';rocks=[];bossShots=[];skyBalls=[];document.getElementById('bossInfo').style.display='block';document.getElementById('bossName').textContent='👹 '+boss.name+' • '+boss.damage+' DANO';updateBossUI();initAudio();snd(140,.35,'sawtooth',.09,-80)}
 function updateBossUI(){if(!boss)return;document.getElementById('bossName').textContent='👹 '+boss.name+' • '+boss.damage+' DANO';document.getElementById('bossHpText').textContent=Math.max(0,Math.ceil(boss.hp))+' / '+boss.max+' HP';document.getElementById('bossHpBar').style.width=Math.max(0,boss.hp/boss.max*100)+'%';document.getElementById('bossHpBar').style.background=boss.color;document.getElementById('bossInfo').style.borderColor=boss.color}
 function updateSpecialSpinUI(){
@@ -728,7 +754,23 @@ function specialSpin(){
 }
 document.getElementById('specialSpinBtn').addEventListener('click',specialSpin);
 document.getElementById('menuSpecialSpinBtn').addEventListener('click',specialSpin);
-function defeatBoss(){if(!boss)return;const defeated=boss;recordMasteryKill(defeated.max||defeated.hp||1000);recordEvolutionKill();bossesDefeated++;localStorage.setItem('rngBossesDefeated',String(bossesDefeated));if(defeated.special){profile.specialTitle='RL DO CU SECO';profile.unlockedTitles=[...new Set([...(profile.unlockedTitles||[]),'RL DO CU SECO'])];saveProfile();parts.push({x:W*.5,y:H*.3,t:'🏆 TÍTULO DESBLOQUEADO: RL DO CU SECO!',life:140,vx:0,vy:-1.1});}boss=null;bossShots=[];skyBalls=[];bossWarnings=[];moveKeys.left=moveKeys.right=moveKeys.up=moveKeys.down=false;player.x=W/2;player.y=H-100*devicePixelRatio;document.getElementById('bossMoveControls').style.display='none';document.getElementById('commandControls').style.display='grid';document.getElementById('bossInfo').style.display='none';profile.specialSpins=(profile.specialSpins||0)+defeated.reward;addXP(defeated.xp||500);saveProfile();updateSpecialSpinUI();score+=500;coins+=500;persistCoins();document.getElementById('menuScore').textContent=coins;document.getElementById('resultText').textContent=defeated.special?'🏆 RL CU SECO DERROTADO! TÍTULO EXCLUSIVO: RL DO CU SECO • +'+(defeated.xp||0)+' XP e +'+defeated.reward+' GIROS ESPECIAIS!':'🏆 '+defeated.name+' derrotado! +'+(defeated.xp||500)+' XP e +'+defeated.reward+' GIRO(S) ESPECIAL(IS)!';destroySnd();for(let i=0;i<45;i++)parts.push({x:W*.5,y:H*.24,t:'✨',life:40,vx:(Math.random()-.5)*12,vy:(Math.random()-.5)*12});}
+const BOSS_REWARDS=[
+ {name:'PRESIDENTE SONO',chance:50,k:'boss_sono',rarity:'BOSS',color:'#a9b8c7',d:180,h:4200,shots:12,skill:'Sono Profundo'},
+ {name:'TUNG TUNG',chance:25,k:'tung_tung',rarity:'BOSS',color:'#ff7a18',d:260,h:5200,shots:14,skill:'Batida TUNG TUNG'},
+ {name:'VT POD',chance:15,k:'vt_pod',rarity:'BOSS',color:'#9b5cff',d:420,h:6800,shots:16,skill:'Pulso Roxo'},
+ {name:'PIETRO FOFO',chance:5,k:'pietro_fofo',rarity:'BOSS',color:'#ff76b7',d:600,h:8200,shots:18,skill:'Explosão Fofa'},
+ {name:'RL DO CU SECO',chance:5,k:'cuseco',rarity:'BOSS SECRETO',color:'#00ffd5',d:1200,h:600000,shots:24,skill:'Chuva de Meteoros + Raio',specialClass:true}
+];
+function bossRewardCharacter(r){return {k:r.k,n:r.rarity,c:r.color,p:0,d:r.d,h:r.h,names:[r.name],shots:r.shots,specialClass:!!r.specialClass,bossReward:true,skillName:r.skill};}
+function runBossRoulette(defeated){
+ const modal=document.getElementById('bossRoulette'),nameEl=document.getElementById('bossRouletteName'),rarityEl=document.getElementById('bossRouletteRarity'),bar=document.getElementById('bossRouletteBar'),msg=document.getElementById('bossRouletteMessage');
+ const roll=Math.random()*100;let acc=0,reward=BOSS_REWARDS[BOSS_REWARDS.length-1];for(const r of BOSS_REWARDS){acc+=r.chance;if(roll<acc){reward=r;break;}}
+ modal.style.display='flex';nameEl.style.color='#7ceaff';nameEl.textContent='???';rarityEl.textContent='SORTEANDO...';msg.textContent='Boss derrotado: '+defeated.name+' • recompensa equipará automaticamente';bar.style.width='0%';
+ let i=0,total=34;const visuals=BOSS_REWARDS;function tick(){if(i>=total){const cls=bossRewardCharacter(reward);showResult(cls,reward.name);profile.characterKey=cls.k;profile.characterName=reward.name;profile.characterDamage=cls.d;profile.characterHp=cls.h;profile.characterShots=cls.shots;if(reward.k==='cuseco'){profile.specialTitle='RL DO CU SECO';profile.unlockedTitles=[...new Set([...(profile.unlockedTitles||[]),'RL DO CU SECO'])];}saveProfile();nameEl.textContent=reward.name;nameEl.style.color=reward.color;rarityEl.textContent=reward.rarity+' • '+reward.chance+'%';msg.textContent='✅ '+reward.name+' EQUIPADO! DANO '+reward.d+' • VIDA '+reward.h+' • '+reward.skill;bar.style.width='100%';setTimeout(()=>{modal.style.display='none';},2600);return;}const v=visuals[Math.floor(Math.random()*visuals.length)];nameEl.textContent=v.name;nameEl.style.color=v.color;rarityEl.textContent='RECOMPENSA DE BOSS';bar.style.width=(i/total*100)+'%';i++;setTimeout(tick,25+Math.pow(i/total,3)*110);}tick();
+}
+
+function defeatBoss(){if(!boss)return;const defeated=boss;recordMasteryKill(defeated.max||defeated.hp||1000);recordEvolutionKill();bossesDefeated++;localStorage.setItem('rngBossesDefeated',String(bossesDefeated));if(defeated.special){profile.specialTitle='RL DO CU SECO';profile.unlockedTitles=[...new Set([...(profile.unlockedTitles||[]),'RL DO CU SECO'])];saveProfile();parts.push({x:W*.5,y:H*.3,t:'🏆 TÍTULO RL DO CU SECO DESBLOQUEADO!',life:140,vx:0,vy:-1.1});}boss=null;bossShots=[];skyBalls=[];bossWarnings=[];moveKeys.left=moveKeys.right=moveKeys.up=moveKeys.down=false;player.x=W/2;player.y=H-100*devicePixelRatio;document.getElementById('bossMoveControls').style.display='none';document.getElementById('commandControls').style.display='grid';document.getElementById('bossInfo').style.display='none';profile.specialSpins=(profile.specialSpins||0)+defeated.reward;addXP(defeated.xp||500);saveProfile();updateSpecialSpinUI();score+=500;coins+=500;persistCoins();document.getElementById('menuScore').textContent=coins;document.getElementById('resultText').textContent='🏆 '+defeated.name+' derrotado! +'+(defeated.xp||500)+' XP e +'+defeated.reward+' GIRO(S) ESPECIAL(IS)!';destroySnd();for(let i=0;i<45;i++)parts.push({x:W*.5,y:H*.24,t:'✨',life:40,vx:(Math.random()-.5)*12,vy:(Math.random()-.5)*12});setTimeout(()=>runBossRoulette(defeated),450);}
+
 function gameDifficultyLevel(){return Math.max(1,Number(profile.level)||1,1+Math.floor(score/500));}
 function spawnRock(){if(boss||gameOver)return;const lv=gameDifficultyLevel();const r=(25+Math.random()*28)*devicePixelRatio;const base=35+r*1.3+score/1000*10;const h=Math.round(base*(1+(lv-1)*.16));rocks.push({x:r+Math.random()*(W-r*2),y:-r,r,h,max:h,v:(1+Math.random()*1.5+Math.min(2,(lv-1)*.025))*devicePixelRatio});}
 function spawnEnemyShip(){if(boss||gameOver)return;const lv=gameDifficultyLevel(),side=Math.random()<.5?-1:1;const x=side<0?25*devicePixelRatio:W-25*devicePixelRatio;const hp=Math.round((75+Math.random()*35)*(1+(lv-1)*.13));enemyShips.push({id:'ship_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8),x,y:(45+Math.random()*Math.min(180,H*.22))*devicePixelRatio,side,hp,max:hp,r:20*devicePixelRatio,vx:(side<0?1:-1)*(1.2+Math.random()*.8+lv*.025)*devicePixelRatio,nextShot:Date.now()+500+Math.random()*600,fireDelay:Math.max(480,1200-lv*18),phase:Math.random()*Math.PI*2});}
@@ -824,7 +866,7 @@ const testPicker=document.getElementById('testCharacterPicker');
 const testGrid=document.getElementById('testCharacterGrid');
 function openTestMode(){testModal.style.display='flex';testPicker.style.display='none';testMessage.textContent='';testPassword.value='';document.querySelector('.eventAdmin').style.display='none';setTimeout(()=>testPassword.focus(),50)}
 function closeTestMode(){testModal.style.display='none'}
-async function unlockTestMode(){const entered=testPassword.value;testMessage.textContent='Verificando senha...';try{const auth=await fetch('/api/test-auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:entered})});const authData=await auth.json();if(!auth.ok||!authData.ok||!authData.token){testMessage.textContent='❌ Senha incorreta.';testPassword.select();return}testAuthToken=authData.token;testMessage.textContent='✅ Modo teste liberado. Escolha um personagem:';testPicker.style.display='block';document.querySelector('.eventAdmin').style.display='block';testGrid.innerHTML='';for(const rarity of [...R,EVENT_RARITY]){for(const name of rarity.names){const b=document.createElement('button');b.type='button';b.style.borderColor=rarity.c==='rgb'?'#b7ff00':rarity.c;b.innerHTML='<span style="color:'+(rarity.c==='rgb'?'#b7ff00':rarity.c)+'">'+esc(name)+'</span><small>'+esc(rarity.n)+' • Dano '+rarity.d+' • Vida '+rarity.h+'</small>';b.addEventListener('click',()=>{showResult(rarity,name);saveProfile();closeTestMode();document.getElementById('resultText').textContent='🧪 TESTE: '+name+' • '+rarity.n;document.getElementById('playBtn').classList.add('enabled');});testGrid.appendChild(b)}}}catch(e){testMessage.textContent='❌ Erro ao validar a senha. Tente novamente.'}}
+async function unlockTestMode(){const entered=testPassword.value;testMessage.textContent='Verificando senha...';try{const auth=await fetch('/api/test-auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:entered})});const authData=await auth.json();if(!auth.ok||!authData.ok||!authData.token){testMessage.textContent='❌ Senha incorreta.';testPassword.select();return}testAuthToken=authData.token;testMessage.textContent='✅ Modo teste liberado. Escolha um personagem:';testPicker.style.display='block';document.querySelector('.eventAdmin').style.display='block';testGrid.innerHTML='';for(const rarity of [...R.filter(r=>r.k!=='cuseco'),EVENT_RARITY,...BOSS_REWARDS.map(b=>bossRewardCharacter(b))]){for(const name of rarity.names){const b=document.createElement('button');b.type='button';b.style.borderColor=rarity.c==='rgb'?'#b7ff00':rarity.c;b.innerHTML='<span style="color:'+(rarity.c==='rgb'?'#b7ff00':rarity.c)+'">'+esc(name)+'</span><small>'+esc(rarity.n)+' • Dano '+rarity.d+' • Vida '+rarity.h+'</small>';b.addEventListener('click',()=>{showResult(rarity,name);saveProfile();closeTestMode();document.getElementById('resultText').textContent='🧪 TESTE: '+name+' • '+rarity.n;document.getElementById('playBtn').classList.add('enabled');});testGrid.appendChild(b)}}}catch(e){testMessage.textContent='❌ Erro ao validar a senha. Tente novamente.'}}
 document.getElementById('testModeOpen').addEventListener('click',openTestMode);
 document.getElementById('testModeClose').addEventListener('click',closeTestMode);
 document.getElementById('testModeUnlock').addEventListener('click',unlockTestMode);
