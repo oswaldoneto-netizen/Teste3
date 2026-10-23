@@ -227,7 +227,7 @@ const R=[
  {k:'lendario',n:'LENDÁRIO',c:'#ff9b20',p:5,d:70,h:1400,names:['Leonardo','Luiz Felipe','Jadrian'],shots:4},
  {k:'mitico',n:'MÍTICO',c:'#ff263c',p:1,d:80,h:1700,names:['RL','Victor','LIPE FF','Presidente'],shots:5},
  {k:'secreto',n:'SECRETO',c:'rgb',p:.7,d:90,h:2000,names:['Pollo','Serjão'],shots:6},
- {k:'god',n:'GOD',c:'#ff4fd8',p:.4,d:120,h:2300,names:['RL CHARRADO','JADRIAN SANDAN'],shots:10},
+ {k:'god',n:'GOD',c:'#ff4fd8',p:.4,d:120,h:2300,names:['RL CHARRADO','LIPÃO CHARRADO','JADRIAN SANDAN'],shots:10},
  {k:'admin',n:'ADMIN',c:'#ffffff',p:.2,d:150,h:2700,names:['LEO PEDREIRO'],shots:12,admin:true},
  {k:'criador',n:'CRIADOR',c:'#ffe100',p:.1,d:999,h:3000,names:['Oswaldo'],shots:20,creator:true},
  {k:'cuseco',n:'RL DO CU SECO',c:'#00ffd5',p:0,d:800,h:18000,names:['RL DO CU SECO'],shots:16,specialClass:true}
@@ -733,10 +733,10 @@ bindMoveButton('cmdLeft','left');bindMoveButton('cmdRight','right');bindMoveButt
 const BOSS_TYPES=[
  {name:'RL ODIO',hp:26000,damage:50,interval:4800,reward:0,xp:1200,color:'#ff526b',weight:50,spinOnDefeat:false},
  {name:'JADRIAN PELUDO',hp:52000,damage:85,interval:3400,reward:0,xp:2800,color:'#ff9b32',weight:35,spinOnDefeat:false},
- {name:'LEO ATIÇADO',hp:95000,damage:125,interval:2900,reward:1,xp:6500,color:'#c34cff',weight:15,spinOnDefeat:true},
+ {name:'LEO ATIÇADO',hp:95000,damage:125,interval:2900,reward:1,xp:6500,color:'#c34cff',weight:15,spinOnDefeat:true,dropType:'raritySpin'},
  {name:'LEO INFIEL',hp:180000,damage:180,interval:2300,reward:0,xp:12000,color:'#36d9ff',weight:10,rouletteReward:true,rewardType:'infiel'},
  {name:'RL DO CU SECO',hp:500000,damage:260,interval:1700,reward:0,xp:30000,color:'#00ffd5',weight:10,special:true,rouletteReward:true,rewardType:'cuseco',cusecoBoss:true},
- {name:'NAINDIGH',hp:130000,damage:145,interval:2700,reward:1,xp:8500,color:'#a8ff3e',weight:25,spinOnDefeat:true}
+ {name:'NAINDIGH',hp:130000,damage:145,interval:2700,reward:1,xp:8500,color:'#a8ff3e',weight:25,spinOnDefeat:true,dropType:'raritySpin'}
 ];
 let bossesDefeated=Number(localStorage.getItem('rngBossesDefeated')||0);
 function chooseBoss(){const total=BOSS_TYPES.reduce((sum,b)=>sum+b.weight,0);let x=Math.random()*total;for(const b of BOSS_TYPES){x-=b.weight;if(x<0)return b;}return BOSS_TYPES[0]}
@@ -759,23 +759,18 @@ function specialSpin(){
  const pool=r.names||[];const name=pool[Math.floor(Math.random()*pool.length)];
  const visualPool=R.filter(a=>['mitico','secreto','god','admin','criador'].includes(a.k)).flatMap(a=>(a.names||[]).map(n=>({name:n,rarity:a.n,color:a.c}))).concat(globalEvent.active?EVENT_RARITY.names.map(n=>({name:n,rarity:'EVENT',color:EVENT_RARITY.c})):[]);
  let i=0;const total=28;resultText.textContent='✨ GIRANDO COM GIRO ESPECIAL...';
- function tick(){if(i>=total){showResult(r,name);special(r);resultText.textContent='✨ GIRO ESPECIAL: '+name+' • '+r.n;rolling=false;updateSpecialSpinUI();return;}const item=visualPool[Math.floor(Math.random()*visualPool.length)];resultName.textContent=item.name;resultRarity.textContent=item.rarity;if(item.color==='rgb'){resultName.classList.add('rainbowText');resultRarity.classList.add('rainbowText');resultName.style.color='';resultRarity.style.color='';}else{resultName.classList.remove('rainbowText');resultRarity.classList.remove('rainbowText');resultName.style.color=item.color;resultRarity.style.color=item.color;}rollSnd();i++;setTimeout(tick,25+Math.pow(i/total,3)*150)}tick();
+ function tick(){if(i>=total){showResult(r,name);special(r);resultText.textContent='🏆 DROP DE BOSS: '+name+' • '+r.n;rolling=false;updateSpecialSpinUI();return;}const item=visualPool[Math.floor(Math.random()*visualPool.length)];resultName.textContent=item.name;resultRarity.textContent=item.rarity;if(item.color==='rgb'){resultName.classList.add('rainbowText');resultRarity.classList.add('rainbowText');resultName.style.color='';resultRarity.style.color='';}else{resultName.classList.remove('rainbowText');resultRarity.classList.remove('rainbowText');resultName.style.color=item.color;resultRarity.style.color=item.color;}rollSnd();i++;setTimeout(tick,25+Math.pow(i/total,3)*150)}tick();
 }
 
 
 const BOSS_REWARDS=[
  {name:'PRESIDENTE SONO',chance:50,k:'boss_sono',rarity:'BOSS',color:'#a9b8c7',d:180,h:4200,shots:12,skill:'Sono Profundo'},
  {name:'TUNG TUNG',chance:25,k:'tung_tung',rarity:'BOSS',color:'#ff7a18',d:260,h:5200,shots:14,skill:'Batida TUNG TUNG'},
- {name:'VT POD',chance:15,k:'vt_pod',rarity:'BOSS',color:'#9b5cff',d:420,h:6800,shots:16,skill:'Pulso Roxo'},
- {name:'PIETRO FOFO',chance:5,k:'pietro_fofo',rarity:'BOSS',color:'#ff76b7',d:600,h:8200,shots:18,skill:'Explosão Fofa'},
+ {name:'PIETRO FOFO',chance:20,k:'pietro_fofo',rarity:'BOSS',color:'#ff76b7',d:600,h:8200,shots:18,skill:'Explosão Fofa'},
  {name:'RL DO CU SECO',chance:5,k:'cuseco',rarity:'BOSS SECRETO',color:'#00ffd5',d:800,h:18000,shots:16,skill:'Clones + Chuva de Meteoros + Raio',specialClass:true}
 ];
-const INFIEL_REWARDS=[
- {name:'LEO INFIEL SUPREMO',chance:45,k:'leo_infiel_supremo',rarity:'BOSS LENDÁRIO',color:'#36d9ff',d:900,h:24000,shots:18,skill:'Rajada Infiel'},
- {name:'LEO CORAÇÃO PARTIDO',chance:30,k:'leo_coracao_partido',rarity:'BOSS ÉPICO',color:'#ff76b7',d:650,h:18000,shots:16,skill:'Pulso Partido'},
- {name:'LEO TRAÍDO',chance:20,k:'leo_traido',rarity:'BOSS RARO',color:'#39a7ff',d:450,h:13000,shots:14,skill:'Golpe Traído'},
- {name:'LEO FIEL (QUASE)',chance:5,k:'leo_fiel_quase',rarity:'BOSS SECRETO',color:'#b85cff',d:1100,h:28000,shots:20,skill:'Explosão Dramática'}
-];
+const INFIEL_REWARDS=BOSS_REWARDS; // Leo Infiel usa exatamente os mesmos drops do RL DO CU SECO.
+
 function bossRewardCharacter(r){return {k:r.k,n:r.rarity,c:r.color,p:0,d:r.d,h:r.h,names:[r.name],shots:r.shots,specialClass:!!r.specialClass,bossReward:true,skillName:r.skill};}
 function runBossRoulette(defeated){
  if(!defeated?.rouletteReward)return;
@@ -788,7 +783,7 @@ function runBossRoulette(defeated){
  const v=visuals[Math.floor(Math.random()*visuals.length)];nameEl.textContent=v.name;nameEl.style.color=v.color;rarityEl.textContent='RECOMPENSA DE '+defeated.name;bar.style.width=(i/total*100)+'%';i++;setTimeout(tick,25+Math.pow(i/total,3)*110);}tick();
 }
 
-function defeatBoss(){if(!boss)return;const defeated=boss;recordMasteryKill(defeated.max||defeated.hp||1000);recordEvolutionKill();bossesDefeated++;localStorage.setItem('rngBossesDefeated',String(bossesDefeated));if(defeated.cusecoBoss){profile.specialTitle='RL DO CU SECO';profile.unlockedTitles=[...new Set([...(profile.unlockedTitles||[]),'RL DO CU SECO'])];saveProfile();parts.push({x:W*.5,y:H*.3,t:'🏆 RL DO CU SECO DERROTADO!',life:140,vx:0,vy:-1.1});}boss=null;bossShots=[];skyBalls=[];bossWarnings=[];moveKeys.left=moveKeys.right=moveKeys.up=moveKeys.down=false;player.x=W/2;player.y=H-100*devicePixelRatio;document.getElementById('bossMoveControls').style.display='none';document.getElementById('commandControls').style.display='grid';document.getElementById('bossInfo').style.display='none';if(defeated.spinOnDefeat){profile.specialSpins=(profile.specialSpins||0)+1;}addXP(defeated.xp||500);saveProfile();updateSpecialSpinUI();score+=500;coins+=500;persistCoins();document.getElementById('menuScore').textContent=coins;document.getElementById('resultText').textContent='🏆 '+defeated.name+' derrotado! +'+(defeated.xp||500)+' XP'+(defeated.spinOnDefeat?' • GIRO ESPECIAL AUTOMÁTICO!':'')+'!';destroySnd();for(let i=0;i<45;i++)parts.push({x:W*.5,y:H*.24,t:'✨',life:40,vx:(Math.random()-.5)*12,vy:(Math.random()-.5)*12});if(defeated.spinOnDefeat)setTimeout(()=>{if(!rolling&&profile.specialSpins>0)specialSpin();},500);if(defeated.rouletteReward)setTimeout(()=>runBossRoulette(defeated),450);}
+function defeatBoss(){if(!boss)return;const defeated=boss;recordMasteryKill(defeated.max||defeated.hp||1000);recordEvolutionKill();bossesDefeated++;localStorage.setItem('rngBossesDefeated',String(bossesDefeated));if(defeated.cusecoBoss){profile.specialTitle='RL DO CU SECO';profile.unlockedTitles=[...new Set([...(profile.unlockedTitles||[]),'RL DO CU SECO'])];saveProfile();parts.push({x:W*.5,y:H*.3,t:'🏆 RL DO CU SECO DERROTADO!',life:140,vx:0,vy:-1.1});}boss=null;bossShots=[];skyBalls=[];bossWarnings=[];moveKeys.left=moveKeys.right=moveKeys.up=moveKeys.down=false;player.x=W/2;player.y=H-100*devicePixelRatio;document.getElementById('bossMoveControls').style.display='none';document.getElementById('commandControls').style.display='grid';document.getElementById('bossInfo').style.display='none';if(defeated.dropType==='raritySpin'||defeated.spinOnDefeat){profile.specialSpins=(profile.specialSpins||0)+1;}addXP(defeated.xp||500);saveProfile();updateSpecialSpinUI();score+=500;coins+=500;persistCoins();document.getElementById('menuScore').textContent=coins;document.getElementById('resultText').textContent='🏆 '+defeated.name+' derrotado! +'+(defeated.xp||500)+' XP'+(defeated.dropType==='raritySpin'?' • DROP DE RARIDADE: MÍTICO/SECRETO/GOD/ADMIN/CRIADOR!':(defeated.spinOnDefeat?' • GIRO ESPECIAL AUTOMÁTICO!':''))+'!';destroySnd();for(let i=0;i<45;i++)parts.push({x:W*.5,y:H*.24,t:'✨',life:40,vx:(Math.random()-.5)*12,vy:(Math.random()-.5)*12});if(defeated.dropType==='raritySpin'||defeated.spinOnDefeat)setTimeout(()=>{if(!rolling&&profile.specialSpins>0)specialSpin();},500);if(defeated.rouletteReward)setTimeout(()=>runBossRoulette(defeated),450);}
 
 
 function gameDifficultyLevel(){return Math.max(1,Number(profile.level)||1,1+Math.floor(score/500));}
