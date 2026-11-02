@@ -232,13 +232,32 @@ html,body{font-family:var(--fb);font-weight:600}
 @keyframes skillReady{0%,100%{box-shadow:0 4px 12px #0008,0 0 0 0 #ffffff00}50%{box-shadow:0 4px 12px #0008,0 0 18px 3px #ffffff66}}
 #commandControls button:disabled{filter:grayscale(.65) brightness(.7)}
 #commandControls button{transition:transform .1s,filter .2s}#commandControls button:active:not(:disabled){transform:scale(.92)}
+
+/* ===== CELULAR: menos animações pesadas e layout ajustado ===== */
+.header h1 .emo{-webkit-text-fill-color:initial;color:initial;background:none;display:inline-block;filter:none}
+#menu .btn.raid{color:#fff}
+@media (pointer:coarse),(max-width:820px){
+ *,*::before,*::after{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+ #menu::before{animation:none}
+ .header h1{animation:none;filter:none}
+ #menu .resultBox::before{animation:none}
+ #menu .resultBox:after{display:none}
+ #menu .btn::after{display:none}
+ #commandControls button,#skillBurst,#skillShield,#skillR{animation:none!important}
+ #menu .playerCard,#menu .mainCard{box-shadow:0 10px 30px #0008}
+ #menu .resultBox{height:210px}
+ #menu .btn{font-size:11px;letter-spacing:.6px;padding:16px 6px}
+ #menu .btn.raid{padding:15px 6px}
+ .header h1{font-size:clamp(22px,7vw,34px)}
+}
+@media (max-width:420px){.raidCard{padding:16px}#raidPanel{width:140px}}
 </style>
 </head>
 <body>
 
 <section id="menu" class="screen">
   <div class="menuWrap">
-    <div class="header"><h1>🎲 RNG DE APELIDOS</h1><div class="creatorTag">👑 RNG CRIADO POR OSWALDO</div><p>Gaste pontos para rolar novos apelidos e enfrente pedras espaciais!</p></div>
+    <div class="header"><h1><span class="emo">🎲</span> RNG DE APELIDOS</h1><div class="creatorTag">👑 RNG CRIADO POR OSWALDO</div><p>Gaste pontos para rolar novos apelidos e enfrente pedras espaciais!</p></div>
     <div id="updateCounter" style="margin:0 0 12px;padding:8px 12px;border:1px solid #283650;border-radius:12px;background:#080f20;text-align:center;color:#a9bad1;font-size:12px;font-weight:900">🔄 ATUALIZAÇÃO 15.6</div>
     <div class="playerCard">
       <div class="playerRow"><label>👤 Player:</label><input class="playerInput" id="playerName" value="Player1" maxlength="16"></div>
@@ -264,6 +283,7 @@ html,body{font-family:var(--fb);font-weight:600}
   <div id="rockLeaderRows" style="display:grid;gap:7px"><div style="color:#7f8da2;text-align:center">Carregando...</div></div>
 </div>
     </div>
+<div class="testDock"><button class="testLink" id="testModeOpen">🧪 modo teste</button></div>
   </div>
 </section>
 
@@ -309,7 +329,7 @@ html,body{font-family:var(--fb);font-weight:600}
       <div style="font-size:11px;color:#8fa0b9;margin-top:14px">A partida fica pausada enquanto você escolhe. Todas as raridades podem evoluir. A opção de tiros laterais fica indisponível do MÍTICO para cima.</div>
     </div>
   </div>
-  <div id="gameOver"><div class="gameOverCard"><h2>💥 VOCÊ PERDEU!</h2><p>Suas vidas chegaram a <b>0</b>.</p><p>Pontuação da partida: <b id="finalScore">0</b></p><div class="overBtns"><button class="retry" id="retryBtn">🔄 JOGAR NOVAMENTE</button><button class="menuBtn" id="overMenuBtn">✕ SAIR</button></div><div class="testDock"><button class="testLink" id="testModeOpen">🧪 modo teste</button></div></div></div>
+  <div id="gameOver"><div class="gameOverCard"><h2>💥 VOCÊ PERDEU!</h2><p>Suas vidas chegaram a <b>0</b>.</p><p>Pontuação da partida: <b id="finalScore">0</b></p><div class="overBtns"><button class="retry" id="retryBtn">🔄 JOGAR NOVAMENTE</button><button class="menuBtn" id="overMenuBtn">✕ SAIR</button></div></div></div>
 </section>
 <div id="bossRoulette" style="display:none;position:fixed;inset:0;z-index:100;background:#030611ed;backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:18px;color:#fff">
  <div style="width:min(92vw,560px);text-align:center;background:linear-gradient(145deg,#111b30,#080c18);border:2px solid #5de7ff;border-radius:24px;padding:22px;box-shadow:0 0 55px #42dfff44">
@@ -346,6 +366,21 @@ html,body{font-family:var(--fb);font-weight:600}
 
 
 <script>
+/* ===== DESEMPENHO: limita resolução e qualidade adaptativa ===== */
+const IS_TOUCH=(()=>{try{return matchMedia('(pointer:coarse)').matches||innerWidth<820}catch(e){return false}})();
+let QUAL=0; // 0 = completo, 1 = leve (sem brilhos), 2 = mínimo
+try{const q=Number(localStorage.getItem('rngQual'));QUAL=q>=0&&q<=2?q:(IS_TOUCH?1:0);if(IS_TOUCH&&QUAL<1)QUAL=1}catch(e){QUAL=IS_TOUCH?1:0}
+try{const real=window.devicePixelRatio||1,cap=IS_TOUCH?1.25:2;Object.defineProperty(window,'devicePixelRatio',{get:()=>Math.min(real,cap),configurable:true})}catch(e){}
+const _perf={n:0,sum:0,last:0,bad:0};
+function perfSample(){
+ const now=performance.now();
+ if(_perf.last){const dt=now-_perf.last;if(dt<500){_perf.sum+=dt;_perf.n++}}
+ _perf.last=now;
+ if(_perf.n>=90){
+  const avg=_perf.sum/_perf.n;_perf.n=0;_perf.sum=0;
+  if(avg>30){_perf.bad++}else _perf.bad=0;if(_perf.bad>=2&&QUAL<2){QUAL++;_perf.bad=0;try{localStorage.setItem('rngQual',String(QUAL))}catch(e){}}
+ }
+}
 const R=[
  {k:'comum',n:'COMUM',c:'#ffffff',p:50,d:20,h:600,names:['Henrico','Jaqueline','Wlissys','Thales','Pedro'],shots:1},
  {k:'raro',n:'RARO',c:'#39a7ff',p:25,d:35,h:850,names:['Bruno','Kailer','Guilherme'],shots:2},
@@ -527,7 +562,7 @@ function fxCelebrate(r,name){
  const d=Math.min(2,window.devicePixelRatio||1);FX.d=d;
  const w=innerWidth,h=innerHeight;
  if(FX.cv.width!==Math.round(w*d)||FX.cv.height!==Math.round(h*d)){FX.cv.width=Math.round(w*d);FX.cv.height=Math.round(h*d)}
- const cfg=FXCFG[r.k]||FXCFG.comum;
+ const cfg=Object.assign({},FXCFG[r.k]||FXCFG.comum);if(QUAL>=1){cfg.n=Math.ceil(cfg.n*.5);cfg.rings=Math.min(cfg.rings,2);delete cfg.rain;if(QUAL>=2){delete cfg.rays;delete cfg.bolts;cfg.n=Math.ceil(cfg.n*.6)}}
  let cx=w/2,cy=h*.38;
  try{const el=document.getElementById('resultName');if(el&&el.offsetParent){const b=el.getBoundingClientRect();cx=b.left+b.width/2;cy=b.top+b.height/2}}catch(e){}
  FX.cx=cx;FX.cy=cy;FX.mono=!!cfg.mono;
@@ -1077,6 +1112,7 @@ function pvpWinSnd(){initAudio();snd(523,.12,'square',.045,90);setTimeout(()=>sn
 function pvpLoseSnd(){initAudio();snd(392,.16,'sawtooth',.05,-90);setTimeout(()=>snd(262,.22,'sawtooth',.055,-80),160);setTimeout(()=>snd(196,.28,'triangle',.045,-50),340)}
 function pvpEnemyHitSnd(){initAudio();snd(180,.08,'square',.035,80)}
 const canvas=document.getElementById('canvas'),ctx=canvas.getContext('2d');
+try{const _sb=Object.getOwnPropertyDescriptor(CanvasRenderingContext2D.prototype,'shadowBlur');Object.defineProperty(ctx,'shadowBlur',{get(){return _sb.get.call(this)},set(v){_sb.set.call(this,QUAL>=1?0:v)},configurable:true})}catch(e){}
 let W=0,H=0,rocks=[],shots=[],bossShots=[],skyBalls=[],bossWarnings=[],enemyShips=[],enemyShots=[],parts=[],score=0,life=100,maxLife=100,spawn=0,enemySpawn=150,player={x:0,y:0},gameOver=false,boss=null,killsSinceBoss=0,matchRockKills=0;
 let lastShotAt=0, burstReadyAt=0, shieldReadyAt=0, shieldHits=0, shieldActive=false, lightningUntil=0;
 const NORMAL_SHOT_COOLDOWN=0, BURST_COOLDOWN=10000, SHIELD_COOLDOWN=7000, MOVE_SPEED=6.5;
@@ -1394,7 +1430,7 @@ function buildBg(){
  }
  const v=x.createRadialGradient(W/2,H/2,m*.25,W/2,H/2,m*.8);v.addColorStop(0,'#00000000');v.addColorStop(1,'#000000aa');x.fillStyle=v;x.fillRect(0,0,W,H);
  _bg.cv=c;_bg.w=W;_bg.h=H;_bg.stars=[];
- const n=Math.max(60,Math.min(260,Math.round(W*H/9000)));
+ const n=Math.max(40,Math.min(QUAL>=1?90:260,Math.round(W*H/9000)));
  for(let i=0;i<n;i++){const q=Math.random();_bg.stars.push({x:Math.random()*W,y:Math.random()*H,l:q<.6?0:q<.9?1:2,p:Math.random()*6.28,c:['#ffffff','#cfe6ff','#ffe9c9','#e2d4ff'][Math.floor(Math.random()*4)]});}
 }
 function drawBackground(){
@@ -1424,7 +1460,7 @@ function drawRock(r){
  ctx.closePath();
  const g=ctx.createRadialGradient(-R*.35,-R*.4,R*.1,0,0,R*1.1);g.addColorStop(0,pal[0]);g.addColorStop(.55,pal[1]);g.addColorStop(1,pal[2]);
  ctx.fillStyle=g;ctx.fill();ctx.lineWidth=2*d;ctx.strokeStyle='rgba(220,228,240,.55)';ctx.stroke();
- for(const c of r.cr){
+ for(const c of (QUAL>=2?[]:r.cr)){
   const cx=Math.cos(c.a)*R*c.d,cy=Math.sin(c.a)*R*c.d,cs=R*c.s;
   ctx.beginPath();ctx.ellipse(cx,cy,cs,cs*.8,0,0,7);ctx.fillStyle='rgba(0,0,0,.28)';ctx.fill();
   ctx.beginPath();ctx.arc(cx,cy,cs,.9,2.6);ctx.strokeStyle='rgba(255,255,255,.25)';ctx.lineWidth=1.5*d;ctx.stroke();
@@ -1549,7 +1585,7 @@ drawBackground();
  for(const p of parts){ctx.globalAlpha=p.life/35;if(p.t){ctx.fillStyle='#fff';ctx.font='bold 15px Arial';ctx.fillText(p.t,p.x,p.y)}else{ctx.fillStyle='#c8d0da';ctx.beginPath();ctx.arc(p.x,p.y,3,0,7);ctx.fill()}ctx.globalAlpha=1}
  requestAnimationFrame(loop)
 }
-function loop(){if(inMatch){update();draw()}else requestAnimationFrame(loop)}
+function loop(){if(inMatch){perfSample();update();draw()}else{_perf.last=0;requestAnimationFrame(loop)}}
 
 // Modo teste: a senha é validada pelo servidor; o código de autorização não fica fixo no HTML.
 let testAuthToken='';
